@@ -54,7 +54,7 @@
   }
   function feedbackScreen() {
     const item = scene(), choice = item.choices.find(c => c.id === state.decisions[state.scene]);
-    return heading(state.scene + '. jelenet · A döntésed után', item.title) + '<section class="consequence-card"><p class="eyebrow">Ezt választottad</p><p class="selected-answer">' + esc(choice.label) + '</p><div class="consequence-body">' +
+    return heading(state.scene + '. jelenet · A történet folytatódik', item.title) + '<section class="consequence-card"><p class="selected-answer">' + esc(choice.label) + '</p><div class="consequence-body">' +
       blocksHTML(A.feedbackBlocks(state, S, E)) + '</div></section><div class="actions">' + button(state.scene === 6 ? 'A híd állapota' : 'Tovább a történetben', 'next') + '</div>';
   }
   function confirmationScreen() {
