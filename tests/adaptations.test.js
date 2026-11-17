@@ -32,6 +32,7 @@ test('A korábbi reakciók ténylegesen módosítják a későbbi elbeszélést'
   assert.notDeepEqual(publicBlocks, quietBlocks);
   assert.ok(publicBlocks.some(b => b.text === A.sourceExcerpts.publicRequest.text));
   assert.ok(!quietBlocks.some(b => b.text === A.sourceExcerpts.publicRequest.text));
+  assert.ok(quietBlocks.some(b => b.text === 'Reggel még annyira dühös voltam, hogy legszívesebben mindent Áron fejéhez vágtam volna. Most már egy kicsit másképp látom.'));
   const unresolved = atScene(3, {1:'C',2:'D'}, {});
   assert.ok(A.blocksForScene(unresolved, S, E).some(b => b.id === 's3-premature-peace'));
 });
