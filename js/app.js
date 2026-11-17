@@ -14,7 +14,6 @@
   try { storage = window.sessionStorage; } catch (_) { /* The story still works in memory. */ }
   const loaded = E.load(storage, S);
   let state = loaded.state, storageAvailable = loaded.storageAvailable, recovered = loaded.recovered;
-  let selected = null;
   const dialog = document.getElementById('reset-dialog');
   const esc = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const paras = items => items.map(text => '<p>' + esc(text) + '</p>').join('');
@@ -49,9 +48,9 @@
     const narrative = heading(state.scene + '. jelenet', item.title) +
       '<section class="scene-card"><p class="scene-time">' + esc(item.time) + '</p>' + blocksHTML(A.blocksForScene(state, S, E)) + '</section>';
     if (!item.choices.length) return narrative + '<div class="actions">' + button('Tovább a történetben', 'next') + '</div>';
-    return narrative + correctionPanel() + '<section class="choice-panel"><fieldset class="choice-fieldset"><legend>' + esc(item.question) + '</legend><div class="choice-list">' +
-      item.choices.map(choice => '<label class="choice-card" for="choice-' + choice.id + '"><input id="choice-' + choice.id + '" type="radio" name="choice" value="' + choice.id + '"><span class="choice-letter" aria-hidden="true">' + choice.id + '</span><span class="choice-text">' + esc(choice.label) + '</span></label>').join('') +
-      '</div></fieldset><p class="selection-hint">Válassz egy lehetőséget, majd erősítsd meg a döntésedet.</p><div class="actions">' + button('Ezt választom', 'choose', false, true) + '</div></section>';
+    return narrative + correctionPanel() + '<section class="choice-panel"><h2 class="choice-question">' + esc(item.question) + '</h2><div class="choice-list">' +
+      item.choices.map(choice => '<button type="button" class="choice-card" id="choice-' + choice.id + '" data-action="select" data-value="' + choice.id + '"><span class="choice-letter" aria-hidden="true">' + choice.id + '</span><span class="choice-text">' + esc(choice.label) + '</span></button>').join('') +
+      '</div></section>';
   }
   function feedbackScreen() {
     const item = scene(), choice = item.choices.find(c => c.id === state.decisions[state.scene]);
@@ -89,7 +88,6 @@
       recovered ? 'A korábbi mentés nem volt olvasható. Új történetet indítottunk.' : '';
   }
   function render(moveFocus) {
-    selected = null;
     const views = { start: startScreen, scene: sceneScreen, feedback: feedbackScreen, confirmation: confirmationScreen, ending: endingScreen };
     main.innerHTML = views[state.view]();
     main.dataset.view = state.view; main.dataset.scene = String(state.scene);
@@ -110,12 +108,6 @@
     storageAvailable = E.save(storage, state);
     render(true);
   }
-  document.addEventListener('change', event => {
-    if (event.target.name !== 'choice') return;
-    selected = event.target.value;
-    const choose = main.querySelector('[data-action="choose"]');
-    if (choose) choose.disabled = false;
-  });
   document.addEventListener('click', event => {
     const control = event.target.closest('[data-action]');
     if (!control || control.disabled) return;
@@ -123,7 +115,7 @@
     if (action === 'restart') { dialog.returnValue = 'cancel'; if (!dialog.open) dialog.showModal(); }
     else if (action === 'start') dispatch({ type: 'START' });
     else if (action === 'next') dispatch({ type: 'NEXT' });
-    else if (action === 'choose' && selected) dispatch({ type: 'SELECT', value: selected });
+    else if (action === 'select' && /^[A-E]$/.test(control.dataset.value || '')) dispatch({ type: 'SELECT', value: control.dataset.value });
     else if (action === 'confirm') dispatch({ type: 'CONFIRM', value: control.dataset.value === 'true' });
     else if (action === 'correct') dispatch({ type: 'CORRECT' });
   });
