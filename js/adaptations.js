@@ -24,7 +24,7 @@
   const opening = add('opening-pad', 'narration', 'Szombat délután az iskola melletti padon ültök Áronnal. Egy ideje keresed a szavakat. Most végre elmondod neki, mi történik otthon.');
   const firstReactions = {
     A: add('s2-public', 'thought', 'A folyosón mindenki felénk fordult. Jó volt végre kimondani, de most még nehezebb megszólalnom.', 'Nóra'),
-    B: add('s2-pause', 'thought', 'Reggel inkább eljöttem. Most már nem minden mondatot ugyanazzal a lendülettel küldenék el.', 'Nóra'),
+    B: add('s2-pause', 'thought', 'Reggel még annyira dühös voltam, hogy legszívesebben mindent Áron fejéhez vágtam volna. Most már egy kicsit másképp látom.', 'Nóra'),
     C: add('s2-facts', 'thought', 'Az osztálytársaktól már tudom, hogy Lili Árontól hallotta. Azt még nem, hogy Áron miért mondta el neki.', 'Nóra'),
     D: add('s2-boundary', 'thought', 'Megkértem őket, hogy ne beszéljenek rólam. De Áronnal még nem tisztáztam, mi történt.', 'Nóra')
   };
