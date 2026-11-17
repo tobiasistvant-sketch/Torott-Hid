@@ -29,12 +29,11 @@ async function begin(page) {
 }
 async function select(page, number, letter) {
   await phase(page, 'scene', number);
-  await expect(page.locator('input[name="choice"]')).toHaveCount(scene(number).choices.length);
-  await expect(action(page, 'choose')).toBeDisabled();
-  for (const item of scene(number).choices) await expect(page.locator(`label[for="choice-${item.id}"]`)).toContainText(item.label);
-  await page.locator('#choice-' + letter).check();
-  await expect(action(page, 'choose')).toBeEnabled();
-  await action(page, 'choose').click();
+  await expect(page.locator('button.choice-card')).toHaveCount(scene(number).choices.length);
+  await expect(action(page, 'choose')).toHaveCount(0);
+  for (const item of scene(number).choices) await expect(page.locator(`button#choice-${item.id}`)).toContainText(item.label);
+  // The answer card itself commits the choice; no separate confirmation button.
+  await page.locator('#choice-' + letter).click();
 }
 async function confirm(page, number, publish) {
   await phase(page, 'confirmation', number);
@@ -154,7 +153,7 @@ test('A 6/E közzététel előtt visszaléphető, és új jövőbeli döntés v�
   await page.reload(); await phase(page, 'confirmation', 6);
   await confirm(page, 6, false);
   expect((await state(page)).decisions[6]).toBeUndefined();
-  await expect(action(page, 'choose')).toBeDisabled();
+  await expect(action(page, 'choose')).toHaveCount(0);
   await decide(page, 6, 'C'); await ending(page, 'R3', route);
 });
 for (const corrected of [false, true]) {
@@ -197,7 +196,7 @@ test('Újratöltés megőrzi a következményt, az újrajátszás tiszta állapo
   expect(await state(page)).toEqual({ version: 1, view: 'start', scene: 0, decisions: {}, publications: {}, corrected: false });
   expect(await page.evaluate(() => sessionStorage.getItem('another_app'))).toBe('preserve');
   await action(page, 'start').click(); await action(page, 'next').click();
-  await expect(page.locator('input[name="choice"]:checked')).toHaveCount(0);
+  await expect(page.locator('button.choice-card')).toHaveCount(4);
 });
 
 test('Sérült mentés biztonságosan új játékot indít, tiltott tárolóval is játszható', async ({ page, context }) => {
@@ -219,14 +218,14 @@ test('Billentyűzettel választható, a fókusz és a megszakított újrakezdés
   await phase(page, 'scene', 0); await expect(active(page).locator('h1')).toBeFocused();
   await action(page, 'next').focus(); await page.keyboard.press('Enter');
   await page.locator('#choice-A').focus(); await page.keyboard.press('Space');
-  await expect(action(page, 'choose')).toBeEnabled();
+  await phase(page, 'feedback', 1);
+  await expect(active(page)).toContainText(choice(1, 'A').label);
   await action(page, 'restart').first().click();
   await expect(page.locator('#reset-dialog')).toBeVisible();
   for (let i = 0; i < 5; i++) {
     await page.keyboard.press('Tab');
     expect(await page.evaluate(() => !!document.activeElement.closest('#reset-dialog'))).toBe(true);
   }
-  await page.keyboard.press('Escape'); await phase(page, 'scene', 1);
-  await expect(page.locator('#choice-A')).toBeChecked();
-  await action(page, 'choose').click(); await phase(page, 'feedback', 1);
+  await page.keyboard.press('Escape'); await phase(page, 'feedback', 1);
+  await expect(active(page)).toContainText(choice(1, 'A').label);
 });
