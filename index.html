@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="hu">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#052738">
+  <meta name="description" content="A Törött híd: interaktív erkölcsi döntéstörténet a haragról, a megbocsátásról és a bizalomról. Nóra történetének 0.0.1-es, szöveges demója.">
+  <title>A Törött híd · 0.0.1 demó</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="js/story.js" defer></script>
+  <script src="js/adaptations.js" defer></script>
+  <script src="js/reflections.js" defer></script>
+  <script src="js/engine.js" defer></script>
+  <script src="js/version.js" defer></script>
+  <script src="js/app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Ugrás a történethez</a>
+  <div class="app-shell">
+    <header class="app-header">
+      <div class="header-inner">
+        <div class="brand">
+          <span class="brand-mark bridge-mark" aria-hidden="true"><span></span></span>
+          <div class="brand-copy"><p class="brand-name">A Törött híd</p><p class="brand-subtitle">Nóra története <span class="app-version header-version" data-app-version hidden></span></p></div>
+        </div>
+        <div class="header-actions"><span class="subject-badge">Református vallás · XI. osztály</span><button type="button" class="restart-button" data-action="restart" hidden>Újrakezdés</button></div>
+      </div>
+      <nav class="chapter-nav" aria-label="A történet jelenetei"><ol id="chapters"></ol></nav>
+      <div id="progress" class="progress-track" role="progressbar" aria-label="Haladás a történetben" aria-valuemin="0" aria-valuemax="8" aria-valuenow="0"><div id="progress-fill" class="progress-fill"></div></div>
+    </header>
+    <p id="storage-note" class="storage-notice" role="status" hidden></p>
+    <main id="main-content" class="app-main" tabindex="-1"><p>A történet betöltése…</p></main>
+    <noscript><p class="storage-notice">A demó használatához engedélyezd a JavaScript futtatását a böngésződben.</p></noscript>
+    <footer class="app-footer"><span>XI. osztály · Református vallás</span><span>Nincs pontozás. A döntéseid ezen a böngészőlapon maradnak.</span><span class="app-version" data-app-version hidden></span></footer>
+  </div>
+  <dialog id="reset-dialog" class="reset-dialog" aria-labelledby="reset-title" aria-describedby="reset-description">
+    <h2 id="reset-title">Újrakezded a történetet?</h2>
+    <p id="reset-description">A mostani döntési útvonalad törlődik. Nóra története az elejéről indul újra.</p>
+    <form method="dialog" class="actions"><button value="cancel" class="btn btn-secondary" autofocus>Még folytatom</button><button value="restart" class="btn btn-primary">Újrakezdem</button></form>
+  </dialog>
+</body>
+</html>
