@@ -104,7 +104,7 @@ Forráskapcsolat:
 Hétfő, 15:16 · Indulat vagy tudatos válasz
 A telefonon Áron neve villan fel. A háttérben látható híd közepén az egyik kötél elszakadt.
 Áron (üzenet): „Nóra, beszélhetünk? Tudom, hogy dühös vagy. Nem akartalak megbántani. Csak tanácsot kértem Lilitől.”
-Nóra – belső gondolat: „Tanácsot? Engedélyt nem kért tőlem. De tényleg el akarta árulni? És számít-e, hogy mit akart?”
+Nóra – belső gondolat: „Csak tanácsot akart kérni? De hát megígérte, hogy senkinek sem mondja el! Lehet, hogy nem akart megbántani, de attól még elárulta a titkomat.”
 Jelenet célja: Elkülöníteni a szándékot, a cselekedetet és a következményt; a haragból vagy tisztelettel megfogalmazott kommunikáció hatásait.
 Forráskapcsolat:
 · A serdülőkor etikai kérdései, 18. és 29. o.
@@ -265,7 +265,7 @@ Forráskapcsolat:
 **Későbbi hatás:** R2: A híd még épül. Nem kötelező a folyamatot gyorsabban lezárni.
 **Fejlesztői jelzés:**
 · future=cautious; ending=R2.
-**C – „Nem akarok haragban maradni. Megbocsátok, de a szoros barátságot nem folytatnám.”**
+**C – „Nem akarok tovább haragudni rád. Megbocsátok, de nem hiszem, hogy ezek után ugyanolyan barátok tudnánk lenni, mint régen.”**
 **Azonnali következmény:** Áron szomorúan, de vita nélkül elfogadja Nóra döntését.
 **Későbbi hatás:** R3: Megbocsátás, de külön utakon. Nem kudarc, és nem automatikusan kisebb erkölcsi értékű kimenetel.
 **Fejlesztői jelzés:**
