@@ -46,6 +46,9 @@ async function decide(page, number, letter, publish = true) {
   if ((number === 5 && letter === 'D') || (number === 6 && letter === 'E')) await confirm(page, number, publish);
   else await phase(page, 'feedback', number);
   await expect(page.locator('.consequence-card')).toBeVisible();
+  await expect(active(page)).toContainText(choice(number, letter).label);
+  await expect(active(page)).not.toContainText('Ezt választottad');
+  await expect(active(page).locator('.screen-heading .eyebrow')).toContainText('A történet folytatódik');
   await action(page, 'next').click();
   await phase(page, number === 6 ? 'ending' : 'scene', number + 1);
 }
