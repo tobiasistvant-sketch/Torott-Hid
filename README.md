@@ -19,7 +19,7 @@ Nyisd meg a `http://localhost:8004` címet. A futó játék statikus HTML/CSS/Ja
 ## Mi működik a demóban?
 
 - Nyitóképernyő és nyolc, sorrendben következő jelenet, elkülönülő párbeszédekkel és Nóra belső gondolataival.
-- A forrásból átvett döntési lehetőségek, utánuk olvasható következménnyel és a későbbi jelenetekhez illő változatokkal.
+- A forrásból átvett döntési lehetőségek, utánuk olvasható következménnyel és a későbbi jelenetekhez illő változatokkal. **A válaszkártyára egyetlen kattintás rögzíti a választ**, nincs külön „Ezt választom” megerősítő gomb.
 - Külön megerősítés a nyilvános megtorlás előtt; az **Átgondolom még** lehetőség visszalépést enged. A közzététel a történet fiktív eseménye: az alkalmazás nem küld üzenetet és nem publikál közösségi oldalra.
 - A „Ne írj többet” határ következetes megtartása. Az ezt követő jóvátételi ajánlat nem Áron új magánüzeneteként jelenik meg.
 - Öt saját záróoldal: történeti összefoglalás, erkölcsi tisztázás, bibliai útmutatás és magyarázat, két gondolkodtató kérdés, a döntési útvonal visszanézése és újrajátszás.
