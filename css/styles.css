@@ -241,7 +241,7 @@ strong { font-weight: 750; }
   .bridge-mark span { left: 5px; right: 5px; }
   .chapter-nav ol { gap: 0.25rem; }
   .chapter-number { width: 23px; height: 23px; font-size: 0.68rem; }
-  .choice-card { grid-template-columns: 20px 28px minmax(0, 1fr); gap: 0.5rem; padding: 0.9rem 0.75rem; }
+  .choice-card { grid-template-columns: 28px minmax(0, 1fr); gap: 0.5rem; padding: 0.9rem 0.75rem; }
   .choice-letter { width: 28px; height: 30px; font-size: 0.9rem; }
   .choice-text { font-size: 0.9rem; }
   .actions > .btn { width: 100%; }
