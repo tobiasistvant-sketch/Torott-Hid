@@ -55,6 +55,8 @@ test('A párbeszédek és gondolatok szöveghűek, a forráshivatkozások ellen�
   }
   assert.deepEqual(story.scenes[0].blocks.filter(block => block.type === 'speech').map(block => block.speaker), ['Nóra', 'Áron', 'Nóra', 'Áron']);
   assert.equal(story.scenes[7].blocks[0].speaker, 'Narrátor');
+  assert.equal(story.scenes[2].blocks.find(block => block.type === 'thought').text, 'Csak tanácsot akart kérni? De hát megígérte, hogy senkinek sem mondja el! Lehet, hogy nem akart megbántani, de attól még elárulta a titkomat.');
+  assert.equal(story.scenes[6].choices.find(choice => choice.id === 'C').label, '„Nem akarok tovább haragudni rád. Megbocsátok, de nem hiszem, hogy ezek után ugyanolyan barátok tudnánk lenni, mint régen.”');
 });
 
 test('A pedagógiai és fejlesztői megjegyzések nem kerülnek a megjelenítendő történeti blokkokba', () => {
