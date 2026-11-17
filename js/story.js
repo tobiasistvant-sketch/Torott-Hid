@@ -198,7 +198,7 @@
         {
           "type": "thought",
           "speaker": "Nóra",
-          "text": "Tanácsot? Engedélyt nem kért tőlem. De tényleg el akarta árulni? És számít-e, hogy mit akart?",
+          "text": "Csak tanácsot akart kérni? De hát megígérte, hogy senkinek sem mondja el! Lehet, hogy nem akart megbántani, de attól még elárulta a titkomat.",
           "source": {
             "file": "docs/nora-pov-forgatokonyv.md",
             "line": 107
@@ -604,7 +604,7 @@
         },
         {
           "id": "C",
-          "label": "„Nem akarok haragban maradni. Megbocsátok, de a szoros barátságot nem folytatnám.”",
+          "label": "„Nem akarok tovább haragudni rád. Megbocsátok, de nem hiszem, hogy ezek után ugyanolyan barátok tudnánk lenni, mint régen.”",
           "immediate": "Áron szomorúan, de vita nélkül elfogadja Nóra döntését.",
           "later": "R3: Megbocsátás, de külön utakon. Nem kudarc, és nem automatikusan kisebb erkölcsi értékű kimenetel.",
           "source": {
