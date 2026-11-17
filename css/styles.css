@@ -140,19 +140,14 @@ strong { font-weight: 750; }
 .speaker { display: block; margin-bottom: 0.35rem; font-family: var(--font-heading); font-size: 0.82rem; font-weight: 700; line-height: 1.5; }
 .block-text { white-space: pre-line; overflow-wrap: anywhere; }
 .thought .block-text { font-style: italic; }
-.choice-fieldset { min-width: 0; margin: 0; padding: 0; border: 0; }
-.choice-fieldset legend { max-width: 100%; margin-bottom: 1.2rem; padding: 0; color: var(--navy); font-family: var(--font-heading); font-size: 1.2rem; font-weight: 700; line-height: 1.5; }
-.choice-list { display: grid; gap: 0.8rem; margin-top: 1.25rem; }
-.choice-fieldset .choice-list { margin-top: 0; }
-.choice-card { min-width: 0; display: grid; grid-template-columns: 22px 34px minmax(0, 1fr); align-items: start; gap: 0.8rem; min-height: 78px; padding: 1.05rem 1.15rem; border: 1.5px solid #B8C5CE; border-radius: 12px; background: white; color: var(--text); text-align: left; cursor: pointer; transition: border-color 150ms ease, background-color 150ms ease; }
+.choice-question { max-width: 100%; margin-bottom: 1.2rem; color: var(--navy); font-family: var(--font-heading); font-size: 1.2rem; font-weight: 700; line-height: 1.5; }
+.choice-list { display: grid; gap: 0.8rem; }
+.choice-card { width: 100%; min-width: 0; display: grid; grid-template-columns: 34px minmax(0, 1fr); align-items: center; gap: 0.95rem; min-height: 78px; padding: 1.05rem 1.15rem; border: 1.5px solid #B8C5CE; border-radius: 12px; background: white; color: var(--text); font: inherit; text-align: left; cursor: pointer; transition: border-color 150ms ease, background-color 150ms ease; }
 .choice-card:hover { border-color: var(--blue); background: #F6FAFD; }
-.choice-card:has(input:checked), .choice-card[aria-pressed='true'], .choice-card.selected { border-color: var(--blue); background: var(--blue-tint); box-shadow: inset 0 0 0 1px var(--blue); }
-.choice-card:has(input:focus-visible) { outline: 3px solid var(--blue); outline-offset: 3px; }
-input[type='radio'] { flex: 0 0 20px; width: 20px; height: 20px; margin: 0.45rem 0 0; accent-color: var(--blue); }
+.choice-card:active { border-color: var(--blue); background: var(--blue-tint); }
+.choice-card:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
 .choice-letter { display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid #D2DFE7; border-radius: 8px; background: #F0F4F7; color: var(--navy); font-family: var(--font-heading); font-size: 1rem; font-weight: 700; }
-.choice-text { min-width: 0; padding-top: 0.1rem; font-size: 0.97rem; line-height: 1.8; overflow-wrap: anywhere; }
-.choice-card:has(input:checked) .choice-letter { border-color: var(--blue); background: var(--blue); color: white; }
-.selection-hint { margin-top: 1rem; color: var(--muted); font-size: 0.85rem; }
+.choice-text { min-width: 0; font-size: 0.97rem; line-height: 1.8; overflow-wrap: anywhere; }
 .actions { display: flex; align-items: center; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.6rem; }
 .btn { min-height: 46px; display: inline-flex; align-items: center; justify-content: center; gap: 0.55rem; padding: 0.8rem 1.2rem; border: 1px solid transparent; border-radius: 10px; font-size: 0.94rem; font-weight: 750; line-height: 1.45; text-align: center; text-decoration: none; }
 .btn svg { flex: 0 0 19px; width: 19px; height: 19px; }
