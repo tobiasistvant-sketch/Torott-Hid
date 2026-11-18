@@ -18,8 +18,37 @@
   // normalized game state. Back/Forward restore the exact earlier screen.
   const HISTORY_MARKER = 'torott-hid-screen-v1';
   let browserHistoryAvailable = false;
-  let historySequence = 0;
+  let historySequence = Number((window.location.hash.match(/^#th-screen-(\\d+)$/) || [])[1]) || 0;
   const navigationUrl = () => window.location.pathname + window.location.search + '#th-screen-' + (++historySequence);
+  // Reconstruct earlier screens when the browser opens a saved game directly:
+  // otherwise its first Back would leave the site instead of revisiting a scene.
+  function precedingScreens(target) {
+    const trail = [];
+    let current = E.createState();
+    const matches = () => JSON.stringify(current) === JSON.stringify(target);
+    for (let i = 0; i < 40; i++) {
+      trail.push(current);
+      if (matches()) return trail;
+      let action;
+      if (current.view === 'start') action = { type: 'START' };
+      else if (current.view === 'scene' && current.scene === 0) action = { type: 'NEXT' };
+      else if (current.view === 'scene' && current.scene === 6 && target.corrected && !current.corrected)
+        action = { type: 'CORRECT' };
+      else if (current.view === 'scene') {
+        const choice = target.decisions[current.scene];
+        if (!choice) break;
+        action = { type: 'SELECT', value: choice };
+      } else if (current.view === 'confirmation') {
+        if (!Object.prototype.hasOwnProperty.call(target.publications, current.scene)) break;
+        action = { type: 'CONFIRM', value: target.publications[current.scene] };
+      } else if (current.view === 'feedback') action = { type: 'NEXT' };
+      else break;
+      const next = E.transition(current, action, S);
+      if (JSON.stringify(next) === JSON.stringify(current)) break;
+      current = next;
+    }
+    return [target];
+  }
   function readHistoryState(entry) {
     if (!entry || entry.app !== HISTORY_MARKER) return null;
     return E.normalize(entry.snapshot, S);
@@ -34,7 +63,9 @@
       storageAvailable = E.save(storage, state);
       recovered = false;
     } else {
-      window.history.replaceState(historyEntry(state), '', navigationUrl());
+      const trail = precedingScreens(state);
+      window.history.replaceState(historyEntry(trail[0]), '', navigationUrl());
+      for (const snapshot of trail.slice(1)) window.history.pushState(historyEntry(snapshot), '', navigationUrl());
     }
     browserHistoryAvailable = true;
   } catch (_) { /* Browser history is optional; game navigation still works. */ }
