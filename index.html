@@ -12,6 +12,7 @@
   <script src="js/reflections.js" defer></script>
   <script src="js/engine.js" defer></script>
   <script src="js/version.js" defer></script>
+  <script src="js/comics.js" defer></script>
   <script src="js/app.js" defer></script>
 </head>
 <body>
@@ -37,6 +38,21 @@
     <h2 id="reset-title">Újrakezded a történetet?</h2>
     <p id="reset-description">A mostani döntési útvonalad törlődik. Nóra története az elejéről indul újra.</p>
     <form method="dialog" class="actions"><button value="cancel" class="btn btn-secondary" autofocus>Még folytatom</button><button value="restart" class="btn btn-primary">Újrakezdem</button></form>
+  </dialog>
+  <dialog id="comic-dialog" class="comic-dialog" aria-labelledby="comic-title">
+    <header class="comic-dialog-header">
+      <h2 id="comic-title">Képregény nagyított nézete</h2>
+      <button type="button" class="btn btn-secondary" data-action="close-comic" autofocus>Bezárás</button>
+    </header>
+    <div class="comic-toolbar" role="group" aria-label="A képregény nagyítása">
+      <button type="button" class="btn btn-secondary" data-action="comic-zoom-out" aria-label="Kicsinyítés">−</button>
+      <button type="button" class="btn btn-secondary" data-action="comic-zoom-reset">Illesztés</button>
+      <button type="button" class="btn btn-secondary" data-action="comic-zoom-in" aria-label="Nagyítás">+</button>
+      <output id="comic-zoom-status" role="status" aria-live="polite" aria-atomic="true">100%</output>
+    </div>
+    <div class="comic-viewer-scroll" tabindex="0" aria-label="Képregény nagyított nézete">
+      <div id="comic-canvas"><img id="comic-viewer-image" alt=""></div>
+    </div>
   </dialog>
 </body>
 </html>
