@@ -1,0 +1,44 @@
+{
+  "project": "A Törött híd",
+  "target": "0.0.4 demó",
+  "package": "J4 addition: five approved images and cumulative docs",
+  "game_modified": false,
+  "image_files": [
+    {
+      "scene": "J4",
+      "branch": "04_kozos_bocsanatkeres",
+      "png": "kepek/jelenet_04/04_kozos_bocsanatkeres.png",
+      "webp": "kepek/jelenet_04/04_kozos_bocsanatkeres.webp",
+      "approved": true
+    },
+    {
+      "scene": "J4",
+      "branch": "04A_fajdalom_es_felelosseg",
+      "png": "kepek/jelenet_04/04A_fajdalom_es_felelosseg.png",
+      "webp": "kepek/jelenet_04/04A_fajdalom_es_felelosseg.webp",
+      "approved": true
+    },
+    {
+      "scene": "J4",
+      "branch": "04B_idokeres",
+      "png": "kepek/jelenet_04/04B_idokeres.png",
+      "webp": "kepek/jelenet_04/04B_idokeres.webp",
+      "approved": true
+    },
+    {
+      "scene": "J4",
+      "branch": "04C_bosszu_es_baratsag",
+      "png": "kepek/jelenet_04/04C_bosszu_es_baratsag.png",
+      "webp": "kepek/jelenet_04/04C_bosszu_es_baratsag.webp",
+      "approved": true
+    },
+    {
+      "scene": "J4",
+      "branch": "04D_ne_irj_tobbet_JOVAHAGYOTT",
+      "png": "kepek/jelenet_04/04D_ne_irj_tobbet_JOVAHAGYOTT.png",
+      "webp": "kepek/jelenet_04/04D_ne_irj_tobbet_JOVAHAGYOTT.webp",
+      "approved": true
+    }
+  ],
+  "note": "Keep prior J3 images and prior manifests intact. Do not overwrite existing manifest.json."
+}
