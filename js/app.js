@@ -167,11 +167,9 @@
     const views = { start: startScreen, scene: sceneScreen, feedback: feedbackScreen, confirmation: confirmationScreen, ending: endingScreen };
     main.innerHTML = views[state.view]();
     const earlier = screenPosition > 0, later = screenPosition < screenTrail.length - 1;
-    if (earlier || later) {
-      main.insertAdjacentHTML('afterbegin', '<nav class="actions screen-navigation" aria-label="Navigáció a már meglátogatott képernyők között">' +
-        (earlier ? button('← Előző képernyő', 'screen-back', true) : '') +
-        (later ? button('Következő megtekintett képernyő →', 'screen-forward', true) : '') + '</nav>');
-    }
+    main.insertAdjacentHTML('afterbegin', '<nav class="actions screen-navigation" aria-label="Navigáció a már meglátogatott képernyők között">' +
+      button('← Előző képernyő', 'screen-back', true, !earlier) +
+      button('Következő képernyő →', 'screen-forward', true, !later) + '</nav>');
     main.dataset.view = state.view; main.dataset.scene = String(state.scene);
     if (state.view === 'ending') main.dataset.ending = E.ending(state); else delete main.dataset.ending;
     document.querySelectorAll('[data-app-version]').forEach(node => { node.textContent = 'v' + version; node.hidden = false; });
