@@ -258,3 +258,22 @@ test('browser Back/Forward restores previous scene and branching choice', async 
   await phase(page, 'feedback', 1);
   expect((await state(page)).decisions[1]).toBe('B');
 });
+
+test('restored saved progress has browser Back entries instead of exiting the game', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(key => {
+    sessionStorage.setItem(key, JSON.stringify({
+      version: 1, view: 'scene', scene: 2,
+      decisions: { 1: 'B' }, publications: {}, corrected: false
+    }));
+  }, KEY);
+  // A new document loaded directly at saved scene 2 must rebuild prior screens.
+  await page.reload();
+  await phase(page, 'scene', 2);
+  await page.goBack();
+  await phase(page, 'feedback', 1);
+  await page.goBack();
+  await phase(page, 'scene', 1);
+  await page.goForward();
+  await phase(page, 'feedback', 1);
+});
