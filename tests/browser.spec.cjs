@@ -277,3 +277,19 @@ test('restored saved progress has browser Back entries instead of exiting the ga
   await page.goForward();
   await phase(page, 'feedback', 1);
 });
+
+test('in-game previous/next works without relying on browser history', async ({ page }) => {
+  await begin(page);
+  await page.locator('#choice-B').click();
+  await phase(page, 'feedback', 1);
+  await page.locator('[data-action="screen-back"]').click();
+  await phase(page, 'scene', 1);
+  await page.locator('[data-action="screen-forward"]').click();
+  await phase(page, 'feedback', 1);
+  await page.locator('[data-action="screen-back"]').click();
+  await phase(page, 'scene', 1);
+  await page.locator('#choice-C').click();
+  await phase(page, 'feedback', 1);
+  expect((await state(page)).decisions[1]).toBe('C');
+  await expect(page.locator('[data-action="screen-forward"]')).toHaveCount(0);
+});
