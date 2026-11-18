@@ -232,3 +232,29 @@ test('Billentyűzettel választható, a fókusz és a megszakított újrakezdés
   await page.keyboard.press('Escape'); await phase(page, 'feedback', 1);
   await expect(active(page)).toContainText(choice(1, 'A').label);
 });
+
+// Regression: browser history must restore earlier choices without replaying.
+test('browser Back/Forward restores previous scene and branching choice', async ({ page }) => {
+  await begin(page);
+  await page.locator('#choice-A').click();
+  await phase(page, 'feedback', 1);
+  const firstUrl = page.url();
+  await action(page, 'next').click();
+  await phase(page, 'scene', 2);
+  const secondUrl = page.url();
+  expect(firstUrl).not.toBe(secondUrl);
+  await page.goBack();
+  await phase(page, 'feedback', 1);
+  expect((await state(page)).decisions[1]).toBe('A');
+  await page.goBack();
+  await phase(page, 'scene', 1);
+  expect((await state(page)).decisions[1]).toBeUndefined();
+  await page.goForward();
+  await phase(page, 'feedback', 1);
+  expect((await state(page)).decisions[1]).toBe('A');
+  await page.goBack();
+  await phase(page, 'scene', 1);
+  await page.locator('#choice-B').click();
+  await phase(page, 'feedback', 1);
+  expect((await state(page)).decisions[1]).toBe('B');
+});
