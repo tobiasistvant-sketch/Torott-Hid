@@ -3,7 +3,7 @@ const fs = require('node:fs');
 const executablePath = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH || (fs.existsSync('/usr/bin/chromium') ? '/usr/bin/chromium' : undefined);
 module.exports = defineConfig({
   testDir: './tests',
-  testMatch: 'browser.spec.cjs',
+  testMatch: ['browser.spec.cjs', 'navigation.spec.cjs'],
   timeout: 45000,
   workers: 2,
   reporter: [['list'], ['html', { open: 'never' }]],

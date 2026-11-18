@@ -1,4 +1,4 @@
-# A Törött híd · 0.0.2 demó
+# A Törött híd · 0.0.3 demó
 
 **XI. osztály · Református vallás · Harag és megbocsátás: morális dilemmák az emberi kapcsolatokban**
 
@@ -24,8 +24,19 @@ Nyisd meg a `http://localhost:8004` címet. A futó játék statikus HTML/CSS/Ja
 - A „Ne írj többet” határ következetes megtartása. Az ezt követő jóvátételi ajánlat nem Áron új magánüzeneteként jelenik meg.
 - Öt saját záróoldal: történeti összefoglalás, erkölcsi tisztázás, bibliai útmutatás és magyarázat, két gondolkodtató kérdés, a döntési útvonal visszanézése és újrajátszás.
 - Helyi, böngészőlaphoz kötött mentés, újratöltés utáni folytatással. Újrajátszáskor tiszta játékállapot indul.
+- Állandó helyen megjelenő **← Előző képernyő** és **Következő képernyő →** gombok a már meglátogatott képernyők közötti mozgáshoz. A képernyőelőzmények újratöltés után is megmaradnak; egy korábbi döntés megváltoztatása új történeti folytatást indít.
 
 Nincs pontozás, erkölcsi rangsor vagy személyes családi történeteket bekérő űrlap. Az R3 és R4 nem „rossz” befejezés; az R5 sem minősíti a játékost rossz embernek. Áron külön POV-ja nem része ennek a demónak. A képi tartalom kizárólag a szerző által már jóváhagyott tizenegy WebP-ből áll; az integráció során új illusztráció nem készült.
+
+## Képernyőnavigáció – 0.0.3 demó
+
+A két navigációs gomb már a kezdőképernyőn látszik, a történet tartalma fölött, állandó helyen. Ha nincs korábbi vagy későbbi meglátogatott képernyő, a megfelelő gomb inaktív. A **Következő képernyő →** a már bejárt folytatáshoz tér vissza; az új jeleneteket továbbra is a történet eredeti választásai és **Tovább a történetben** gombja nyitják meg.
+
+Visszalépés után ugyanaz a döntés és következmény áll vissza, amely az adott képernyőhöz tartozott. A döntési képernyőn másik választ is kijelölhetsz: ilyenkor a korábbi folytatás helyett az új választás szerinti út marad érvényes. A navigációs előzmény külön, böngészőlaphoz kötött mentést kap; a játékbeli gombok működéséhez nem szükséges a böngésző History API-ja.
+
+A böngésző Vissza/Előre gombjai is a játék korábban bejárt állapotait követik, amikor a History API elérhető. A böngészőbejegyzések a mentett útvonalhoz tartozó azonosítókat használnak: egy elhagyott döntési ág vagy egy újrajátszás előtti játékállapot nem írhatja felül az aktuális történetet. A játék első előzménybejegyzése előtt az oldal elhagyható.
+
+A hibafeltárás bizonyítékait, a mentési modellt és a megismételhető ellenőrzéseket a [0.0.3 navigációs jegyzet](docs/navigation-0.0.3.md) részletezi. A történet, a válaszlehetőségek, a következmények, a befejezések és a jóváhagyott képek nem változnak; a J–01 és J–02 tartalmi/megjelenítési kérések nem részei ennek a javításnak.
 
 ## Jóváhagyott képregények – 0.0.2 demó
 
@@ -81,10 +92,11 @@ A végkifejletet nem csak az utolsó gomb határozza meg. Például a barátság
 - `js/adaptations.js`: elkülönített dramaturgiai változatok és az aktuális úthoz igazított történeti összefoglalások.
 - `js/reflections.js`: az öt külön reflexió; a forrásból átvett részek és az új magyarázatok megkülönböztetésével.
 - `js/engine.js`: tiszta állapotgép, események, befejezési szabályok és biztonságos munkamenetmentés.
+- `js/navigation.js`: a meglátogatott állapotok külön mentett idővonala, a vissza-/előrelépés és az érvényes böngészőbejegyzések azonosítása.
 - `js/app.js`: megjelenítés és eseménykezelés; a történeti szöveg adatból érkezik.
 - `js/comics.js`: a közös jelenetképek és döntési következményképek külön hozzárendelése, alternatív szövegek és átiratok.
 - `design/references/`: a tizenegy jóváhagyott WebP és a változatlan szerzői beillesztési források.
-- `js/version.js`, `package.json`, `package-lock.json`: a `0.0.2` kiadás verzióadatai és fejlesztői tesztkörnyezete.
+- `js/version.js`, `package.json`, `package-lock.json`: a `0.0.3` kiadás verzióadatai és fejlesztői tesztkörnyezete.
 - `assets/fonts/`: helyi betűkészletek, forrás- és licencadatok.
 - `tests/`: forráshűség, állapotgép, reflexiók és a böngészős működés ellenőrzése.
 
@@ -105,27 +117,31 @@ A felhőkörnyezetben meglévő rendszer-Chromium használható, ha a Playwright
 
 Az állapottesztek az összes elérhető döntés-, közzététel- és korrekciókombinációt, mind az öt végkifejletet, a visszalépést, a mentést és az újrajátszást ellenőrzik. A forráshűségtesztek közvetlenül az eredeti Markdown-dokumentumokhoz mérik az átvett szövegeket. A böngészőtesztek a tényleges felületet és a feltételes jeleneteket vizsgálják mobilon és asztali nézetben. A képregény-integráció ellenőrzése kiterjed a tizenegy helyes képelérési útra, az Ad3 sorrendre, a nagyításra és visszatérésre, a szöveges átiratra, valamint a képhiba utáni tartalékmegjelenítésre. A 3–7. jelenet és mind az öt befejezés ellenőrzése továbbra is szükséges.
 
+A navigációs tesztek a valóban látható gombokat és inaktív állapotukat, a vissza-/előrelépést, az A döntés B-re cserélését, az újratöltést, a mentett későbbi képernyőket, a böngésző előzményeit és az elhagyott ágak kizárását is vizsgálják. A futtatás tényleges eredményét és az ellenőrzött commitot az átadási beszámoló rögzíti.
+
 ## Helyi adatkezelés
 
-A játék a `sessionStorage` `torott_hid_demo_v1` kulcsát használja. A mentés csak a döntési útvonalat, a jelenetet, a közzétételi megerősítéseket és a korrekció állapotát tartalmazza. Nincs regisztráció, névbekérés, analitika vagy szerveroldali válaszgyűjtés.
+A játék az aktuális történetállapotot a `sessionStorage` `torott_hid_demo_v1` kulcsán tárolja. A navigáció a külön `torott_hid_navigation_v1` kulcson őrzi a meglátogatott állapotokat, az aktuális helyet és a bejegyzések azonosítóit, így az előre bejárt képernyők újratöltés után is visszahívhatók. Ezekben is csak a döntési útvonal, a jelenet, a közzétételi megerősítések, a korrekció és a navigáció technikai adatai szerepelnek. Nincs regisztráció, névbekérés, analitika vagy szerveroldali válaszgyűjtés.
 
 A munkamenet a böngészőlaphoz kötött. A böngésző saját lap-helyreállítása egy korábban bezárt munkamenetet is visszaállíthat. Tiltott vagy betelt tároló mellett a játék memóriában tovább használható; sérült mentésnél tiszta állapot indul. Újrajátszáskor csak e játék saját állapota törlődik, más alkalmazások tárolókulcsai megmaradnak.
 
 ## GitHub és GitHub Pages
 
-A 0.0.2 képregény-integráció fejlesztési és felülvizsgálati ága: **`feat/comics-v0.0.2`**.
-
-A repository ellenőrzött Pages-beállítása:
+A tartósan ajánlott Pages-beállítás:
 
 1. **Settings → Pages → Build and deployment**.
 2. **Source: Deploy from a branch**.
-3. **Branch: `demo/v0.0.1`**, mappa: **`/ (root)`**.
+3. **Branch: `main`**, mappa: **`/ (root)`**.
 
-A `demo/v0.0.1` ágnév történeti név: nem határozza meg az alkalmazás verziószámát. Az alkalmazás verziója továbbra is **0.0.2 demó**, a `package.json` alapján. A meglévő Pages-konfiguráció megtartásával a tesztelt alkalmazáscommitnak erre a kiszolgálási ágra is el kell jutnia; a fejlesztési ág feltöltése önmagában nem frissíti az élő oldalt.
+A 0.0.3 javítás előtti ellenőrzésben a tényleges Pages-forrás a `demo/v0.0.1` ág volt, gyökérmappával. Ez történeti ágnév, nem az alkalmazás verziószáma; az alkalmazás verziója **0.0.3 demó**, a `package.json` alapján.
+
+A tartós megoldás a Pages átállítása a `main` ágra, hogy a közzététel közvetlenül a javításokat tartalmazó ágat kövesse. Ha az integráció jogosultsága nem engedi a forrásváltást, a meglévő Pages-beállítás megtartható: ebben az esetben ugyanazt a tesztelt commitot kell fast-forward feltöltéssel a `main` és a `demo/v0.0.1` ágra is eljuttatni. Így a repository és az élő demó azonos kódot kap. Külön Pages-forráság mellett minden későbbi kiadásnál is szükséges az ágak összehangolása; a `main` frissítése önmagában nem frissíti az élő oldalt.
 
 A `.nojekyll` jelzi a közvetlen statikus kiszolgálást; nincs szükség alkalmazásfordításra. A Pages címe: `https://tobiasistvant-sketch.github.io/Torott-Hid/`.
 
-Az aktuális kiszolgált ágat a **Settings → Pages**, a tényleges telepítési eredményt a GitHub **Actions → pages-build-deployment** mutatja. A 0.0.2 képregény-integráció élő állapota csak a megfelelő commit sikeres buildje és telepítése után igazolható; a ténylegesen ellenőrzött közzétételi állapotot az átadási beszámoló rögzíti.
+Az egyetlen központi verzióadat a `package.json` `version` mezője. A verziófrissítést az `npm version` végzi a lockfile-lal együtt; a projekt `version` szkriptje ezután automatikusan futtatja a szinkronizálást. A `npm run version:sync` külön is frissíti a generált `js/version.js` fájlt, az oldal címét és leírását, valamint az összes JavaScript- és CSS-hivatkozás verziózott lekérdezési paraméterét. A `npm test` előellenőrzése hibát jelez, ha ezek eltérnek a központi verziótól.
+
+Az aktuális kiszolgált ágat a **Settings → Pages**, a tényleges telepítési eredményt a GitHub **Actions → pages-build-deployment** mutatja. Ellenőrizni kell, hogy a `main`, a tényleges Pages-forráság és a sikeres Pages-build ugyanarra a kiadási commitra mutat-e. Az `index.html` verziózott JavaScript- és CSS-hivatkozásainak is a 0.0.3 kiadást kell kérniük. A közzétételt és az élő oldal tényleges böngészős ellenőrzését külön kell igazolni; hálózati tiltás esetén az utóbbi nem tekinthető elvégzettnek. A ténylegesen választott forráságat, a beállításváltás eredményét és a telepítési állapotot az átadási beszámoló rögzíti.
 
 ## Következő szerzői ellenőrzés
 

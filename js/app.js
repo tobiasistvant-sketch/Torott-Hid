@@ -2,10 +2,10 @@
 (function () {
   'use strict';
   const S = window.TorottHidStory, A = window.TorottHidAdaptations;
-  const R = window.TorottHidReflections, E = window.TorottHidEngine;
+  const R = window.TorottHidReflections, E = window.TorottHidEngine, N = window.TorottHidNavigation;
   const C = window.TorottHidComics || { scenes: {}, consequences: {} };
   const main = document.getElementById('main-content');
-  if (!S || !A || !R || !E) {
+  if (!S || !A || !R || !E || !N) {
     main.textContent = 'A történet egyik fájlja nem töltődött be. Frissítsd az oldalt.';
     return;
   }
@@ -15,6 +15,10 @@
   try { storage = window.sessionStorage; } catch (_) { /* The story still works in memory. */ }
   const loaded = E.load(storage, S);
   let state = loaded.state, storageAvailable = loaded.storageAvailable, recovered = loaded.recovered;
+  const navigation = N.create({ engine: E, story: S, storage, initialState: state, recovered });
+  state = navigation.current;
+  const HISTORY_MARKER = 'torott-hid-navigation-v2';
+  let browserHistoryAvailable = true;
   const dialog = document.getElementById('reset-dialog');
   const comicDialog = document.getElementById('comic-dialog');
   const comicViewerImage = document.getElementById('comic-viewer-image');
@@ -187,6 +191,8 @@
   function render(moveFocus) {
     const views = { start: startScreen, scene: sceneScreen, feedback: feedbackScreen, confirmation: confirmationScreen, ending: endingScreen };
     main.innerHTML = views[state.view]();
+    document.querySelector('[data-action="screen-back"]').disabled = !navigation.canBack;
+    document.querySelector('[data-action="screen-forward"]').disabled = !navigation.canForward;
     main.dataset.view = state.view; main.dataset.scene = String(state.scene);
     if (state.view === 'ending') main.dataset.ending = E.ending(state); else delete main.dataset.ending;
     document.querySelectorAll('[data-app-version]').forEach(node => { node.textContent = 'v' + version; node.hidden = false; });
@@ -199,13 +205,70 @@
     updateNotice();
     if (moveFocus) { main.querySelector('h1').focus({ preventScroll: true }); window.scrollTo({ top: 0, behavior: 'instant' }); }
   }
-  function dispatch(action) {
+  function closeOverlays() {
     if (comicDialog.open) { comicOpener = null; comicDialog.close(); }
-    state = E.transition(state, action, S);
-    if (state.view !== 'start') recovered = false;
-    storageAvailable = E.save(storage, state);
+    if (dialog.open) { dialog.returnValue = 'cancel'; dialog.close(); }
+  }
+  function saveProgress() {
+    const gameSaved = E.save(storage, state);
+    const navigationSaved = navigation.save();
+    storageAvailable = gameSaved && navigationSaved;
+  }
+  function writeBrowserEntry(entryId, replace) {
+    if (!browserHistoryAvailable) return;
+    try {
+      const entry = { app: HISTORY_MARKER, runId: navigation.runId, entryId };
+      const url = window.location.pathname + window.location.search + '#th-screen-' + navigation.runId + '-' + entryId;
+      window.history[replace ? 'replaceState' : 'pushState'](entry, '', url);
+    } catch (_) { browserHistoryAvailable = false; }
+  }
+  function restoreBrowserEntry(entry) {
+    return !!entry && entry.app === HISTORY_MARKER && entry.runId === navigation.runId && navigation.restore(entry.entryId);
+  }
+  function initializeBrowserHistory() {
+    if (!recovered && restoreBrowserEntry(window.history.state)) state = navigation.current;
+    else {
+      // A legacy save has no screen trail in browser history. Seed its reachable
+      // past once; a reload of an existing app entry never duplicates it.
+      navigation.trail.slice(0, navigation.position + 1).forEach((entry, index) => writeBrowserEntry(entry.id, index === 0));
+    }
+    saveProgress();
+  }
+  function restoreScreen(delta) {
+    if (!navigation.move(delta)) return;
+    closeOverlays();
+    state = navigation.current;
+    recovered = false;
+    saveProgress();
+    writeBrowserEntry(navigation.entryId, false);
     render(true);
   }
+  function dispatch(action) {
+    const next = E.transition(state, action, S);
+    if (JSON.stringify(next) === JSON.stringify(state) && action.type !== 'RESTART') return;
+    closeOverlays();
+    if (action.type === 'RESTART') navigation.restart();
+    else navigation.push(next);
+    state = navigation.current;
+    if (state.view !== 'start' || action.type === 'RESTART') recovered = false;
+    saveProgress();
+    writeBrowserEntry(navigation.entryId, action.type === 'RESTART');
+    render(true);
+  }
+  window.addEventListener('popstate', event => {
+    if (restoreBrowserEntry(event.state)) {
+      closeOverlays();
+      state = navigation.current;
+      recovered = false;
+      saveProgress();
+      render(true);
+    } else if (event.state && event.state.app === HISTORY_MARKER) {
+      // An abandoned branch or an earlier playthrough cannot revive old choices.
+      // Replace only this stale entry; never push or loop through browser history.
+      closeOverlays();
+      writeBrowserEntry(navigation.entryId, true);
+    }
+  });
   document.addEventListener('click', event => {
     const control = event.target.closest('[data-action]');
     if (!control || control.disabled) return;
@@ -215,6 +278,8 @@
     else if (action === 'comic-zoom-in') setComicZoom(comicZoom + 0.5);
     else if (action === 'comic-zoom-out') setComicZoom(comicZoom - 0.5);
     else if (action === 'comic-zoom-reset') setComicZoom(1);
+    else if (action === 'screen-back') restoreScreen(-1);
+    else if (action === 'screen-forward') restoreScreen(1);
     else if (action === 'restart') { dialog.returnValue = 'cancel'; if (!dialog.open) dialog.showModal(); }
     else if (action === 'start') dispatch({ type: 'START' });
     else if (action === 'next') dispatch({ type: 'NEXT' });
@@ -229,5 +294,6 @@
     if (event.shiftKey && document.activeElement === buttons[0]) { event.preventDefault(); buttons[buttons.length - 1].focus(); }
     else if (!event.shiftKey && document.activeElement === buttons[buttons.length - 1]) { event.preventDefault(); buttons[0].focus(); }
   });
+  initializeBrowserHistory();
   render(false);
 })();

@@ -4,16 +4,17 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#052738">
-  <meta name="description" content="A Törött híd: interaktív erkölcsi döntéstörténet a haragról, a megbocsátásról és a bizalomról. Nóra történetének 0.0.2-es, szöveges demója.">
-  <title>A Törött híd · 0.0.2 demó</title>
-  <link rel="stylesheet" href="css/styles.css">
-  <script src="js/story.js" defer></script>
-  <script src="js/adaptations.js" defer></script>
-  <script src="js/reflections.js" defer></script>
-  <script src="js/engine.js" defer></script>
-  <script src="js/version.js" defer></script>
-  <script src="js/comics.js" defer></script>
-  <script src="js/app.js" defer></script>
+  <meta name="description" content="A Törött híd: interaktív erkölcsi döntéstörténet a haragról, a megbocsátásról és a bizalomról. Nóra történetének 0.0.3 demója.">
+  <title>A Törött híd · 0.0.3 demó</title>
+  <link rel="stylesheet" href="css/styles.css?v=0.0.3">
+  <script src="js/story.js?v=0.0.3" defer></script>
+  <script src="js/adaptations.js?v=0.0.3" defer></script>
+  <script src="js/reflections.js?v=0.0.3" defer></script>
+  <script src="js/engine.js?v=0.0.3" defer></script>
+  <script src="js/navigation.js?v=0.0.3" defer></script>
+  <script src="js/version.js?v=0.0.3" defer></script>
+  <script src="js/comics.js?v=0.0.3" defer></script>
+  <script src="js/app.js?v=0.0.3" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main-content">Ugrás a történethez</a>
@@ -29,6 +30,10 @@
       <nav class="chapter-nav" aria-label="A történet jelenetei"><ol id="chapters"></ol></nav>
       <div id="progress" class="progress-track" role="progressbar" aria-label="Haladás a történetben" aria-valuemin="0" aria-valuemax="8" aria-valuenow="0"><div id="progress-fill" class="progress-fill"></div></div>
     </header>
+    <nav class="screen-navigation" aria-label="Navigáció a már meglátogatott képernyők között">
+      <button type="button" class="btn btn-secondary" data-action="screen-back" disabled>← Előző képernyő</button>
+      <button type="button" class="btn btn-secondary" data-action="screen-forward" disabled>Következő képernyő →</button>
+    </nav>
     <p id="storage-note" class="storage-notice" role="status" hidden></p>
     <main id="main-content" class="app-main" tabindex="-1"><p>A történet betöltése…</p></main>
     <noscript><p class="storage-notice">A demó használatához engedélyezd a JavaScript futtatását a böngésződben.</p></noscript>

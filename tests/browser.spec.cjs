@@ -446,3 +446,65 @@ for (const focusTarget of ['nagyítógomb', 'átirat']) test('A későn hibázó
   expect(await state(page)).toEqual(saved);
   await expect(action(page, 'next')).toBeEnabled();
 });
+
+// Regression: browser history must restore earlier choices without replaying.
+test('browser Back/Forward restores previous scene and branching choice', async ({ page }) => {
+  await begin(page);
+  await page.locator('#choice-A').click();
+  await phase(page, 'feedback', 1);
+  const firstUrl = page.url();
+  await action(page, 'next').click();
+  await phase(page, 'scene', 2);
+  const secondUrl = page.url();
+  expect(firstUrl).not.toBe(secondUrl);
+  await page.goBack();
+  await phase(page, 'feedback', 1);
+  expect((await state(page)).decisions[1]).toBe('A');
+  await page.goBack();
+  await phase(page, 'scene', 1);
+  expect((await state(page)).decisions[1]).toBeUndefined();
+  await page.goForward();
+  await phase(page, 'feedback', 1);
+  expect((await state(page)).decisions[1]).toBe('A');
+  await page.goBack();
+  await phase(page, 'scene', 1);
+  await page.locator('#choice-B').click();
+  await phase(page, 'feedback', 1);
+  expect((await state(page)).decisions[1]).toBe('B');
+});
+
+test('restored saved progress has browser Back entries instead of exiting the game', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(key => {
+    sessionStorage.setItem(key, JSON.stringify({
+      version: 1, view: 'scene', scene: 2,
+      decisions: { 1: 'B' }, publications: {}, corrected: false
+    }));
+  }, KEY);
+  // A new document loaded directly at saved scene 2 must rebuild prior screens.
+  await page.goto('/?saved-progress-test=1');
+  await phase(page, 'scene', 2);
+  await page.goBack();
+  await phase(page, 'feedback', 1);
+  await page.goBack();
+  await phase(page, 'scene', 1);
+  await page.goForward();
+  await phase(page, 'feedback', 1);
+});
+
+test('in-game previous/next works without relying on browser history', async ({ page }) => {
+  await begin(page);
+  await page.locator('#choice-B').click();
+  await phase(page, 'feedback', 1);
+  await page.locator('[data-action="screen-back"]').click();
+  await phase(page, 'scene', 1);
+  await page.locator('[data-action="screen-forward"]').click();
+  await phase(page, 'feedback', 1);
+  await page.locator('[data-action="screen-back"]').click();
+  await phase(page, 'scene', 1);
+  await page.locator('#choice-C').click();
+  await phase(page, 'feedback', 1);
+  expect((await state(page)).decisions[1]).toBe('C');
+  await expect(page.locator('[data-action="screen-forward"]')).toBeVisible();
+  await expect(page.locator('[data-action="screen-forward"]')).toBeDisabled();
+});
