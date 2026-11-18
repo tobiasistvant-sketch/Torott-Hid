@@ -1,17 +1,17 @@
-# A Törött híd · 0.0.1 demó
+# A Törött híd · 0.0.2 demó
 
 **XI. osztály · Református vallás · Harag és megbocsátás: morális dilemmák az emberi kapcsolatokban**
 
 Böngészőben futó, magyar nyelvű, szöveges döntésjáték Nóra szemszögéből. A demó a történet 0–7. jelenetét és mind az öt különálló befejezést végigjátszhatóvá teszi. A játékos Nóra reakcióiról dönt; Áron önálló szereplő, a bocsánatkérését nem a játékos „jó válaszai” váltják ki.
 
-Ez **kipróbálásra készült dramaturgiai és pedagógiai munkaváltozat**, nem végleges tananyag. A szerző külön engedélyezte a `0.0.1` demó programozását; ez a korábbi előkészítési sorrendet a demó céljára felülírja, a forrásszövegek végleges jóváhagyását nem helyettesíti.
+Ez **kipróbálásra készült dramaturgiai és pedagógiai munkaváltozat**, nem végleges tananyag. A szerző külön engedélyezte a `0.0.2` demó programozását; ez a korábbi előkészítési sorrendet a demó céljára felülírja, a forrásszövegek végleges jóváhagyását nem helyettesíti.
 
 ## Kipróbálás helyben
 
 A repository gyökeréből:
 
 ```sh
-python3 -m http.server 8004 --bind 127.0.0.1
+python3 -m http.server 8004 --bind 127.0.0.2
 ```
 
 Nyisd meg a `http://localhost:8004` címet. A futó játék statikus HTML/CSS/JavaScript: nincs fordítás, adatbázis, alkalmazásszerver vagy futásidejű csomagfüggőség. A betűkészletek helyben találhatók.
@@ -63,7 +63,7 @@ A végkifejletet nem csak az utolsó gomb határozza meg. Például a barátság
 - `js/reflections.js`: az öt külön reflexió; a forrásból átvett részek és az új magyarázatok megkülönböztetésével.
 - `js/engine.js`: tiszta állapotgép, események, befejezési szabályok és biztonságos munkamenetmentés.
 - `js/app.js`: megjelenítés és eseménykezelés; a történeti szöveg adatból érkezik.
-- `js/version.js`, `package.json`, `package-lock.json`: a `0.0.1` kiadás verzióadatai és fejlesztői tesztkörnyezete.
+- `js/version.js`, `package.json`, `package-lock.json`: a `0.0.2` kiadás verzióadatai és fejlesztői tesztkörnyezete.
 - `assets/fonts/`: helyi betűkészletek, forrás- és licencadatok.
 - `tests/`: forráshűség, állapotgép, reflexiók és a böngészős működés ellenőrzése.
 
@@ -92,18 +92,18 @@ A munkamenet a böngészőlaphoz kötött. A böngésző saját lap-helyreállí
 
 ## GitHub és GitHub Pages
 
-A demó felülvizsgálati ága: **`demo/v0.0.1`**. A `main` beolvasztása külön ellenőrzés tárgya.
+A demó felülvizsgálati ága: **`demo/v0.0.2`**. A `main` beolvasztása külön ellenőrzés tárgya.
 
 A statikus Pages-kiszolgáláshoz a repositoryban:
 
 1. **Settings → Pages → Build and deployment**.
 2. **Source: Deploy from a branch**.
-3. **Branch: `demo/v0.0.1`**, mappa: **`/ (root)`**.
+3. **Branch: `demo/v0.0.2`**, mappa: **`/ (root)`**.
 4. **Save**, majd várd meg a sikeres buildet és telepítést.
 
 A `.nojekyll` jelzi a közvetlen statikus kiszolgálást; nincs szükség alkalmazásfordításra. Sikeres közzététel után az oldal címe: `https://tobiasistvant-sketch.github.io/Torott-Hid/`.
 
-A közzétett változat a `demo/v0.0.1` ág aktuális, sikeresen telepített commitját követi. A tényleges közzétételi állapotot a GitHub **Actions → pages-build-deployment** futtatása és a Pages-beállítások jelzik. Egy helyi szerver elindítása önmagában nem jelent GitHub-közzétételt.
+A közzétett változat a `demo/v0.0.2` ág aktuális, sikeresen telepített commitját követi. A tényleges közzétételi állapotot a GitHub **Actions → pages-build-deployment** futtatása és a Pages-beállítások jelzik. Egy helyi szerver elindítása önmagában nem jelent GitHub-közzétételt.
 
 ## Következő szerzői ellenőrzés
 
