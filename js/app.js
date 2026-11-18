@@ -69,6 +69,27 @@
     }
     browserHistoryAvailable = true;
   } catch (_) { /* Browser history is optional; game navigation still works. */ }
+  // In-game screen history is independent of browser History API: it remains
+  // usable even when browser Back would leave the page or history is unavailable.
+  let screenTrail = precedingScreens(state).map(snapshot => JSON.parse(JSON.stringify(snapshot)));
+  let screenPosition = screenTrail.length - 1;
+  function rememberScreen(snapshot) {
+    screenTrail = screenTrail.slice(0, screenPosition + 1);
+    screenTrail.push(JSON.parse(JSON.stringify(snapshot)));
+    screenPosition = screenTrail.length - 1;
+  }
+  function restoreScreenAt(position) {
+    if (position < 0 || position >= screenTrail.length) return;
+    screenPosition = position;
+    state = JSON.parse(JSON.stringify(screenTrail[position]));
+    recovered = false;
+    storageAvailable = E.save(storage, state);
+    if (browserHistoryAvailable) {
+      try { window.history.pushState(historyEntry(state), '', navigationUrl()); }
+      catch (_) { browserHistoryAvailable = false; }
+    }
+    render(true);
+  }
   const dialog = document.getElementById('reset-dialog');
   const esc = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const paras = items => items.map(text => '<p>' + esc(text) + '</p>').join('');
@@ -145,6 +166,12 @@
   function render(moveFocus) {
     const views = { start: startScreen, scene: sceneScreen, feedback: feedbackScreen, confirmation: confirmationScreen, ending: endingScreen };
     main.innerHTML = views[state.view]();
+    const earlier = screenPosition > 0, later = screenPosition < screenTrail.length - 1;
+    if (earlier || later) {
+      main.insertAdjacentHTML('afterbegin', '<nav class="actions screen-navigation" aria-label="Navigáció a már meglátogatott képernyők között">' +
+        (earlier ? button('← Előző képernyő', 'screen-back', true) : '') +
+        (later ? button('Következő megtekintett képernyő →', 'screen-forward', true) : '') + '</nav>');
+    }
     main.dataset.view = state.view; main.dataset.scene = String(state.scene);
     if (state.view === 'ending') main.dataset.ending = E.ending(state); else delete main.dataset.ending;
     document.querySelectorAll('[data-app-version]').forEach(node => { node.textContent = 'v' + version; node.hidden = false; });
@@ -161,6 +188,8 @@
     const next = E.transition(state, action, S);
     if (JSON.stringify(next) === JSON.stringify(state)) return;
     state = next;
+    if (action.type === 'RESTART') { screenTrail = [JSON.parse(JSON.stringify(state))]; screenPosition = 0; }
+    else rememberScreen(state);
     if (state.view !== 'start') recovered = false;
     storageAvailable = E.save(storage, state);
     if (browserHistoryAvailable) {
@@ -173,6 +202,9 @@
     const restored = readHistoryState(event.state);
     if (!restored) return;
     state = restored;
+    const matching = screenTrail.findIndex(snapshot => JSON.stringify(snapshot) === JSON.stringify(restored));
+    if (matching >= 0) screenPosition = matching;
+    else rememberScreen(restored);
     recovered = false;
     storageAvailable = E.save(storage, state);
     render(true);
@@ -182,6 +214,8 @@
     if (!control || control.disabled) return;
     const action = control.dataset.action;
     if (action === 'restart') { dialog.returnValue = 'cancel'; if (!dialog.open) dialog.showModal(); }
+    else if (action === 'screen-back') restoreScreenAt(screenPosition - 1);
+    else if (action === 'screen-forward') restoreScreenAt(screenPosition + 1);
     else if (action === 'start') dispatch({ type: 'START' });
     else if (action === 'next') dispatch({ type: 'NEXT' });
     else if (action === 'select' && /^[A-E]$/.test(control.dataset.value || '')) dispatch({ type: 'SELECT', value: control.dataset.value });
