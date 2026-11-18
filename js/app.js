@@ -18,6 +18,8 @@
   // normalized game state. Back/Forward restore the exact earlier screen.
   const HISTORY_MARKER = 'torott-hid-screen-v1';
   let browserHistoryAvailable = false;
+  let historySequence = 0;
+  const navigationUrl = () => window.location.pathname + window.location.search + '#th-screen-' + (++historySequence);
   function readHistoryState(entry) {
     if (!entry || entry.app !== HISTORY_MARKER) return null;
     return E.normalize(entry.snapshot, S);
@@ -32,7 +34,7 @@
       storageAvailable = E.save(storage, state);
       recovered = false;
     } else {
-      window.history.replaceState(historyEntry(state), '');
+      window.history.replaceState(historyEntry(state), '', navigationUrl());
     }
     browserHistoryAvailable = true;
   } catch (_) { /* Browser history is optional; game navigation still works. */ }
@@ -131,7 +133,7 @@
     if (state.view !== 'start') recovered = false;
     storageAvailable = E.save(storage, state);
     if (browserHistoryAvailable) {
-      try { window.history.pushState(historyEntry(state), ''); }
+      try { window.history.pushState(historyEntry(state), '', navigationUrl()); }
       catch (_) { browserHistoryAvailable = false; }
     }
     render(true);
