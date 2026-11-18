@@ -58,7 +58,7 @@
   }
   try {
     const fromHistory = readHistoryState(window.history.state);
-    if (fromHistory) {
+    if (fromHistory && !recovered) {
       state = fromHistory;
       storageAvailable = E.save(storage, state);
       recovered = false;
