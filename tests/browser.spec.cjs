@@ -268,7 +268,7 @@ test('restored saved progress has browser Back entries instead of exiting the ga
     }));
   }, KEY);
   // A new document loaded directly at saved scene 2 must rebuild prior screens.
-  await page.reload();
+  await page.goto('/?saved-progress-test=1');
   await phase(page, 'scene', 2);
   await page.goBack();
   await phase(page, 'feedback', 1);
