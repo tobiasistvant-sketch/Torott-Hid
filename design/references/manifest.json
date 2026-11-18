@@ -1,0 +1,140 @@
+{
+  "project": "A Törött híd",
+  "version": "comic-assets-v0.2-author-approved",
+  "source": "ChatGPT-ben készült, a felhasználó által elfogadott képi irányok",
+  "note": "Mind a 11 kép elfogadott a szerző kifejezett döntése alapján; a B és C felső narrációja szándékosan azonos az A ágéval; a D kép elfogadott. Ne generálj át képeket, és ne módosítsd a képi feliratokat.",
+  "entries": [
+    {
+      "scene": "0",
+      "choice": "common",
+      "name": "00_jelenet_a_titok_kozosen",
+      "status": "approved",
+      "png": "KEPEK/00_intro/00_jelenet_a_titok_kozosen.png",
+      "webp": "KEPEK/00_intro/00_jelenet_a_titok_kozosen.webp",
+      "source_file": "a_colored_pencil_comic_page_with_five_panels_hand.png",
+      "description": "Jóváhagyott 5 képkockás titok- és ígéretjelenet; név- és gondolatfeliratok nélkül.",
+      "png_bytes": 3621997,
+      "webp_bytes": 610388
+    },
+    {
+      "scene": "1",
+      "choice": "common",
+      "name": "01_jelenet_a_folyoson_kozosen",
+      "status": "approved",
+      "png": "KEPEK/01_folyoso/01_jelenet_a_folyoson_kozosen.png",
+      "webp": "KEPEK/01_folyoso/01_jelenet_a_folyoson_kozosen.webp",
+      "source_file": "a_colored_pencil_comic_page_in_the_same_illustrate.png",
+      "description": "Közös folyosói alapjelenet, két osztálytárs, Nóra gondolata.",
+      "png_bytes": 3834518,
+      "webp_bytes": 661462
+    },
+    {
+      "scene": "1",
+      "choice": "A",
+      "name": "01A_nyilvanos_szamonkeres_kovetkezmeny",
+      "status": "approved",
+      "png": "KEPEK/01_folyoso/01A_nyilvanos_szamonkeres_kovetkezmeny.png",
+      "webp": "KEPEK/01_folyoso/01A_nyilvanos_szamonkeres_kovetkezmeny.webp",
+      "source_file": "a_full_page_comic_panel_crayon_pencil_colored_com.png",
+      "description": "Nóra Áront nyilvánosan számon kéri; képi következmény, felirat nélkül.",
+      "png_bytes": 4241560,
+      "webp_bytes": 772540
+    },
+    {
+      "scene": "1",
+      "choice": "B",
+      "name": "01B_elvonulas_kovetkezmeny",
+      "status": "approved",
+      "png": "KEPEK/01_folyoso/01B_elvonulas_kovetkezmeny.png",
+      "webp": "KEPEK/01_folyoso/01B_elvonulas_kovetkezmeny.webp",
+      "source_file": "a_comic_style_panel_page_in_the_same_colored_penci.png",
+      "description": "Nóra elvonul, időt ad magának; felirat nélkül.",
+      "png_bytes": 3957889,
+      "webp_bytes": 700258
+    },
+    {
+      "scene": "1",
+      "choice": "C",
+      "name": "01C_osztalytarsak_kikerdezese_kovetkezmeny",
+      "status": "approved",
+      "png": "KEPEK/01_folyoso/01C_osztalytarsak_kikerdezese_kovetkezmeny.png",
+      "webp": "KEPEK/01_folyoso/01C_osztalytarsak_kikerdezese_kovetkezmeny.webp",
+      "source_file": "comic_style_illustrated_scene_with_the_same_charac.png",
+      "description": "Nóra megkérdezi, mit hallottak; helyesbített változat, alul nincs külön körbetét.",
+      "png_bytes": 3511436,
+      "webp_bytes": 643470
+    },
+    {
+      "scene": "1",
+      "choice": "D",
+      "name": "01D_pletyka_leallitasa_kovetkezmeny",
+      "status": "approved",
+      "png": "KEPEK/01_folyoso/01D_pletyka_leallitasa_kovetkezmeny.png",
+      "webp": "KEPEK/01_folyoso/01D_pletyka_leallitasa_kovetkezmeny.webp",
+      "source_file": "a_detailed_comic_style_comic_page_with_three_panel.png",
+      "description": "Nóra leállítja a pletykát; utolsó panelen könnyes, dühös és megijedt.",
+      "png_bytes": 3317883,
+      "webp_bytes": 599666
+    },
+    {
+      "scene": "2",
+      "choice": "common",
+      "name": "02_jelenet_aron_elso_uzenete_kozosen",
+      "status": "approved",
+      "png": "KEPEK/02_uzenet/02_jelenet_aron_elso_uzenete_kozosen.png",
+      "webp": "KEPEK/02_uzenet/02_jelenet_aron_elso_uzenete_kozosen.webp",
+      "source_file": "nóra_üzenete_az_iskolában.png",
+      "description": "Három panel: Áron üzenete megérkezik, teljes telefonos üzenet, majd Nóra forrás szerinti korábbi belső monológja.",
+      "png_bytes": 3672838,
+      "webp_bytes": 596336
+    },
+    {
+      "scene": "2",
+      "choice": "A",
+      "name": "02A_soha_nem_bocsatom_meg_kovetkezmeny",
+      "status": "approved",
+      "png": "KEPEK/02_uzenet/02A_soha_nem_bocsatom_meg_kovetkezmeny.png",
+      "webp": "KEPEK/02_uzenet/02A_soha_nem_bocsatom_meg_kovetkezmeny.webp",
+      "source_file": "a_colored_pencil_crayon_style_comic_panel_three_v.png",
+      "description": "Hárompaneles, ceruzatextúrás telefonos üzenetváltás, „Nóra keményen megfogalmazza fájdalmát” felirattal.",
+      "png_bytes": 3772949,
+      "webp_bytes": 603640
+    },
+    {
+      "scene": "2",
+      "choice": "D",
+      "name": "02D_felejtsuk_el_kovetkezmeny",
+      "status": "approved",
+      "png": "KEPEK/02_uzenet/02D_felejtsuk_el_kovetkezmeny.png",
+      "webp": "KEPEK/02_uzenet/02D_felejtsuk_el_kovetkezmeny.webp",
+      "source_file": "a_colored_pencil_comic_panel_triptych_with_hungari.png",
+      "description": "A szerző által kifejezetten jóváhagyott 2D kép a jelenlegi feliratokkal, módosítás nélkül. Beilleszthető.",
+      "png_bytes": 3456487,
+      "webp_bytes": 535070
+    },
+    {
+      "scene": "2",
+      "choice": "B",
+      "name": "02B_igeret_szamonkerese_kovetkezmeny",
+      "status": "approved",
+      "png": "KEPEK/02_uzenet/02B_igeret_szamonkerese_kovetkezmeny.png",
+      "webp": "KEPEK/02_uzenet/02B_igeret_szamonkerese_kovetkezmeny.webp",
+      "source_file": "nóra_fájdalmas_üzenete.png",
+      "description": "Szerző által kifejezetten jóváhagyott B döntési ág; a „Nóra keményen megfogalmazza fájdalmát.” felső narráció változatlanul, jóváhagyva marad.",
+      "png_bytes": 2906091,
+      "webp_bytes": 355228
+    },
+    {
+      "scene": "2",
+      "choice": "C",
+      "name": "02C_idot_ker_kovetkezmeny",
+      "status": "approved",
+      "png": "KEPEK/02_uzenet/02C_idot_ker_kovetkezmeny.png",
+      "webp": "KEPEK/02_uzenet/02C_idot_ker_kovetkezmeny.webp",
+      "source_file": "nóra_fájdalma_három_panelben.png",
+      "description": "Szerző által kifejezetten jóváhagyott C döntési ág; a „Nóra keményen megfogalmazza fájdalmát.” felső narráció változatlanul, jóváhagyva marad.",
+      "png_bytes": 2768413,
+      "webp_bytes": 303134
+    }
+  ]
+}
