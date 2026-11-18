@@ -208,10 +208,8 @@ strong { font-weight: 750; }
 .comic-image { display: block; width: 100%; max-width: 100%; height: auto; object-fit: contain; }
 .comic-zoom-hint { display: block; padding: 0.6rem 0.75rem; border-top: 1px solid var(--line); background: #F0F8F9; color: var(--teal); font-size: 0.8rem; font-weight: 700; line-height: 1.5; text-align: right; }
 .comic figcaption { margin-top: 0.6rem; color: var(--muted); font-size: 0.8rem; line-height: 1.6; }
-.comic-transcript { margin-top: 1rem; border: 1px solid var(--line); border-radius: 10px; background: #F7F9FA; }
-.comic-transcript summary { min-height: 46px; padding: 0.75rem 1rem; color: var(--teal); font-size: 0.9rem; font-weight: 700; cursor: pointer; }
-.comic-transcript[open] summary { border-bottom: 1px solid var(--line); }
-.comic-transcript > :not(summary) { margin: 1rem; }
+.comic-transcript { margin-top: 1rem; padding: 1rem; border: 1px solid var(--line); border-radius: 10px; background: #F7F9FA; }
+.comic-transcript .transcript-label { margin: 0; color: var(--teal); font-size: 0.9rem; font-weight: 700; }
 .comic-transcript .story-block:first-of-type { margin-top: 1rem; }
 .comic-source-fallback { margin-top: 1.1rem; }
 .comic-fallback-message { margin-bottom: 1rem; padding: 0.85rem 1rem; border: 1px solid #D8BDA0; border-radius: 9px; background: #FFFAF3; color: #68441F; font-size: 0.9rem; line-height: 1.7; }

@@ -3,6 +3,8 @@ const story = require('../js/story.js');
 const reflections = require('../js/reflections.js');
 const engine = require('../js/engine.js');
 const adaptations = require('../js/adaptations.js');
+const revisions = require('../js/revisions.js');
+const approvedApology = 'Nóra, sokat gondolkodtam azon, ami történt. Megígértem, hogy nem mondom el senkinek, mégis megtettem. Nem Lili hibája, hogy megbíztam benne a titkoddal. Én szegtem meg az ígéretemet. Sajnálom, hogy megbántottalak. Nem várom, hogy most válaszolj, és azt sem, hogy azonnal megbocsáss.';
 const KEY = require('../js/engine.js').STORAGE_KEY;
 const versionLabel = 'v' + require('../package.json').version;
 const active = page => page.locator('#main-content');
@@ -48,7 +50,7 @@ async function decide(page, number, letter, publish = true) {
   if ((number === 5 && letter === 'D') || (number === 6 && letter === 'E')) await confirm(page, number, publish);
   else await phase(page, 'feedback', number);
   await expect(page.locator('.consequence-card')).toBeVisible();
-  if (number <= 2) await expect(active(page).locator('.comic')).toHaveCount(1);
+  if (number <= 4) await expect(active(page).locator('.comic')).toHaveCount(1);
   else await expect(active(page)).toContainText(choice(number, letter).label);
   expect((await state(page)).decisions[number]).toBe(letter);
   await expect(active(page)).not.toContainText('Ezt választottad');
@@ -181,8 +183,7 @@ for (const third of ['C', 'D']) {
   test('Áron önálló bocsánatkérése a 3/' + third + ' reakció után is eljut Nórához', async ({ page }) => {
     await through(page, ['A', 'A', third], 3);
     await phase(page, 'scene', 4);
-    const apology = scene(4).blocks.find(block => block.speaker === 'Áron');
-    await expect(active(page)).toContainText(apology.text);
+    await expect(active(page)).toContainText(approvedApology);
     await expect(active(page)).not.toContainText('jutalom');
   });
 }
@@ -297,9 +298,10 @@ test('Mind a tizenegy jóváhagyott kép a megfelelő közös jelenethez vagy d�
     await restoreComic(page, item);
     const comic = await loadedComic(page, item.file);
     await expect(active(page).locator('img.comic-image')).toHaveCount(1);
-    await expect(comic.locator('details.comic-transcript')).not.toHaveAttribute('open');
+    await expect(comic.locator('.comic-transcript')).toBeVisible();
+    await expect(comic.locator('details, summary')).toHaveCount(0);
     if (item.view === 'scene' && item.number < 2) {
-      await expect(active(page).locator('.scene-card .story-block.speech:visible')).toHaveCount(0);
+      await expect(active(page).locator('.scene-card > .story-block.speech:visible')).toHaveCount(0);
     }
     if (item.view === 'feedback') await expect(active(page).locator('.selected-answer:visible')).toHaveCount(0);
   }
@@ -307,38 +309,40 @@ test('Mind a tizenegy jóváhagyott kép a megfelelő közös jelenethez vagy d�
 });
 
 for (const [letter, id] of Object.entries({ A: 's2-public', B: 's2-pause', C: 's2-facts', D: 's2-boundary' })) {
-  test('Ad3: az 1/' + letter + ' után a változó monológ a közös kép előtt marad, ismétlődő párbeszéd nélkül', async ({ page }) => {
+  test('J–03: az 1/' + letter + ' után csak az engedélyezett monológ marad, és nincs képen kívüli párbeszédismétlés', async ({ page }) => {
     const saved = await restoreComic(page, { number: 2, view: 'scene' }, { 1: letter });
     const comic = await loadedComic(page, '02_jelenet_aron_elso_uzenete_kozosen.webp');
     const monologue = active(page).locator('.story-block.thought:visible').filter({ hasText: adaptations.catalog[id].text });
-    await expect(monologue).toHaveCount(1);
-    expect(await monologue.evaluate(el => !!(el.compareDocumentPosition(document.querySelector('.comic')) & Node.DOCUMENT_POSITION_FOLLOWING))).toBe(true);
+    await expect(monologue).toHaveCount(letter === 'A' ? 0 : 1);
+    if (letter !== 'A') expect(await monologue.evaluate(el => !!(el.compareDocumentPosition(document.querySelector('.comic')) & Node.DOCUMENT_POSITION_FOLLOWING))).toBe(true);
     const originalMessage = scene(2).blocks.find(block => block.speaker === 'Áron').text;
-    await expect(active(page).locator('.story-block:visible').filter({ hasText: originalMessage })).toHaveCount(0);
+    await expect(comic.locator('.comic-transcript .story-block:visible').filter({ hasText: originalMessage })).toHaveCount(1);
+    await expect(active(page).locator('.scene-card > .story-block:visible').filter({ hasText: originalMessage })).toHaveCount(0);
     const originalThought = scene(2).blocks.find(block => block.type === 'thought').text;
     await expect(active(page).locator('.story-block:visible').filter({ hasText: originalThought })).toHaveCount(0);
     const extra = active(page).locator('.story-block.speech:visible').filter({ hasText: adaptations.sourceExcerpts.publicRequest.text });
-    await expect(extra).toHaveCount(letter === 'A' ? 1 : 0);
-    if (letter === 'A') expect(await extra.evaluate(el => !!(document.querySelector('.comic').compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING))).toBe(true);
-    await expect(comic.locator('details.comic-transcript')).not.toHaveAttribute('open');
+    await expect(extra).toHaveCount(0);
+    await expect(comic.locator('.comic-transcript')).toBeVisible();
     expect(await state(page)).toEqual(saved);
   });
 }
 
-test('A képregény szöveges átirata billentyűzettel hozzáférhető, alaphelyzetben nem ismétli a képet', async ({ page }) => {
+test('J–01: a képregény szöveges átirata alaphelyzetben látható, hozzáférhető és nincs lenyitó gomb', async ({ page }) => {
   const saved = await restoreComic(page, { number: 0, view: 'scene' });
   const comic = await loadedComic(page, '00_jelenet_a_titok_kozosen.webp');
-  const transcript = comic.locator('details.comic-transcript');
-  const summary = transcript.locator('summary');
-  await expect(summary).toContainText('Szöveges átirat');
-  await expect(transcript).not.toHaveAttribute('open');
-  await summary.focus(); await page.keyboard.press('Enter');
-  await expect(transcript).toHaveAttribute('open', '');
+  const transcript = comic.locator('.comic-transcript');
+  await expect(transcript).toBeVisible();
+  await expect(transcript).toHaveAttribute('aria-label', /átirat/i);
+  await expect(comic.locator('details, summary')).toHaveCount(0);
+  await expect(active(page).getByRole('button', { name: /szöveg(?:es)? átirat/i })).toHaveCount(0);
+  await transcript.focus();
+  await expect(transcript).toBeFocused();
   expect((await transcript.innerText()).length).toBeGreaterThan(120);
   const texts = await page.evaluate(() => TorottHidComics.scenes[0].transcript.map(block => block.text));
-  for (const text of texts) await expect(transcript).toContainText(text);
-  await page.keyboard.press('Enter');
-  await expect(transcript).not.toHaveAttribute('open');
+  for (const text of texts) {
+    await expect(transcript).toContainText(text);
+    await expect(active(page).locator('.block-text:visible').filter({ hasText: text })).toHaveCount(1);
+  }
   expect(await state(page)).toEqual(saved);
 });
 
@@ -402,7 +406,7 @@ test('Mind a tizenegy hibás képútvonal automatikusan működő szöveges tart
     await expect(comic.locator('.comic-media')).toBeHidden();
     await expect(comic.locator('.comic-fallback-message')).toBeVisible();
     await expect(comic.locator('[data-action="open-comic"]')).toBeHidden();
-    const blocks = item.view === 'scene' ? adaptations.blocksForScene(saved, story, engine) : adaptations.feedbackBlocks(saved, story, engine);
+    const blocks = item.view === 'scene' ? revisions.sceneBlocks(saved, adaptations.blocksForScene(saved, story, engine)) : revisions.feedbackBlocks(saved, adaptations.feedbackBlocks(saved, story, engine));
     for (const block of blocks) await expect(active(page)).toContainText(block.text);
     expect(await state(page)).toEqual(saved);
     if (item.view === 'scene' && item.number) await expect(page.locator('button.choice-card')).toHaveCount(4);
@@ -436,7 +440,7 @@ for (const focusTarget of ['nagyítógomb', 'átirat']) test('A későn hibázó
   await requested;
   const saved = await state(page);
   const comic = active(page).locator('.comic');
-  const focused = focusTarget === 'nagyítógomb' ? comic.locator('[data-action="open-comic"]') : comic.locator('.comic-transcript summary');
+  const focused = focusTarget === 'nagyítógomb' ? comic.locator('[data-action="open-comic"]') : comic.locator('.comic-transcript');
   await focused.focus();
   await pendingRoute.abort();
   const fallback = comic.locator('.comic-source-fallback');

@@ -104,8 +104,8 @@ test('Egy korai új döntés eldobja az elhagyott jövő döntéseit, közzété
   await phase(page, 'scene', 2);
   const before = adaptations.blocksForScene(await saved(page), story, engine).find(block => block.id === 's2-pause');
   expect(before).toBeTruthy();
-  await expect(main(page).locator('.story-block:visible').first()).toContainText(before.text);
-  await expect(main(page).locator('.story-block:visible')).not.toContainText('A folyosón mindenki felénk fordult.');
+  await expect(main(page).locator('.story-block:visible').filter({ hasText: before.text })).toHaveCount(1);
+  await expect(main(page)).not.toContainText('A folyosón mindenki felénk fordult.');
   await page.reload();
   expect((await saved(page)).decisions).toEqual({ 1: 'B' });
 });

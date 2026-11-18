@@ -6,7 +6,21 @@ const path = require('node:path');
 const crypto = require('node:crypto');
 const vm = require('node:vm');
 const comics = require('../js/comics.js');
-const manifest = require('../design/references/manifest.json');
+const j3Manifest = require('../design/references/manifest.json');
+const j4Manifest = require('../docs/manifest_J4_0.0.4.json');
+const originalAssets = {
+  '00_jelenet_a_titok_kozosen.webp': '7279ca8f8928b177e576e6179fb5b7e50aa2c3faa85f268ab9d012dadc77fc4c',
+  '01_jelenet_a_folyoson_kozosen.webp': 'ef591c8720efe44a25b1c48a1c764e671fff86d932fb27b1d899e302978ea6ae',
+  '01A_nyilvanos_szamonkeres_kovetkezmeny.webp': 'b19973fa5e095fa2f7c746917a7158520495f9ddcf1059b0c2a743360d1d3d08',
+  '01B_elvonulas_kovetkezmeny.webp': '9201604eefd57f5ae8ecb4d974972b516ebb1193b2f7e7387c61e28ef6004ad7',
+  '01C_osztalytarsak_kikerdezese_kovetkezmeny.webp': '3ecc0aa9f72058ab0de75dd806eecd4e568a8a390258ad72e2fde5a2bb570ccb',
+  '01D_pletyka_leallitasa_kovetkezmeny.webp': 'e32e0a4b072c7e7e3a01afaa0ee5a7d131e1d694a20695f9cf523f3882d7d53c',
+  '02_jelenet_aron_elso_uzenete_kozosen.webp': '24a48d4b9bfedee94193e584c7965a697297615b4737504cdbb8154364b8bf6c',
+  '02A_soha_nem_bocsatom_meg_kovetkezmeny.webp': '9e7174aca709bde96a05d332f6c95207ecf5a71a576a07cfe4804630f11f1919',
+  '02B_igeret_szamonkerese_kovetkezmeny.webp': '52140e7b0678eba2ced8e0c537c59847ebf776ff9b499a8dc87f02488068f2a9',
+  '02C_idot_ker_kovetkezmeny.webp': '7769ced928a8268b31d4a1604115257a37d695853de27581e29033fb6e0226cc',
+  '02D_felejtsuk_el_kovetkezmeny.webp': 'db26b8a5369273c4d07fc75bae41b8d26ed5846219a593f96bfff24577e6ff7d'
+};
 const entries = Object.values(comics.scenes).concat(Object.values(comics.consequences).flatMap(Object.values));
 function webpSize(bytes) {
   assert.equal(bytes.toString('ascii', 0, 4), 'RIFF');
@@ -31,20 +45,25 @@ function webpSize(bytes) {
   assert.fail('Hiányzik a WebP méretadata.');
 }
 
-test('Pontosan a tizenegy jóváhagyott kép szerepel a valódi, lapos GitHub-útvonalakon', () => {
-  assert.equal(entries.length, 11);
-  assert.equal(new Set(entries.map(entry => entry.id)).size, 11);
-  assert.equal(new Set(entries.map(entry => entry.src)).size, 11);
-  assert.deepEqual(Object.keys(comics.scenes), ['0', '1', '2']);
-  assert.deepEqual(Object.keys(comics.consequences), ['1', '2']);
-  for (const scene of [1, 2]) assert.deepEqual(Object.keys(comics.consequences[scene]), ['A', 'B', 'C', 'D']);
-  const expected = manifest.entries.map(entry => 'design/references/' + path.basename(entry.webp)).sort();
+test('A korábbi tizenegy és a két új manifest tíz jóváhagyott képe a valódi, lapos GitHub-útvonalakon szerepel', () => {
+  assert.equal(entries.length, 21);
+  assert.equal(new Set(entries.map(entry => entry.id)).size, 21);
+  assert.equal(new Set(entries.map(entry => entry.src)).size, 21);
+  assert.deepEqual(Object.keys(comics.scenes), ['0', '1', '2', '3', '4']);
+  assert.deepEqual(Object.keys(comics.consequences), ['1', '2', '3', '4']);
+  for (const scene of [1, 2, 3, 4]) assert.deepEqual(Object.keys(comics.consequences[scene]), ['A', 'B', 'C', 'D']);
+  assert.equal(j3Manifest.images.length, 5);
+  assert.equal(j4Manifest.image_files.length, 5);
+  for (const item of [...j3Manifest.images, ...j4Manifest.image_files]) assert.equal(item.approved, true);
+  const expected = [...Object.keys(originalAssets), ...j3Manifest.images.map(entry => path.basename(entry.webp)),
+    ...j4Manifest.image_files.map(entry => path.basename(entry.webp))].map(name => 'design/references/' + name).sort();
   assert.deepEqual(entries.map(entry => entry.src).sort(), expected);
   for (const entry of entries) {
     assert.ok(!entry.src.includes('KEPEK/'));
     assert.equal(path.basename(entry.src), path.basename(entry.src.replaceAll('\\', '/')));
     const bytes = fs.readFileSync(path.resolve(__dirname, '..', entry.src));
     assert.equal(crypto.createHash('sha256').update(bytes).digest('hex'), entry.sha256, entry.id + ' jóváhagyott bináris');
+    if (originalAssets[path.basename(entry.src)]) assert.equal(entry.sha256, originalAssets[path.basename(entry.src)], 'Az eredeti tizenegy kép változatlan marad.');
     assert.deepEqual(webpSize(bytes), [entry.width, entry.height], entry.id + ' változatlan eredeti képarány');
   }
 });
@@ -53,12 +72,17 @@ test('A közös képek, a külön monológ és a szöveget igénylő néma köve
   assert.equal(comics.scenes[0].layout, 'replace-scene');
   assert.equal(comics.scenes[1].layout, 'replace-scene');
   assert.equal(comics.scenes[2].layout, 'ad3');
-  assert.deepEqual(comics.scenes[2].beforeBlockIds, ['s2-public', 's2-pause', 's2-facts', 's2-boundary']);
-  assert.deepEqual(comics.scenes[2].afterSourceLines, [136]);
+  assert.deepEqual(comics.scenes[1].beforeBlockIds, ['v004-j02-intro']);
+  assert.deepEqual(comics.scenes[2].beforeBlockIds, ['v004-j03-intro', 's2-pause', 's2-facts', 's2-boundary']);
+  assert.equal(comics.scenes[2].afterSourceLines, undefined);
+  assert.deepEqual(comics.scenes[3].beforeBlockIds, ['v004-j06-A', 'v004-j06-B', 'v004-j06-C', 'v004-j06-D', 'v004-j07-intro']);
+  assert.deepEqual(comics.scenes[4].beforeBlockIds, ['v004-j10-A', 'v004-j10-B', 'v004-j10-C', 'v004-j10-D']);
+  assert.equal(comics.scenes[3].layout, 'replace-scene');
+  assert.equal(comics.scenes[4].layout, 'replace-scene');
   for (const choice of ['A', 'B']) assert.equal(comics.consequences[1][choice].layout, 'illustrated-consequence');
   for (const choice of ['C', 'D']) assert.equal(comics.consequences[1][choice].layout, 'replace-consequence');
-  for (const choice of ['A', 'B', 'C', 'D']) assert.equal(comics.consequences[2][choice].layout, 'replace-consequence');
-  for (const scene of [3, 4, 5, 6, 7]) {
+  for (const scene of [2, 3, 4]) for (const choice of ['A', 'B', 'C', 'D']) assert.equal(comics.consequences[scene][choice].layout, 'replace-consequence');
+  for (const scene of [5, 6, 7]) {
     assert.equal(comics.scenes[scene], undefined);
     assert.equal(comics.consequences[scene], undefined);
   }
@@ -83,6 +107,24 @@ test('Az elfogadott képfeliratok sajátosságai változtatás nélkül kerülne
   assert.equal(comics.consequences[2].D.transcript.find(block => block.speaker === 'Áron').text, 'Rendben. Nem sürgetlek.');
   assert.equal(comics.scenes[0].transcript.at(-1).text, 'Végre valakinek elmondhattam. Áronban mindig bízom.');
   assert.ok(comics.consequences[1].D.transcript.some(block => block.text.includes('Ez nem pletyka téma.')));
+  assert.equal(comics.consequences[2].A.title, 'A válasz következménye');
+});
+
+test('A J3/J4 jóváhagyott beszédei pontosak, a végleges J4–D kép válasz nélküli és a J3–C nem tartalmaz önvádat', () => {
+  const approved = fs.readFileSync(path.resolve(__dirname, '../docs/02_szovegfrissitesek_0.0.4_TELJES.md'), 'utf8');
+  for (const scene of [3, 4]) for (const choice of ['A', 'B', 'C', 'D']) {
+    for (const block of comics.consequences[scene][choice].transcript.filter(block => block.type === 'speech')) {
+      assert.ok(approved.includes(block.text), scene + choice + ': a jóváhagyott párbeszéd pontos átirata');
+    }
+  }
+  for (const block of comics.scenes[4].transcript) assert.ok(approved.includes(block.text));
+  assert.equal(comics.consequences[3].C.transcript.some(block => block.type === 'thought'), false);
+  assert.ok(comics.consequences[4].C.transcript.some(block => block.text.includes('bosszút')));
+  const boundary = comics.consequences[4].D;
+  assert.equal(boundary.src, 'design/references/04D_ne_irj_tobbet_JOVAHAGYOTT.webp');
+  assert.equal(boundary.sha256, 'b160f90643347b6aaa95879d41f01c43bd086bb7dcea8bd83b56e13b569b0e0d');
+  assert.equal(boundary.transcript.some(block => block.speaker === 'Áron'), false);
+  assert.deepEqual(boundary.transcript.map(block => block.text), ['Nem érdekel. Ne írj többet.', 'Áron nem küld több személyes üzenetet Nórának.']);
 });
 
 test('A képregényadat közvetlen böngészős betöltéshez és Node-teszthez is használható', () => {

@@ -3,9 +3,10 @@
   'use strict';
   const S = window.TorottHidStory, A = window.TorottHidAdaptations;
   const R = window.TorottHidReflections, E = window.TorottHidEngine, N = window.TorottHidNavigation;
+  const U = window.TorottHidRevisions;
   const C = window.TorottHidComics || { scenes: {}, consequences: {} };
   const main = document.getElementById('main-content');
-  if (!S || !A || !R || !E || !N) {
+  if (!S || !A || !R || !E || !N || !U) {
     main.textContent = 'A történet egyik fájlja nem töltődött be. Frissítsd az oldalt.';
     return;
   }
@@ -47,7 +48,7 @@
       '<figure class="comic-media"><button type="button" class="comic-image-button" data-action="open-comic" data-comic-id="' + esc(entry.id) + '" aria-label="Képregény nagyítása: ' + esc(entry.title) + '">' +
       '<img class="comic-image" src="' + esc(entry.src) + '" width="' + entry.width + '" height="' + entry.height + '" alt="' + esc(entry.alt) + '" loading="lazy" decoding="async">' +
       '<span class="comic-zoom-hint">Képregény nagyítása</span></button><figcaption>' + esc(entry.title) + '</figcaption></figure>' +
-      accompanying + '<details class="comic-transcript"><summary>Szöveges átirat</summary><div>' + blocksHTML(entry.transcript) + '</div></details>' +
+      accompanying + '<section class="comic-transcript" role="region" aria-label="Képregény szöveges átirata" tabindex="0"><h2 class="transcript-label">Szöveges átirat</h2><div>' + blocksHTML(entry.transcript) + '</div></section>' +
       '<p class="comic-fallback-message" role="status" hidden>A kép most nem tölthető be. A történet szöveges változatával folytathatod.</p>' +
       '<div class="comic-source-fallback" tabindex="-1" hidden>' + blocksHTML(sourceBlocks) + '</div></section>';
   }
@@ -144,7 +145,7 @@
   function sceneScreen() {
     const item = scene();
     const narrative = heading(state.scene + '. jelenet', item.title) +
-      '<section class="scene-card"><p class="scene-time">' + esc(item.time) + '</p>' + sceneContent(A.blocksForScene(state, S, E)) + '</section>';
+      '<section class="scene-card"><p class="scene-time">' + esc(item.time) + '</p>' + sceneContent(U.sceneBlocks(state, A.blocksForScene(state, S, E))) + '</section>';
     if (!item.choices.length) return narrative + '<div class="actions">' + button('Tovább a történetben', 'next') + '</div>';
     return narrative + correctionPanel() + '<section class="choice-panel"><h2 class="choice-question">' + esc(item.question) + '</h2><div class="choice-list">' +
       item.choices.map(choice => '<button type="button" class="choice-card" id="choice-' + choice.id + '" data-action="select" data-value="' + choice.id + '"><span class="choice-letter" aria-hidden="true">' + choice.id + '</span><span class="choice-text">' + esc(choice.label) + '</span></button>').join('') +
@@ -153,7 +154,7 @@
   function feedbackScreen() {
     const item = scene(), choice = item.choices.find(c => c.id === state.decisions[state.scene]);
     const entry = (C.consequences[state.scene] || {})[choice.id];
-    const feedback = A.feedbackBlocks(state, S, E);
+    const feedback = U.feedbackBlocks(state, A.feedbackBlocks(state, S, E));
     return heading(state.scene + '. jelenet · A történet folytatódik', item.title) + '<section class="consequence-card">' +
       (entry ? comicHTML(entry, feedback) : '<p class="selected-answer">' + esc(choice.label) + '</p><div class="consequence-body">' + blocksHTML(feedback) + '</div>') +
       '</section><div class="actions">' + button(state.scene === 6 ? 'A híd állapota' : 'Tovább a történetben', 'next') + '</div>';
