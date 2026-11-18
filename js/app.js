@@ -14,6 +14,28 @@
   try { storage = window.sessionStorage; } catch (_) { /* The story still works in memory. */ }
   const loaded = E.load(storage, S);
   let state = loaded.state, storageAvailable = loaded.storageAvailable, recovered = loaded.recovered;
+  // Each completed navigation gets a browser history entry containing its full
+  // normalized game state. Back/Forward restore the exact earlier screen.
+  const HISTORY_MARKER = 'torott-hid-screen-v1';
+  let browserHistoryAvailable = false;
+  function readHistoryState(entry) {
+    if (!entry || entry.app !== HISTORY_MARKER) return null;
+    return E.normalize(entry.snapshot, S);
+  }
+  function historyEntry(snapshot) {
+    return { app: HISTORY_MARKER, snapshot: snapshot };
+  }
+  try {
+    const fromHistory = readHistoryState(window.history.state);
+    if (fromHistory) {
+      state = fromHistory;
+      storageAvailable = E.save(storage, state);
+      recovered = false;
+    } else {
+      window.history.replaceState(historyEntry(state), '');
+    }
+    browserHistoryAvailable = true;
+  } catch (_) { /* Browser history is optional; game navigation still works. */ }
   const dialog = document.getElementById('reset-dialog');
   const esc = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const paras = items => items.map(text => '<p>' + esc(text) + '</p>').join('');
@@ -103,11 +125,25 @@
     if (moveFocus) { main.querySelector('h1').focus({ preventScroll: true }); window.scrollTo({ top: 0, behavior: 'instant' }); }
   }
   function dispatch(action) {
-    state = E.transition(state, action, S);
+    const next = E.transition(state, action, S);
+    if (JSON.stringify(next) === JSON.stringify(state)) return;
+    state = next;
     if (state.view !== 'start') recovered = false;
     storageAvailable = E.save(storage, state);
+    if (browserHistoryAvailable) {
+      try { window.history.pushState(historyEntry(state), ''); }
+      catch (_) { browserHistoryAvailable = false; }
+    }
     render(true);
   }
+  window.addEventListener('popstate', event => {
+    const restored = readHistoryState(event.state);
+    if (!restored) return;
+    state = restored;
+    recovered = false;
+    storageAvailable = E.save(storage, state);
+    render(true);
+  });
   document.addEventListener('click', event => {
     const control = event.target.closest('[data-action]');
     if (!control || control.disabled) return;
