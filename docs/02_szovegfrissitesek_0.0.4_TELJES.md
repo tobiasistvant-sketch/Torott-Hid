@@ -161,3 +161,147 @@ A fenti jelenet képe jóváhagyott; a kép **nem tartalmaz jelenetcímet**.
 - Ne adjunk szereplőnév-címkét a beszéd-/gondolatbuborékok elé a KÉPEN. A chat fejlécében a beszélgetőpartner neve természetesen látható.
 - Ne szerepeljen automatikus képregénycím (pl. „4. jelenet – A bocsánatkérés”) a képen.
 - A döntések nincsenek erkölcsi helyesség szerint felcímkézve vagy pontozva.
+
+
+---
+
+# J–13 – J5 bevezető feedbackek, J4 A/B/C/D szerint – JÓVÁHAGYVA
+
+## J4–A → J5 – A felelősség próbája
+> Azt mondtam Áronnak, hogy nem nekem kell kitalálnom, hogyan hozza helyre, amit elrontott. Ő azt ígérte, átgondolja. Azóta azon kapom magam, hogy figyelem, történik-e valami. De honnan fogom tudni, hogy tényleg tett valamit? És ha megpróbálja helyrehozni, nem lesz abból még több beszéd rólam?
+
+## J4–B → J5 – Az idő nem old meg mindent
+> Áron tényleg nem sürgetett. Nem kérdezte meg újra, hogy megbocsátok-e, és nem próbált úgy beszélni velem, mintha minden rendben lenne. Jólesett, hogy békén hagyott. Csakhogy attól, hogy én időt kértem, a többiek még ugyanúgy beszélhetnek rólam. Nem akarok újra belekeveredni ebbe az egészbe. De meddig lehet úgy várni, hogy közben semmi sem változik?
+
+## J4–C → J5 – A bosszú helyett mi következik?
+> Azt mondtam, nem akarok bosszút állni. És ezt komolyan is gondoltam. De attól még dühös vagyok, amikor eszembe jut, hogy mások a családomról beszélnek. Áron szeretné, ha újra megbíznék benne. Csakhogy most nem a barátságunkról akarok dönteni. Előbb azt szeretném, hogy végre ne legyen mindenkinek köze ahhoz, ami otthon történik.
+
+## J4–D → J5 – Amikor a csendnek következménye van
+> Áron nem írt többet. Pontosan azt tette, amit kértem. Először megkönnyebbültem, hogy nem kell újabb üzeneteket olvasnom tőle. Aztán egy osztálytársamtól megtudtam, hogy beszélt Lilivel, és megkérte, ne terjessze tovább a történetemet. Nem szólt róla nekem. Talán mert megtiltottam, hogy keressen. Most nem tudom, sikerült-e bármit elérnie. És azt sem, akarok-e egyáltalán beszélni vele erről.
+
+# J–14 – J5 nyitó képek két változatban
+**J4 A/B/C után – Áron közvetlen üzenete:**
+> Szóltam Lilinek, hogy nem lett volna szabad továbbadni. Ha szeretnéd, nyilvánosan is vállalom, hogy tőlem indult. De nem akarok rólad beszélni az engedélyed nélkül.
+
+Nóra: „Mit írjak vissza?” – gondolat; még nem válaszol.
+
+**J4 D után – közvetett információ:**
+Áron nem küld személyes üzenetet. Nóra egy osztálytársától tudja meg, hogy Áron beszélt Lilivel. A képregényben a hír: „Lili már nem beszél rólad. Áron szólt neki.” Nóra elgondolkozik: „Írjak neki én?” Nincs elküldött válasz.
+
+# J–15 – J5 A/B/C jóváhagyott párbeszédek
+
+## J5–A – Állítsd le a pletykát
+**Nóra:** „Beszélj Lilivel, hogy álljon le. Kérlek, ne foglalkozzatok ezzel többet.”
+
+**Áron:** „Lili, már beszéltünk erről, de még mindig terjed a pletyka. Kérlek, ne beszélj többet Nóra családjáról.”
+
+**Lili:** „Jó, rendben. Nem hozom fel többet.”
+
+**Áron:** „Beszéltem vele. Megígérte, hogy nem folytatja.”
+
+*Nóra elolvassa az üzenetet, félreteszi a telefonját, és nem válaszol. A pletyka megszűnése nem garantált.*
+
+## J5–B – Nyilvános felelősségvállalás
+**Nóra:** „Mondhatod az osztálynak azt is, hogy megszegted a bizalmamat. DE A CSALÁDOMRÓL egy szót se.”
+
+**Áron:** „Figyeljetek, szeretnék mondani valamit. Nóra megbízott bennem, én meg továbbadtam olyasmit, amit nem kellett volna. Nagyon elrontottam.”
+
+**Osztálytárs:** „De akkor mi történt pontosan?”
+
+**Áron:** „Nem fogom elmondani. Pont ez volt a baj, hogy először sem kellett volna beszélnem róla.”
+
+*Nóra figyeli Áront, néhány diák összesúg. Nóra nem szólal meg.*
+
+## J5–C – Segítség elutasítása
+**Nóra:** „Nem kell a segítséged többé már.”
+
+**Áron:** „Rendben. Nem erőltetem.”
+
+*Másnap az iskolai folyosón Áron és Nóra elhaladnak egymás mellett, nem kezdeményeznek beszélgetést.*
+
+# J–16 – J5–D: megtörténő bosszú – JÓVÁHAGYVA
+**Nóra:** „Majd én is közzéteszek rólad valamit, hogy érezd, milyen.”
+
+*Nóra az osztály közös üzenetváltásában nyilvánosságra hozza Áron bizalmas információját, és megnyomja a küldés gombot. Az osztály reagál, Áron elolvassa. Nóra és Áron később elkerülik egymást.*
+
+A jóváhagyott képen a közzétett szöveg: „Tudjátok, Áron valójában egy ideje pszichológushoz jár. Én tudom, mert bízott bennem, de már nem érdekel.” Ez **fiktív történetszöveg, nem állítás valós személyről**. A közlés valóban megtörténik, nem piszkozat. A későbbi lezárásban ezzel számolni kell.
+
+**Eltávolítandó régi szöveg:** „A tervezet még nem került nyilvánosságra. Most még visszaléphetsz; a harag kimondása és a másik ember nyilvános bántása nem ugyanaz.”
+
+**Eltávolítandó régi belső gondolat:** „Attól, hogy fáj, biztosan jobban leszek, ha neki is fáj?”
+
+# J–17 – J6 négy jóváhagyott narrációja és belső monológja
+
+## J5–A → J6 – A pletyka elcsendesedik
+**Narráció:**
+> Három hét telt el. Áron beszélt Lilivel, és azóta nem avatkozott bele újra Nóra ügyébe. Az iskolában lassan elcsendesedtek a találgatások, bár néha még felbukkan egy-egy félmondat. Nóra és Áron ezalatt alig beszéltek egymással. Most egy közös osztályprojekt miatt ismét egymás mellé kerülnek.
+
+**Nóra – belső monológ:**
+> Végül tényleg beszélt Lilivel. Nem kérkedett vele, nem várta, hogy megköszönjem. És mostanában már nem fordulnak utánam annyian a folyosón. Néha azon kapom magam, hogy majdnem odaszólok neki valamit, ahogy régen. Aztán eszembe jut, ami történt. Vajon lehet még úgy beszélgetni vele, hogy ne gondoljak folyton arra, amit elmondott?
+
+## J5–B → J6 – Amit mindenki hallott
+**Narráció:**
+> Áron három héttel ezelőtt az osztály előtt ismerte el, hogy továbbadott egy rábízott titkot. Nóra családjáról nem árult el újabb részleteket. Néhány osztálytárs azonban még utána is kérdezősködött, mások viszont abbahagyták a találgatást. Azóta Nóra többször észrevette, hogy Áron mintha mondani szeretne neki valamit, de végül egyikük sem kezdeményezett beszélgetést. Most egy osztályprojektben együtt kell dolgozniuk.
+
+**Nóra – belső monológ:**
+> Amikor kiállt az osztály elé, azt hittem, elsüllyedek szégyenemben. Mindenki minket figyelt. De aztán, amikor valaki kérdezősködni kezdett, Áron nem mondott többet. Furcsa volt látni, hogy most éppen ő hallgatott el valamit, amit régen gondolkodás nélkül továbbadott. Nem tudom, segített-e ezzel, vagy csak még kellemetlenebb lett minden. De arra a pillanatra biztosan emlékezni fogok.
+
+## J5–C → J6 – Három hét csend
+**Narráció:**
+> Három hét telt el azóta, hogy Nóra elutasította Áron további segítségét. Áron nem próbálta rábeszélni semmire, és nem kereste személyes beszélgetéssel. Az iskolában néha találkoztak, de többnyire elmentek egymás mellett. Nóra közben megtanulta, milyen nélküle tölteni a szüneteket. Most egy közös osztályprojekt miatt mégis egymás mellé ültetik őket.
+
+**Nóra – belső monológ:**
+> Azt mondtam, nincs szükségem a segítségére. Ő pedig tényleg békén hagyott. Eleinte jó volt, hogy nem kellett folyton azon gondolkodnom, mit mondjak neki. De közben valahogy hozzászoktam, hogy már nem ül mellettem a szünetekben, nem küld vicces képeket, és nem vár meg az iskola előtt. Most itt ül mellettem, és szinte idegennek érzem. Vajon ő is így van ezzel?
+
+## J5–D → J6 – Amikor már ketten tudják
+**Narráció:**
+> Három héttel ezelőtt Nóra az osztály közös csoportjába írta azt, amit Áron korábban bizalmasan elmondott neki. Az üzenetet többen elolvasták, és hamar beszédtéma lett belőle. Áron azóta kerüli Nórát. Nem veszekedett vele, nem próbált visszavágni, egyszerűen megszakította a személyes kapcsolatot. Most egy közös osztályprojektben mégis egymás mellé kerülnek. Áron szó nélkül előveszi a füzetét.
+
+**Nóra – belső monológ:**
+> Amikor elküldtem azt az üzenetet, annyira dühös voltam, hogy látni akartam, mi történik. És történt is. Az osztályban napokig erről beszéltek. Áron pedig azóta úgy megy el mellettem, mintha ott sem lennék. Néha eszembe jut, mennyire szerettem volna, hogy megértse, mit éreztem, amikor az én titkom kiderült. Most már mindketten tudjuk, milyen, amikor valaki továbbadja azt, amit rábíztunk. Csak éppen egymással nem beszélünk.
+
+# J–18 – J6 nyitókép, döntések és következményképek
+A J6 főképernyő: **narráció → monológ → közös kép → A/B/C/D/E döntési lehetőség**. A kép maga felirat nélküli, kézzel satírozott osztálytermi illusztráció.
+
+## J6–A – Újrakezdés
+**Nóra:** „Szeretném, ha lassan újra barátok lehetnénk. Nem egyik napról a másikra.”
+
+**Áron:** „Én is szeretném. De tudom, hogy időbe telik.”
+
+*Egymás felé fordulnak, óvatos mosoly; visszatérnek a közös projektfüzethez.*
+
+## J6–B – Bizonytalan közeledés
+**Nóra:** „Szeretnék esélyt adni a beszélgetésnek, de most még bizonytalan vagyok.”
+
+**Áron:** „Rendben. Nem kell most eldöntenünk mindent.”
+
+*Rövid szemkontaktus, majd közös munka. A feszültség még érződik.*
+
+## J6–C – Megbocsátás, külön utakon
+**Nóra:** „Nem akarok tovább haragudni rád. Megbocsátok, de nem hiszem, hogy ezek után ugyanolyan barátok tudnánk lenni, mint régen.”
+
+**Áron:** „Sajnálom, hogy így alakult. De megértem.”
+
+*Egymásra néznek, majd külön folytatják a munkát.*
+
+## J6–D – A kapcsolat lezárása
+**Nóra:** „Kérlek, ne keress személyesen. Csak a szükséges iskolai ügyeket beszéljük meg.”
+
+**Áron:** „Rendben. Akkor maradjunk a projektnél.”
+
+*Áron visszafordul a füzetéhez, Nóra is a feladatára figyel.*
+
+## J6–E – Nyilvános szembesítés (a javított, jóváhagyott változat)
+**Nóra:** „Te komolyan azt hiszed, hogy ezek után minden mehet tovább, mintha semmi sem történt volna?”
+
+**Áron:** „Nem. De ezt most miért az egész osztály előtt kell megbeszélnünk?”
+
+**Nóra:** „Amikor az én titkomat elmondtad, akkor sem zavart, hogy mások is megtudják!”
+
+*Áron becsukja a füzetét, elfordul. Az osztály figyel, a tanár észreveszi a konfliktust.*
+
+# J–19 – Főképernyő hídja és öt R-híd – a vizuális elképzelés
+A főképernyőn ép híd áll, bal oldalon Nóra, jobb oldalon Áron, egymás felé fordulnak. R1: javított híd, közeledés. R2: hiányos/javítás alatt, még külön állnak. R3: járható, de két külön irányba távoznak. R4: fizikailag létező, lezárt híd; távolságtartás. R5: összeomlott híd, egymástól távolodás. **A hat megrajzolt hídillusztráció még nincs külön jóváhagyva**, ezért a fájlok áttekintendők. A vizuális jelentéshez illő reflektív kérdések az `04_R_reflexios_kerdesek.md` fájlban találhatók.
+
+# J–20 – Feltételes J6-választások és R-képernyős plusz gomb – MÉG NEM VÉGLEGES
+Felvetés: J5–D után J6 A/B/C zárolása (D és E marad). R4/R5 képernyőn külön gomb. **A gomb célja, utólagos döntési következménye és pontos felirata nem véglegesített**, ezért a fejlesztőnek önállóan nem szabad jóváírást vagy automatikus kapcsolatjavítást hozzáadnia.

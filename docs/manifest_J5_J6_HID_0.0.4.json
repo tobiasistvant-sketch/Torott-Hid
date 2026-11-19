@@ -1,0 +1,247 @@
+{
+  "project": "A Törött híd",
+  "version_target": "0.0.4 demó",
+  "build_date": "2026-11-19",
+  "total_new_images": 18,
+  "notes": [
+    "A korábbi J0–J4 képek már fel vannak töltve / korábbi csomagban találhatók",
+    "A hat híd képe elkészült, de nincs külön egyedi jóváhagyás",
+    "A J5–D/J6 A–C zárolási szabály és az R plusz gomb tervezet"
+  ],
+  "images": [
+    {
+      "id": "05_kozos_ABC_aron_uzenete",
+      "category": "jelenet_05",
+      "description": "05 kozos ABC aron uzenete",
+      "png": "kepek/jelenet_05/05_kozos_ABC_aron_uzenete.png",
+      "webp": "kepek/jelenet_05/05_kozos_ABC_aron_uzenete.webp",
+      "source_filename": "üzenetek_nó_ra_és_áron_között.png",
+      "pixels": [
+        1122,
+        1402
+      ],
+      "approval": "accepted_in_conversation"
+    },
+    {
+      "id": "05_kulon_D_kozvetett_hir",
+      "category": "jelenet_05",
+      "description": "05 kulon D kozvetett hir",
+      "png": "kepek/jelenet_05/05_kulon_D_kozvetett_hir.png",
+      "webp": "kepek/jelenet_05/05_kulon_D_kozvetett_hir.webp",
+      "source_filename": "nóra_üzenetre_vár.png",
+      "pixels": [
+        1122,
+        1402
+      ],
+      "approval": "accepted_in_conversation"
+    },
+    {
+      "id": "05A_lilivel_beszel",
+      "category": "jelenet_05",
+      "description": "05A lilivel beszel",
+      "png": "kepek/jelenet_05/05A_lilivel_beszel.png",
+      "webp": "kepek/jelenet_05/05A_lilivel_beszel.webp",
+      "source_filename": "pletyka_utáni_megnyugvás.png",
+      "pixels": [
+        1122,
+        1402
+      ],
+      "approval": "accepted_in_conversation"
+    },
+    {
+      "id": "05B_osztaly_elott_felelosseg",
+      "category": "jelenet_05",
+      "description": "05B osztaly elott felelosseg",
+      "png": "kepek/jelenet_05/05B_osztaly_elott_felelosseg.png",
+      "webp": "kepek/jelenet_05/05B_osztaly_elott_felelosseg.webp",
+      "source_filename": "bizalom_vallomás_és_csendes_következmények.png",
+      "pixels": [
+        1122,
+        1402
+      ],
+      "approval": "accepted_in_conversation"
+    },
+    {
+      "id": "05C_segites_elutasitasa",
+      "category": "jelenet_05",
+      "description": "05C segites elutasitasa",
+      "png": "kepek/jelenet_05/05C_segites_elutasitasa.png",
+      "webp": "kepek/jelenet_05/05C_segites_elutasitasa.webp",
+      "source_filename": "csendes_távolodás_egy_folyosón.png",
+      "pixels": [
+        1122,
+        1402
+      ],
+      "approval": "accepted_in_conversation"
+    },
+    {
+      "id": "05D_bosszu_kozzetetel",
+      "category": "jelenet_05",
+      "description": "05D bosszu kozzetetel",
+      "png": "kepek/jelenet_05/05D_bosszu_kozzetetel.png",
+      "webp": "kepek/jelenet_05/05D_bosszu_kozzetetel.webp",
+      "source_filename": "nóra_bosszúja_és_áron_csalódása.png",
+      "pixels": [
+        1122,
+        1402
+      ],
+      "approval": "accepted_in_conversation"
+    },
+    {
+      "id": "06_kozos_osztalyterem",
+      "category": "jelenet_06",
+      "description": "06 kozos osztalyterem",
+      "png": "kepek/jelenet_06/06_kozos_osztalyterem.png",
+      "webp": "kepek/jelenet_06/06_kozos_osztalyterem.webp",
+      "source_filename": "a_hand_drawn_colored_pencil_comic_panel_sketchy_p.png",
+      "pixels": [
+        1671,
+        941
+      ],
+      "approval": "accepted_in_conversation"
+    },
+    {
+      "id": "06A_ujrakezdes",
+      "category": "jelenet_06",
+      "description": "06A ujrakezdes",
+      "png": "kepek/jelenet_06/06A_ujrakezdes.png",
+      "webp": "kepek/jelenet_06/06A_ujrakezdes.webp",
+      "source_filename": "a_colored_pencil_comic_in_four_panels_2x2_with_t.png",
+      "pixels": [
+        1199,
+        1312
+      ],
+      "approval": "accepted_in_conversation"
+    },
+    {
+      "id": "06B_bizonytalan_kozeledes",
+      "category": "jelenet_06",
+      "description": "06B bizonytalan kozeledes",
+      "png": "kepek/jelenet_06/06B_bizonytalan_kozeledes.png",
+      "webp": "kepek/jelenet_06/06B_bizonytalan_kozeledes.webp",
+      "source_filename": "a_comic_style_illustration_in_colored_pencil_crayo.png",
+      "pixels": [
+        1536,
+        1024
+      ],
+      "approval": "accepted_in_conversation"
+    },
+    {
+      "id": "06C_megbocsatas_kulon_utak",
+      "category": "jelenet_06",
+      "description": "06C megbocsatas kulon utak",
+      "png": "kepek/jelenet_06/06C_megbocsatas_kulon_utak.png",
+      "webp": "kepek/jelenet_06/06C_megbocsatas_kulon_utak.webp",
+      "source_filename": "a_colored_pencil_comic_page_with_four_panels_in_a.png",
+      "pixels": [
+        1245,
+        1263
+      ],
+      "approval": "accepted_in_conversation"
+    },
+    {
+      "id": "06D_szemelyes_kapcsolat_lezarasa",
+      "category": "jelenet_06",
+      "description": "06D szemelyes kapcsolat lezarasa",
+      "png": "kepek/jelenet_06/06D_szemelyes_kapcsolat_lezarasa.png",
+      "webp": "kepek/jelenet_06/06D_szemelyes_kapcsolat_lezarasa.webp",
+      "source_filename": "a_hand_drawn_colored_pencil_comic_in_four_panels.png",
+      "pixels": [
+        1239,
+        1270
+      ],
+      "approval": "accepted_in_conversation"
+    },
+    {
+      "id": "06E_nyilvanos_szembesites",
+      "category": "jelenet_06",
+      "description": "06E nyilvanos szembesites",
+      "png": "kepek/jelenet_06/06E_nyilvanos_szembesites.png",
+      "webp": "kepek/jelenet_06/06E_nyilvanos_szembesites.webp",
+      "source_filename": "a_colored_pencil_comic_in_four_panels_with_thick_b.png",
+      "pixels": [
+        1246,
+        1263
+      ],
+      "approval": "accepted_in_conversation"
+    },
+    {
+      "id": "H0_fokepernyo_ep_hid",
+      "category": "hidak",
+      "description": "H0 fokepernyo ep hid",
+      "png": "kepek/hidak/H0_fokepernyo_ep_hid.png",
+      "webp": "kepek/hidak/H0_fokepernyo_ep_hid.webp",
+      "source_filename": "colored_pencil_illustration_a_warm_autumn_scene.png",
+      "pixels": [
+        1536,
+        1024
+      ],
+      "approval": "awaiting_individual_approval"
+    },
+    {
+      "id": "R1_a_hid_ujjaepul",
+      "category": "hidak",
+      "description": "R1 a hid ujjaepul",
+      "png": "kepek/hidak/R1_a_hid_ujjaepul.png",
+      "webp": "kepek/hidak/R1_a_hid_ujjaepul.webp",
+      "source_filename": "a_warm_colored_pencil_crayon_illustration_a_detai.png",
+      "pixels": [
+        1536,
+        1024
+      ],
+      "approval": "awaiting_individual_approval"
+    },
+    {
+      "id": "R2_a_hid_meg_epul",
+      "category": "hidak",
+      "description": "R2 a hid meg epul",
+      "png": "kepek/hidak/R2_a_hid_meg_epul.png",
+      "webp": "kepek/hidak/R2_a_hid_meg_epul.webp",
+      "source_filename": "a_detailed_colored_pencil_style_illustration_a_wa.png",
+      "pixels": [
+        1536,
+        1024
+      ],
+      "approval": "awaiting_individual_approval"
+    },
+    {
+      "id": "R3_megbocsatas_kulon_utakon",
+      "category": "hidak",
+      "description": "R3 megbocsatas kulon utakon",
+      "png": "kepek/hidak/R3_megbocsatas_kulon_utakon.png",
+      "webp": "kepek/hidak/R3_megbocsatas_kulon_utakon.webp",
+      "source_filename": "a_warm_colored_pencil_colored_pencil_sketch_scene.png",
+      "pixels": [
+        1536,
+        1024
+      ],
+      "approval": "awaiting_individual_approval"
+    },
+    {
+      "id": "R4_lezart_hid",
+      "category": "hidak",
+      "description": "R4 lezart hid",
+      "png": "kepek/hidak/R4_lezart_hid.png",
+      "webp": "kepek/hidak/R4_lezart_hid.webp",
+      "source_filename": "colored_pencil_style_illustration_of_an_autumn_ou.png",
+      "pixels": [
+        1536,
+        1024
+      ],
+      "approval": "awaiting_individual_approval"
+    },
+    {
+      "id": "R5_osszeomlott_hid",
+      "category": "hidak",
+      "description": "R5 osszeomlott hid",
+      "png": "kepek/hidak/R5_osszeomlott_hid.png",
+      "webp": "kepek/hidak/R5_osszeomlott_hid.webp",
+      "source_filename": "a_detailed_colored_pencil_crayon_style_illustratio.png",
+      "pixels": [
+        1536,
+        1024
+      ],
+      "approval": "awaiting_individual_approval"
+    }
+  ]
+}

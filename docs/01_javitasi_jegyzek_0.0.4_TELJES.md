@@ -1,6 +1,6 @@
 # A Törött híd – 0.0.4 demó – javítási jegyzék
 
-Dátum: 2026. november 18.
+Dátum: 2026. november 19.
 Állapot: munkajegyzék, **a játékba még nem beépített** módosítások.
 A „demó” megnevezés megmarad. A verzió tényleges frissítése a későbbi fejlesztési lépés része.
 A „J–” azonosító javítási sorszám; a „3A–3D” a **3. jelenet döntési ágát** jelenti.
@@ -59,7 +59,7 @@ A felhasználó kifejezetten jóváhagyta mind a négy kész képet. Az eredeti 
 ## Az ellenőrzéshez
 - A 0.0.4 nem jelenti azt, hogy a javításokat már alkalmaztuk.
 - A korábbi 0.0.3 navigációs fejlesztés elkülönül ettől a jegyzéktől.
-- Codi-prompt **most még nem készült**. A későbbi beépítéskor a fenti pontok és a képfájlok alapján kell dolgozni.
+- A kapcsolódó Codi-prompt külön dokumentumban található; a jelen csomag képei még nincsenek beépítve. A későbbi beépítéskor a fenti pontok és a képfájlok alapján kell dolgozni.
 
 
 ## J–10 – J4: négy döntésfüggő bevezető belső monológ – JÓVÁHAGYVA
@@ -78,3 +78,42 @@ A fenti öt J4-kép jóváhagyott, ne regeneráljuk őket önkényesen. A késő
 
 ## Feltöltési megjegyzés
 A korábbi J3-s csomag öt képét **nem kell újra feltölteni**. Ez az új, kiegészítő csomag kizárólag az új J4-képeket tartalmazza, a dokumentumok viszont teljes, kumulatív kiadásban szerepelnek.
+
+
+---
+
+## J–13 – J5 nyitó, J4 választásától függő feedback – JÓVÁHAGYVA
+J4–A/B/C/D szerint négy külön, teljes terjedelmű narratív belső monológ. Ezek a `02_szovegfrissitesek_0.0.4_TELJES.md` fájlban vannak. Nem szabad az előző döntéseket figyelmen kívül hagyva egyetlen közös monológra cserélni.
+
+## J–14 – J5 nyitójelenet két eltérő képregénnyel – JÓVÁHAGYVA
+- J4–A, B vagy C után: `05_kozos_ABC_aron_uzenete.webp`, Áron közvetlenül üzen, hogy beszélt Lilivel, és nyilvánosan is vállalná, ha Nóra engedélyezi. Nóra azon gondolkodik, mit írjon vissza.
+- J4–D után: `05_kulon_D_kozvetett_hir.webp`. Áron **nem** küld személyes üzenetet. Nóra osztálytárstól értesül Áron Lilinek tett kéréséről, és csak Nóra kezdeményezheti a személyes kommunikációt. A kép végén nincs elküldött üzenet, csupán mérlegelés.
+
+## J–15 – J5 A/B/C következményei – JÓVÁHAGYVA
+- A: Nóra arra kéri Áront, beszéljen Lilivel és ne foglalkozzanak többet a családi ügyével. Áron beszél Lilivel; a lány megígéri, nem hozza fel újra. Kép `05A_lilivel_beszel.webp`.
+- B: Áron az osztály előtt természetes, beszélt nyelvi megfogalmazásban vállalja, hogy elmondott egy rábízott titkot; nem tár fel családi részleteket. Kép `05B_osztaly_elott_felelosseg.webp`.
+- C: Nóra nem kér további segítséget; Áron válaszol, hogy nem erőlteti, majd a folyosón távolságot tart. Kép `05C_segites_elutasitasa.webp`.
+
+## J–16 – J5 D: a bosszú megvalósul – JÓVÁHAGYVA
+Nóra az osztálycsoportba **ténylegesen közzéteszi** Áron rábízott titkát. Ne legyen a közzététel előtt jó/rossz döntést sugalló figyelmeztetés, újabb rejtett megerősítés vagy megbánásra ösztönző gondolat. A következményeket a történet hitelesen megmutathatja. Kép `05D_bosszu_kozzetetel.webp`. Ez a korábbi, csak elmentett tervezettel működő story-logika szándékos változtatása, tesztekkel együtt átvezetendő.
+
+## J–17 – J6: négy, J5 A/B/C/D szerinti narráció és belső monológ – JÓVÁHAGYVA
+Mind a négy külön narrációt és monológot a `02_szovegfrissitesek_0.0.4_TELJES.md` tartalmazza. Sorrend: **narráció → belső monológ → osztálytermi nyitókép → A/B/C/D/E döntési lehetőség**.
+
+## J–18 – J6 közös nyitóképe és az öt döntés következményképe – JÓVÁHAGYVA
+Közös kép: `06_kozos_osztalyterem.webp`: osztályterem, tanár, diákok; Nóra és Áron egymás mellett ül, de másfelé néznek; **jól látható színesceruza-vonások, képbe írt cím vagy narráció nélkül**.
+A/B/C/D/E következményekhez: `06A_ujrakezdes.webp`, `06B_bizonytalan_kozeledes.webp`, `06C_megbocsatas_kulon_utak.webp`, `06D_szemelyes_kapcsolat_lezarasa.webp`, `06E_nyilvanos_szembesites.webp`. J6 E a jóváhagyott, életszerű, osztály előtti vita, **nem** egy új titok megosztása.
+
+## J–19 – A híd motívuma a főképernyőn és az R-oldalakon
+A történet jelenetei közé **nem** kell hídállapot-jelzőt vagy átvezető animációt beiktatni.
+A főképernyőn egy **ép híd** Nórával és Áronnal; az R1–R5 oldalakon ugyanazon metafora öt külön helyzete, testbeszéddel. Hat illusztráció a `kepek/hidak/` könyvtárban. R-oldalakra tegyünk befejezésenként egy reflexiós kérdést. Az elkészült képek elfogadását a felhasználó egyenként nem erősítette meg, ezért **áttekintésre előkészített képsorozatként** kezeljük, és ne állítsuk, hogy már mind a hat jóváhagyott.
+
+## J–20 – J5 D után J6 A/B/C zárolása – JAVASLAT, MÉG NEM VÉGLEGES
+A felhasználó felvetette: ha J5–D ágon megtörtént a bizalmas információ közzététele, a J6 A/B/C legyen látható, de inaktív, csak D/E választható. A lehetőségre pozitív terv készült, **de nincs külön, végleges kódszabály- és hozzáférhetőségi jóváhagyás**. Az R4/R5 oldali **plusz gomb** célja/működése szintén nyitott; egyelőre ne implementáljuk automatikusan.
+
+## Képi és tartalmi ellenőrzések
+- 0.0.4 demó, nem általános újratervezés.
+- A korábbi J0–J4 jóváhagyott képek és ágak megőrzendők.
+- R-képernyőn hídillusztráció, **nem külön képregény**.
+- Nem készítünk erkölcsi pontozót; a tényleges döntések következményeit viszont megmutatjuk.
+- Áron, ha korábban a kapcsolatfelvétel tiltott, nem írhat Nórának önkényesen.
