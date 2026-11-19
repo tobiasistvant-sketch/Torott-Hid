@@ -68,21 +68,26 @@ test('Minden lezárás a tényleges útvonalat foglalja össze, R5 megőrzi Áro
     for (const marker of ['Fejlesztői jelzés','Forráskapcsolat','evidence_of_repair','tension+=','játék megmutathat']) assert.ok(!text.includes(marker));
   }
 });
-test('A tervezet visszavonása és a tényleges közlés korrekciója eltérő visszajelzést ad', () => {
+test('A J5–D közzététel megtörtént tény, a meglévő korrekció külön döntés marad', () => {
   const choices={1:'C',2:'B',3:'D',4:'A',5:'D',6:'C'};
   let s=atScene(5,choices,{});
   s=E.transition(s,{type:'SELECT',value:'D'},S);s=E.transition(s,{type:'CONFIRM',value:false},S);
-  assert.equal(A.feedbackBlocks(s,S,E)[0].id,'s5-withheld');
+  assert.equal(s.publications[5],true);
+  assert.equal(A.feedbackBlocks(s,S,E)[0].id,'s5-published');
   const pending=atScene(6,choices,{5:true});
   assert.ok(A.blocksForScene(pending,S,E).some(b=>b.id==='s6-publication-remains'));
   const corrected=E.transition(pending,{type:'CORRECT'},S);
+  assert.equal(corrected.publications[5],true);
   assert.ok(A.blocksForScene(corrected,S,E).some(b=>b.id==='s6-corrected-post'));
   assert.ok(!A.blocksForScene(corrected,S,E).some(b=>b.id==='s6-publication-remains'));
 });
-test('Egy visszavont fenyegetés után tett új közlés nem válik utólag visszavont bejegyzéssé', () => {
+test('A visszavont fenyegetés utáni nyilvános vita nem válik titokközléssé', () => {
   const choices={1:'A',2:'B',3:'D',4:'A',5:'A',6:'E'};
   const s=atScene(7,choices,{6:true},true);
   assert.equal(s.corrected,true);assert.equal(E.ending(s),'R5');
   assert.equal(s.publications[5],undefined);
+  assert.equal(s.publications[6],undefined);
+  assert.equal(E.facts(s).retaliation,false);
+  assert.equal(E.facts(s).finalPublicConflict,true);
   assert.ok(!A.summary(s,E).includes(A.summaryTexts.correction));
 });

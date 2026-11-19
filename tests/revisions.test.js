@@ -131,14 +131,19 @@ test('J4–C megőrzi a bosszú szót; J4–D után Áron nem küld záró vála
     let feedback = E.transition(fifth, { type: 'SELECT', value: repair }, S);
     if (feedback.view === 'confirmation') feedback = E.transition(feedback, { type: 'CONFIRM', value: false }, S);
     const after = R.feedbackBlocks(feedback, A.feedbackBlocks(feedback, S, E));
-    assert.ok(!after.some(block => block.speaker === 'Áron' && block.channel === 'message'));
+    const messages = after.filter(block => block.type === 'speech' && block.channel === 'message');
+    if (messages.length) {
+      assert.equal(messages[0].speaker, 'Nóra');
+      assert.equal(messages[0].initiatedBy, 'Nóra');
+      for (const reply of messages.filter(block => block.speaker === 'Áron')) assert.equal(reply.inReplyTo, 'Nóra');
+    }
   }
 });
 
 test('Az adatréteg nem jelenít meg szerkesztői utasításokat és a többi jelenetet változatlanul hagyja', () => {
   const all = Object.values(R.catalog).map(block => block.text).join('\n');
   for (const instruction of ['Nincs külön, Nórát elítélő', 'Nincs új monológ', 'Képi pontosítás', 'JOVAHAGYOTT.webp', 'A fenyegetés nem azonos']) assert.ok(!all.includes(instruction));
-  for (const number of [0, 5, 6, 7]) {
+  for (const number of [0, 7]) {
     const source = [{ text: 'unchanged' }];
     assert.equal(R.sceneBlocks({ scene: number, decisions: {} }, source), source);
     assert.equal(R.feedbackBlocks({ scene: number, decisions: {} }, source), source);
@@ -146,4 +151,156 @@ test('Az adatréteg nem jelenít meg szerkesztői utasításokat és a többi je
   const browser = {};
   vm.runInNewContext(fs.readFileSync(path.join(root, 'js/revisions.js'), 'utf8'), browser);
   assert.equal(browser.TorottHidRevisions.monologues[4].D.text, R.monologues[4].D.text);
+});
+
+test('J–13: a J4 négy választását a négy teljes, szó szerinti J5-monológ követi', () => {
+  for (const letter of ['A', 'B', 'C', 'D']) {
+    const state = stateAt(5, { 1: 'C', 2: 'B', 3: 'A', 4: letter });
+    const expected = quotationAfter(text, '## J4–' + letter + ' → J5');
+    const blocks = R.sceneBlocks(state, A.blocksForScene(state, S, E));
+    assert.equal(blocks[0], R.monologues[5][letter]);
+    assert.equal(blocks[0].text, expected);
+    assert.equal(blocks.filter(block => Object.values(R.monologues[5]).includes(block)).length, 1);
+  }
+  assert.equal(new Set(Object.values(R.monologues[5]).map(block => block.text)).size, 4);
+});
+
+test('J–14: J4–D után közvetett hír, A/B/C után pontos közvetlen üzenet következik', () => {
+  for (const letter of ['A', 'B', 'C', 'D']) {
+    const state = stateAt(5, { 1: 'C', 2: 'B', 3: 'A', 4: letter });
+    const blocks = R.sceneBlocks(state, A.blocksForScene(state, S, E));
+    if (letter === 'D') {
+      assert.ok(!blocks.some(block => block.speaker === 'Áron' && block.channel === 'message'));
+      assert.ok(blocks.some(block => block.speaker === 'Osztálytárs' && block.text === 'Lili már nem beszél rólad. Áron szólt neki.'));
+      assert.ok(blocks.some(block => block.type === 'thought' && block.text === 'Írjak neki én?'));
+      assert.ok(!blocks.some(block => block.speaker === 'Nóra' && block.type === 'speech'));
+    } else {
+      const message = blocks.find(block => block.speaker === 'Áron' && block.channel === 'message');
+      assert.equal(message.text, quotationAfter(text, '**J4 A/B/C után – Áron közvetlen üzenete:**'));
+      assert.ok(blocks.some(block => block.type === 'thought' && block.text === 'Mit írjak vissza?'));
+    }
+  }
+});
+
+test('J–15/J–16: az új J5 ágak jóváhagyott szövegei és a tényleges közzététel elkülönülnek', () => {
+  for (const letter of ['A', 'B', 'C', 'D']) {
+    const before = stateAt(5, { 1: 'C', 2: 'B', 3: 'A', 4: 'D' });
+    const state = E.transition(before, { type: 'SELECT', value: letter }, S);
+    assert.equal(state.view, 'feedback', 'Nincs második megerősítő vagy piszkozatképernyő.');
+    const blocks = R.feedbackBlocks(state, A.feedbackBlocks(state, S, E));
+    assert.equal(blocks, R.feedback[5][letter]);
+    const start = text.indexOf(letter === 'D' ? '# J–16 – J5–D' : '## J5–' + letter + ' –');
+    const end = text.indexOf('\n## ', start + 5);
+    const section = text.slice(start, end < 0 ? undefined : end);
+    for (const block of blocks) assert.ok(section.includes(block.text), letter + ': pontos jóváhagyott forrás');
+    assert.equal(state.publications[5] === true, letter === 'D');
+    if (letter === 'D') {
+      assert.equal(blocks[0].type, 'thought');
+      assert.ok(blocks.some(block => block.speaker === 'Nóra' && block.channel === 'class-group' && block.text === 'Tudjátok, Áron valójában egy ideje pszichológushoz jár. Én tudom, mert bízott bennem, de már nem érdekel.'));
+      assert.ok(!JSON.stringify(blocks).includes('A tervezet még nem került nyilvánosságra.'));
+      assert.ok(!JSON.stringify(blocks).includes('Attól, hogy fáj, biztosan jobban leszek'));
+    }
+  }
+  assert.ok(text.includes(R.publicationFact));
+});
+
+test('A J5 és J6 aktív választásfeliratai a friss jóváhagyott megszólalásokból származnak', () => {
+  for (const number of [5, 6]) for (const [letter, override] of Object.entries(R.choiceOverrides[number])) {
+    const first = R.feedback[number][letter].find(block => block.speaker === 'Nóra');
+    assert.equal(override.label, '„' + first.text + '”');
+    assert.deepEqual(override.source, first.source);
+  }
+  assert.deepEqual(Object.keys(R.choiceOverrides[6]), ['A', 'B', 'C', 'D', 'E']);
+  assert.ok(R.choiceOverrides[6].E.label.includes('az egész osztály') === false);
+  assert.equal(R.choiceOverrides[6].E.label, '„Te komolyan azt hiszed, hogy ezek után minden mehet tovább, mintha semmi sem történt volna?”');
+});
+
+test('J–17: J5 A/B/C/D után a teljes jóváhagyott narráció és monológ a helyes sorrendben jelenik meg', () => {
+  for (const letter of ['A', 'B', 'C', 'D']) {
+    const state = stateAt(6, { 1: 'C', 2: 'B', 3: 'A', 4: 'B', 5: letter });
+    const heading = '## J5–' + letter + ' → J6';
+    const section = text.slice(text.indexOf(heading));
+    const blocks = R.sceneBlocks(state, A.blocksForScene(state, S, E));
+    assert.equal(blocks[0], R.narrations[6][letter]);
+    assert.equal(blocks[1], R.monologues[6][letter]);
+    assert.equal(blocks[0].text, quotationAfter(section, '**Narráció:**'));
+    assert.equal(blocks[1].text, quotationAfter(section, '**Nóra – belső monológ:**'));
+    assert.deepEqual(blocks.slice(2), R.common[6]);
+  }
+});
+
+test('J–18: mind az öt J6 párbeszéd a jóváhagyott szakaszhoz tartozik; E nem új titokközlés', () => {
+  for (const letter of ['A', 'B', 'C', 'D', 'E']) {
+    const before = stateAt(6, { 1: 'C', 2: 'B', 3: 'A', 4: 'A', 5: 'A' });
+    const state = E.transition(before, { type: 'SELECT', value: letter }, S);
+    assert.equal(state.view, 'feedback');
+    const blocks = R.feedbackBlocks(state, A.feedbackBlocks(state, S, E));
+    assert.equal(blocks, R.feedback[6][letter]);
+    const section = text.split('## J6–' + letter + ' –')[1].split('\n## ')[0];
+    for (const block of blocks) assert.ok(section.includes(block.text), letter);
+    assert.equal(Object.prototype.hasOwnProperty.call(state.publications, 6), false);
+    if (letter === 'E') {
+      assert.equal(E.facts(state).finalPublicConflict, true);
+      assert.equal(E.facts(state).retaliation, false);
+      assert.ok(!JSON.stringify(blocks).includes('pszichológushoz jár'));
+    }
+  }
+});
+
+test('Az összegzés megőrzi a megtörtént J5D tényét, és J6E esetén nem talál ki titokközlést', () => {
+  for (const fifth of ['A', 'B', 'C', 'D']) {
+    const before = stateAt(6, { 1: 'C', 2: 'B', 3: 'A', 4: 'D', 5: fifth });
+    const feedback = E.transition(before, { type: 'SELECT', value: 'E' }, S);
+    const ended = E.transition(feedback, { type: 'NEXT' }, S);
+    const summary = R.summary(ended, A.summary(ended, E), E);
+    assert.equal(E.ending(ended), 'R5');
+    assert.ok(summary.includes(R.feedback[6].E.at(-1).text));
+    assert.ok(!summary.some(line => line.includes('A megerősített nyilvános megtorlás')));
+    assert.ok(!summary.some(line => line.includes('A későbbi szándékod már változhatott')));
+    assert.equal(summary.includes(R.narrations[6].D.text), fifth === 'D');
+  }
+  let state = stateAt(6, { 1: 'C', 2: 'B', 3: 'A', 4: 'D', 5: 'D' });
+  state = E.transition(state, { type: 'CORRECT' }, S);
+  state = E.transition(state, { type: 'SELECT', value: 'C' }, S);
+  state = E.transition(state, { type: 'NEXT' }, S);
+  const summary = R.summary(state, A.summary(state, E), E);
+  assert.equal(state.publications[5], true);
+  assert.ok(summary.includes(R.narrations[6].D.text), 'A kifejezett későbbi korrekció sem teszi meg nem történtté a közlést.');
+});
+
+test('Az öt hídreflexió és közös kérdés szó szerint az R-dokumentumból származik', () => {
+  const lines = fs.readFileSync(path.join(root, R.endingQuestions.source.file), 'utf8').split(/\r?\n/);
+  assert.equal(lines[R.endingQuestions.source.commonLine - 1], '**Közös kérdés:** ' + R.endingQuestions.common);
+  assert.deepEqual(Object.keys(R.endingQuestions.byEnding), ['R1', 'R2', 'R3', 'R4', 'R5']);
+  for (const [id, question] of Object.entries(R.endingQuestions.byEnding)) {
+    assert.equal(lines[R.endingQuestions.source.byEndingLines[id] - 1], question);
+  }
+});
+
+test('A teljes J4 × J5 × J6 kombináció jóváhagyott szöveget és valós állapotfüggő lezárást ad', () => {
+  const endings = new Set();
+  let count = 0;
+  for (const fourth of ['A', 'B', 'C', 'D']) for (const fifth of ['A', 'B', 'C', 'D']) for (const sixth of ['A', 'B', 'C', 'D', 'E']) {
+    const atFive = stateAt(5, { 1: 'C', 2: 'B', 3: 'A', 4: fourth });
+    assert.equal(R.sceneBlocks(atFive, A.blocksForScene(atFive, S, E))[0], R.monologues[5][fourth]);
+    const chosenFive = E.transition(atFive, { type: 'SELECT', value: fifth }, S);
+    assert.equal(chosenFive.view, 'feedback');
+    assert.equal(R.feedbackBlocks(chosenFive, A.feedbackBlocks(chosenFive, S, E)), R.feedback[5][fifth]);
+    const atSix = E.transition(chosenFive, { type: 'NEXT' }, S);
+    const openingSix = R.sceneBlocks(atSix, A.blocksForScene(atSix, S, E));
+    assert.equal(openingSix[0], R.narrations[6][fifth]);
+    assert.equal(openingSix[1], R.monologues[6][fifth]);
+    const chosenSix = E.transition(atSix, { type: 'SELECT', value: sixth }, S);
+    assert.equal(chosenSix.view, 'feedback', 'J20 szerint egyik J6 ág sem zárolt.');
+    assert.equal(R.feedbackBlocks(chosenSix, A.feedbackBlocks(chosenSix, S, E)), R.feedback[6][sixth]);
+    assert.equal(chosenSix.publications[5] === true, fifth === 'D');
+    assert.equal(Object.hasOwn(chosenSix.publications, 6), false);
+    const end = E.transition(chosenSix, { type: 'NEXT' }, S);
+    const ending = E.ending(end);
+    endings.add(ending);
+    if (fifth === 'D' || sixth === 'E') assert.equal(ending, 'R5');
+    count++;
+  }
+  assert.equal(count, 80);
+  assert.deepEqual(Array.from(endings).sort(), ['R1', 'R2', 'R3', 'R4', 'R5']);
 });

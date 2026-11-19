@@ -235,7 +235,7 @@ test('J4–D után az ötödik és hatodik jelenet sem küld tiltott személyes 
     expect(engine.facts(await saved(page)).noContact).toBe(true);
     await expect(main(page).locator('.story-block.speech[data-channel="message"]').filter({ has: page.locator('.speaker', { hasText: 'Áron' }) })).toHaveCount(0);
     if (scene === 5) {
-      await expect(main(page)).toContainText('Egy osztálytársadtól tudod meg');
+      await expect(main(page)).toContainText('Lili már nem beszél rólad. Áron szólt neki.');
       await select(page, 5, 'C');
     }
   }

@@ -180,6 +180,68 @@
         "v004-j10-C",
         "v004-j10-D"
       ]
+    },
+    "5": {
+      "id": "scene-5",
+      "src": "design/references/05_kozos_ABC_aron_uzenete.webp",
+      "width": 1122,
+      "height": 1402,
+      "title": "A jóvátétel lehetősége",
+      "alt": "Nóra a telefonján Áron üzenetét olvassa: beszélt Lilivel, és Nóra engedélyével nyilvánosan is vállalná a felelősségét. Nóra még csak azon gondolkodik, mit válaszoljon.",
+      "transcript": [
+        {
+          "type": "speech",
+          "speaker": "Áron",
+          "text": "Szóltam Lilinek, hogy nem lett volna szabad továbbadni. Ha szeretnéd, nyilvánosan is vállalom, hogy tőlem indult. De nem akarok rólad beszélni az engedélyed nélkül.",
+          "channel": "message"
+        },
+        {
+          "type": "thought",
+          "speaker": "Nóra",
+          "text": "Mit írjak vissza?"
+        }
+      ],
+      "transcriptSource": "approved-image",
+      "layout": "replace-scene",
+      "sha256": "b6048f7c585f7de9bba518c6e6e4e262dbc3d60353255e7f6a1e90b97ab80682",
+      "sourceManifest": "docs/manifest_J5_J6_HID_0.0.4.json",
+      "approval": "accepted_in_conversation",
+      "beforeBlockIds": [
+        "v1-j13-A",
+        "v1-j13-B",
+        "v1-j13-C",
+        "v1-j13-D"
+      ]
+    },
+    "6": {
+      "id": "scene-6",
+      "src": "design/references/06_kozos_osztalyterem.webp",
+      "width": 1671,
+      "height": 941,
+      "title": "Közös osztályprojekt",
+      "alt": "Színesceruzával rajzolt osztályterem: Nóra és Áron egymás mellett ülnek a nyitott füzeteknél, de másfelé néznek. A háttérben tanár és diákok láthatók. A képen nincs felirat.",
+      "transcript": [
+        {
+          "type": "narration",
+          "text": "Osztályterem, tanár, diákok; Nóra és Áron egymás mellett ül, de másfelé néznek."
+        }
+      ],
+      "transcriptSource": "approved-image",
+      "layout": "replace-scene",
+      "sha256": "39665344cc5784a21d88c42f4563a04cccf872fa008bfb6439f6a087f4c1b70b",
+      "sourceManifest": "docs/manifest_J5_J6_HID_0.0.4.json",
+      "approval": "accepted_in_conversation",
+      "beforeBlockIds": [
+        "v1-j17-narr-A",
+        "v1-j17-narr-B",
+        "v1-j17-narr-C",
+        "v1-j17-narr-D",
+        "v1-j17-thought-A",
+        "v1-j17-thought-B",
+        "v1-j17-thought-C",
+        "v1-j17-thought-D"
+      ],
+      "textless": true
     }
   },
   "consequences": {
@@ -687,6 +749,481 @@
         "layout": "replace-consequence",
         "sha256": "b160f90643347b6aaa95879d41f01c43bd086bb7dcea8bd83b56e13b569b0e0d"
       }
+    },
+    "5": {
+      "A": {
+        "id": "scene-5-A",
+        "src": "design/references/05A_lilivel_beszel.webp",
+        "width": 1122,
+        "height": 1402,
+        "title": "Beszélgetés Lilivel",
+        "alt": "Nóra üzenetben kéri Áront, hogy beszéljen Lilivel. Áron személyesen megkéri a lányt, hogy ne beszéljen Nóra családjáról, majd beszámol Nórának a válaszáról. Nóra félreteszi a telefonját.",
+        "transcript": [
+          {
+            "type": "speech",
+            "speaker": "Nóra",
+            "text": "Beszélj Lilivel, hogy álljon le. Kérlek, ne foglalkozzatok ezzel többet.",
+            "channel": "message",
+            "initiatesContact": true
+          },
+          {
+            "type": "speech",
+            "speaker": "Áron",
+            "text": "Lili, már beszéltünk erről, de még mindig terjed a pletyka. Kérlek, ne beszélj többet Nóra családjáról."
+          },
+          {
+            "type": "speech",
+            "speaker": "Lili",
+            "text": "Jó, rendben. Nem hozom fel többet."
+          },
+          {
+            "type": "speech",
+            "speaker": "Áron",
+            "text": "Beszéltem vele. Megígérte, hogy nem folytatja.",
+            "channel": "message",
+            "initiatedBy": "Nóra",
+            "replyToNora": true
+          },
+          {
+            "type": "narration",
+            "text": "Nóra elolvassa az üzenetet, félreteszi a telefonját, és nem válaszol. A pletyka megszűnése nem garantált."
+          }
+        ],
+        "transcriptSource": "approved-image",
+        "layout": "replace-consequence",
+        "sha256": "379f11d98a4bf9cc7259f3cae2f28e84637be501013e4f997b2260e793f188e7",
+        "sourceManifest": "docs/manifest_J5_J6_HID_0.0.4.json",
+        "approval": "accepted_in_conversation"
+      },
+      "B": {
+        "id": "scene-5-B",
+        "src": "design/references/05B_osztaly_elott_felelosseg.webp",
+        "width": 1122,
+        "height": 1402,
+        "title": "Nyilvános felelősségvállalás",
+        "alt": "Nóra engedélyt ad Áronnak a felelősség nyilvános vállalására, családi részletek nélkül. Áron az osztály előtt beszél, de a kérdezősködésre nem árul el többet; Nóra csendben figyel.",
+        "transcript": [
+          {
+            "type": "speech",
+            "speaker": "Nóra",
+            "text": "Mondhatod az osztálynak azt is, hogy megszegted a bizalmamat. DE A CSALÁDOMRÓL egy szót se.",
+            "channel": "message",
+            "initiatesContact": true
+          },
+          {
+            "type": "speech",
+            "speaker": "Áron",
+            "text": "Figyeljetek, szeretnék mondani valamit. Nóra megbízott bennem, én meg továbbadtam olyasmit, amit nem kellett volna. Nagyon elrontottam.",
+            "channel": "classroom"
+          },
+          {
+            "type": "speech",
+            "speaker": "Osztálytárs",
+            "text": "De akkor mi történt pontosan?",
+            "channel": "classroom"
+          },
+          {
+            "type": "speech",
+            "speaker": "Áron",
+            "text": "Nem fogom elmondani. Pont ez volt a baj, hogy először sem kellett volna beszélnem róla.",
+            "channel": "classroom"
+          },
+          {
+            "type": "narration",
+            "text": "Nóra figyeli Áront, néhány diák összesúg. Nóra nem szólal meg."
+          }
+        ],
+        "transcriptSource": "approved-image",
+        "layout": "replace-consequence",
+        "sha256": "8462226dce5719332bf31950c54283a267b0973beb6d6b9ed2d4770fb9a73008",
+        "sourceManifest": "docs/manifest_J5_J6_HID_0.0.4.json",
+        "approval": "accepted_in_conversation"
+      },
+      "C": {
+        "id": "scene-5-C",
+        "src": "design/references/05C_segites_elutasitasa.webp",
+        "width": 1122,
+        "height": 1402,
+        "title": "A segítség elutasítása",
+        "alt": "Nóra kezdeményez üzenetet: közli, hogy nem kéri Áron segítségét. Áron erre válaszol, hogy nem erőlteti. Másnap a folyosón elhaladnak egymás mellett, beszélgetés nélkül.",
+        "transcript": [
+          {
+            "type": "speech",
+            "speaker": "Nóra",
+            "text": "Nem kell a segítséged többé már.",
+            "channel": "message",
+            "initiatesContact": true
+          },
+          {
+            "type": "speech",
+            "speaker": "Áron",
+            "text": "Rendben. Nem erőltetem.",
+            "channel": "message",
+            "initiatedBy": "Nóra",
+            "replyToNora": true
+          },
+          {
+            "type": "narration",
+            "text": "Másnap az iskolai folyosón Áron és Nóra elhaladnak egymás mellett, nem kezdeményeznek beszélgetést."
+          }
+        ],
+        "transcriptSource": "approved-image",
+        "layout": "replace-consequence",
+        "sha256": "332c040d1730110d0787042bbbed7d354bf794371f9bfabc67b8c9f8784b939a",
+        "sourceManifest": "docs/manifest_J5_J6_HID_0.0.4.json",
+        "approval": "accepted_in_conversation"
+      },
+      "D": {
+        "id": "scene-5-D",
+        "src": "design/references/05D_bosszu_kozzetetel.webp",
+        "width": 1122,
+        "height": 1402,
+        "title": "A közzétett üzenet",
+        "alt": "Nóra elküldi Áron bizalmas információját az osztálycsoportba. Az üzenet megjelenik, a többiek reagálnak, és Áron elolvassa. Később Nóra és Áron elkerülik egymást.",
+        "transcript": [
+          {
+            "type": "thought",
+            "speaker": "Nóra",
+            "text": "Majd én is közzéteszek rólad valamit, hogy érezd, milyen."
+          },
+          {
+            "type": "speech",
+            "speaker": "Nóra",
+            "text": "Tudjátok, Áron valójában egy ideje pszichológushoz jár. Én tudom, mert bízott bennem, de már nem érdekel.",
+            "channel": "class-group"
+          },
+          {
+            "type": "speech",
+            "speaker": "Osztálytárs",
+            "text": "Ez komoly?!",
+            "channel": "class-group"
+          },
+          {
+            "type": "speech",
+            "speaker": "Osztálytárs",
+            "text": "Nem is gondoltam!",
+            "channel": "class-group"
+          },
+          {
+            "type": "speech",
+            "speaker": "Osztálytárs",
+            "text": "Azta...",
+            "channel": "class-group"
+          },
+          {
+            "type": "speech",
+            "speaker": "Osztálytárs",
+            "text": "Hogy lehetett ilyen bizalmas?",
+            "channel": "class-group"
+          },
+          {
+            "type": "narration",
+            "text": "Nóra az osztály közös üzenetváltásában nyilvánosságra hozza Áron bizalmas információját, és megnyomja a küldés gombot. Az osztály reagál, Áron elolvassa. Nóra és Áron később elkerülik egymást."
+          }
+        ],
+        "transcriptSource": "approved-image",
+        "layout": "replace-consequence",
+        "sha256": "9163f87ed6463280bab944c5f8238b7a4abf38222f8df32ef5389d5afd269503",
+        "sourceManifest": "docs/manifest_J5_J6_HID_0.0.4.json",
+        "approval": "accepted_in_conversation",
+        "event": "publication"
+      }
+    },
+    "6": {
+      "A": {
+        "id": "scene-6-A",
+        "src": "design/references/06A_ujrakezdes.webp",
+        "width": 1199,
+        "height": 1312,
+        "title": "Lassú újrakezdés",
+        "alt": "Nóra lassú újrakezdésről beszél Áronnak az osztályteremben. Áron elfogadja, hogy ehhez idő kell. Óvatos mosollyal egymás felé fordulnak, majd visszatérnek a projektfüzethez.",
+        "transcript": [
+          {
+            "type": "speech",
+            "speaker": "Nóra",
+            "text": "Szeretném, ha lassan újra barátok lehetnénk. Nem egyik napról a másikra.",
+            "channel": "classroom"
+          },
+          {
+            "type": "speech",
+            "speaker": "Áron",
+            "text": "Én is szeretném. De tudom, hogy időbe telik.",
+            "channel": "classroom"
+          },
+          {
+            "type": "narration",
+            "text": "Egymás felé fordulnak, óvatos mosoly; visszatérnek a közös projektfüzethez."
+          }
+        ],
+        "transcriptSource": "approved-image",
+        "layout": "replace-consequence",
+        "sha256": "d09f289ee6c6dd425788d4ec4ea9c269f093355966f25d7839b18fab734570ec",
+        "sourceManifest": "docs/manifest_J5_J6_HID_0.0.4.json",
+        "approval": "accepted_in_conversation"
+      },
+      "B": {
+        "id": "scene-6-B",
+        "src": "design/references/06B_bizonytalan_kozeledes.webp",
+        "width": 1536,
+        "height": 1024,
+        "title": "Bizonytalan közeledés",
+        "alt": "Nóra elmondja, hogy esélyt adna a beszélgetésnek, de bizonytalan. Áron nem sürgeti a döntést. Rövid szemkontaktus után közösen dolgoznak, a feszültség még érződik.",
+        "transcript": [
+          {
+            "type": "speech",
+            "speaker": "Nóra",
+            "text": "Szeretnék esélyt adni a beszélgetésnek, de most még bizonytalan vagyok.",
+            "channel": "classroom"
+          },
+          {
+            "type": "speech",
+            "speaker": "Áron",
+            "text": "Rendben. Nem kell most eldöntenünk mindent.",
+            "channel": "classroom"
+          },
+          {
+            "type": "narration",
+            "text": "Rövid szemkontaktus, majd közös munka. A feszültség még érződik."
+          }
+        ],
+        "transcriptSource": "approved-image",
+        "layout": "replace-consequence",
+        "sha256": "2ea5e3de304fa4ecb71ab2c67b453331fa408506ab7fb83d69a46c0fa4521d59",
+        "sourceManifest": "docs/manifest_J5_J6_HID_0.0.4.json",
+        "approval": "accepted_in_conversation"
+      },
+      "C": {
+        "id": "scene-6-C",
+        "src": "design/references/06C_megbocsatas_kulon_utak.webp",
+        "width": 1245,
+        "height": 1263,
+        "title": "Megbocsátás, külön utakon",
+        "alt": "Nóra kimondja, hogy megbocsát, de a korábbi barátságot nem folytatná ugyanúgy. Áron elfogadja a döntését. Egymásra néznek, majd külön folytatják a munkát.",
+        "transcript": [
+          {
+            "type": "speech",
+            "speaker": "Nóra",
+            "text": "Nem akarok tovább haragudni rád. Megbocsátok, de nem hiszem, hogy ezek után ugyanolyan barátok tudnánk lenni, mint régen.",
+            "channel": "classroom"
+          },
+          {
+            "type": "speech",
+            "speaker": "Áron",
+            "text": "Sajnálom, hogy így alakult. De megértem.",
+            "channel": "classroom"
+          },
+          {
+            "type": "narration",
+            "text": "Egymásra néznek, majd külön folytatják a munkát."
+          }
+        ],
+        "transcriptSource": "approved-image",
+        "layout": "replace-consequence",
+        "sha256": "9ba40a19bf175c4127301196bb6c58646a212b9853204ae580135acba36cb0a1",
+        "sourceManifest": "docs/manifest_J5_J6_HID_0.0.4.json",
+        "approval": "accepted_in_conversation"
+      },
+      "D": {
+        "id": "scene-6-D",
+        "src": "design/references/06D_szemelyes_kapcsolat_lezarasa.webp",
+        "width": 1239,
+        "height": 1270,
+        "title": "A személyes kapcsolat lezárása",
+        "alt": "Nóra csak a szükséges iskolai ügyekre korlátozza a kapcsolatot. Áron elfogadja ezt, és visszafordul a füzetéhez. Nóra is a közös feladatra figyel.",
+        "transcript": [
+          {
+            "type": "speech",
+            "speaker": "Nóra",
+            "text": "Kérlek, ne keress személyesen. Csak a szükséges iskolai ügyeket beszéljük meg.",
+            "channel": "classroom"
+          },
+          {
+            "type": "speech",
+            "speaker": "Áron",
+            "text": "Rendben. Akkor maradjunk a projektnél.",
+            "channel": "classroom"
+          },
+          {
+            "type": "narration",
+            "text": "Áron visszafordul a füzetéhez, Nóra is a feladatára figyel."
+          }
+        ],
+        "transcriptSource": "approved-image",
+        "layout": "replace-consequence",
+        "sha256": "d548c882eb4e78fc781e6f3691e413f1deb4c0ea4d628f179c48162dd91802c7",
+        "sourceManifest": "docs/manifest_J5_J6_HID_0.0.4.json",
+        "approval": "accepted_in_conversation"
+      },
+      "E": {
+        "id": "scene-6-E",
+        "src": "design/references/06E_nyilvanos_szembesites.webp",
+        "width": 1246,
+        "height": 1263,
+        "title": "Nyilvános szembesítés",
+        "alt": "Nóra az osztály előtt számon kéri Áront. Áron azt kérdezi, miért most, mindenki előtt beszélik meg ezt. Bezárja a füzetét és elfordul, a tanár és az osztály figyel. Új titok nem kerül nyilvánosságra.",
+        "transcript": [
+          {
+            "type": "speech",
+            "speaker": "Nóra",
+            "text": "Te komolyan azt hiszed, hogy ezek után minden mehet tovább, mintha semmi sem történt volna?",
+            "channel": "classroom"
+          },
+          {
+            "type": "speech",
+            "speaker": "Áron",
+            "text": "Nem. De ezt most miért az egész osztály előtt kell megbeszélnünk?",
+            "channel": "classroom"
+          },
+          {
+            "type": "speech",
+            "speaker": "Nóra",
+            "text": "Amikor az én titkomat elmondtad, akkor sem zavart, hogy mások is megtudják!",
+            "channel": "classroom"
+          },
+          {
+            "type": "narration",
+            "text": "Áron becsukja a füzetét, elfordul. Az osztály figyel, a tanár észreveszi a konfliktust."
+          }
+        ],
+        "transcriptSource": "approved-image",
+        "layout": "replace-consequence",
+        "sha256": "8ddee0e9a529aaba8f52766a399a4dddcd0cb1f7c6411de59151fe8f0a75e65f",
+        "sourceManifest": "docs/manifest_J5_J6_HID_0.0.4.json",
+        "approval": "accepted_in_conversation",
+        "event": "public-confrontation"
+      }
+    }
+  },
+  "sceneVariants": {
+    "5": {
+      "noContact": {
+        "id": "scene-5-no-contact",
+        "src": "design/references/05_kulon_D_kozvetett_hir.webp",
+        "width": 1122,
+        "height": 1402,
+        "title": "Közvetett hír",
+        "alt": "Nóra egy osztálytárs üzenetéből értesül arról, hogy Áron beszélt Lilivel. Árontól nem kap személyes üzenetet. Az üres chatmezőt nézve mérlegeli, hogy ő írjon-e neki.",
+        "transcript": [
+          {
+            "type": "speech",
+            "speaker": "Osztálytárs",
+            "text": "Lili már nem beszél rólad. Áron szólt neki.",
+            "channel": "message"
+          },
+          {
+            "type": "narration",
+            "text": "Árontól nem érkezik új személyes üzenet. Egy osztálytársadtól tudod meg, hogy megkérte Lilit: ne beszéljen tovább rólad."
+          },
+          {
+            "type": "thought",
+            "speaker": "Nóra",
+            "text": "Írjak neki én?"
+          }
+        ],
+        "transcriptSource": "approved-image",
+        "layout": "replace-scene",
+        "sha256": "194b22ef1fe9732040d6d82857e9f7ca96b48a682bc7ed85c29f227c704f5695",
+        "sourceManifest": "docs/manifest_J5_J6_HID_0.0.4.json",
+        "approval": "accepted_in_conversation",
+        "beforeBlockIds": [
+          "v1-j13-A",
+          "v1-j13-B",
+          "v1-j13-C",
+          "v1-j13-D"
+        ]
+      }
+    }
+  },
+  "bridges": {
+    "H0": {
+      "id": "bridge-H0",
+      "src": "design/references/H0_fokepernyo_ep_hid.webp",
+      "width": 1536,
+      "height": 1024,
+      "title": "A Törött híd",
+      "alt": "Őszi tájban ép fahíd ível át a patakon. Nóra a bal, Áron a jobb parton áll, hátizsákkal, egymás felé fordulva.",
+      "transcript": [],
+      "transcriptSource": "image-description",
+      "layout": "bridge",
+      "sha256": "3786fd61b301908b8a0b7bab37ea108c429452881f8aeb879af3c7c26303b9fb",
+      "sourceManifest": "docs/manifest_J5_J6_HID_0.0.4.json",
+      "approval": "awaiting_individual_approval",
+      "kind": "bridge"
+    },
+    "R1": {
+      "id": "bridge-R1",
+      "src": "design/references/R1_a_hid_ujjaepul.webp",
+      "width": 1536,
+      "height": 1024,
+      "title": "A híd újjáépül",
+      "alt": "Az ép fahídon Nóra és Áron egymás felé lépnek, óvatos mosollyal. A háttérben őszi lomb és patak látható.",
+      "transcript": [],
+      "transcriptSource": "image-description",
+      "layout": "bridge",
+      "sha256": "262fc9ff1854cd4a3421aacce084619c0cb2f67f5c6f3504fb64543931ab79ba",
+      "sourceManifest": "docs/manifest_J5_J6_HID_0.0.4.json",
+      "approval": "awaiting_individual_approval",
+      "kind": "bridge"
+    },
+    "R2": {
+      "id": "bridge-R2",
+      "src": "design/references/R2_a_hid_meg_epul.webp",
+      "width": 1536,
+      "height": 1024,
+      "title": "A híd még épül",
+      "alt": "Hiányos deszkájú, javítás alatt álló fahíd két végén Nóra és Áron egymás felé nézve állnak. A bal parton szerszámosláda és deszkák hevernek.",
+      "transcript": [],
+      "transcriptSource": "image-description",
+      "layout": "bridge",
+      "sha256": "5c4375a6aecfd3f8ae51e5db552686ca7b7a7affb44f1f706b22e273a10b1000",
+      "sourceManifest": "docs/manifest_J5_J6_HID_0.0.4.json",
+      "approval": "awaiting_individual_approval",
+      "kind": "bridge"
+    },
+    "R3": {
+      "id": "bridge-R3",
+      "src": "design/references/R3_megbocsatas_kulon_utakon.webp",
+      "width": 1536,
+      "height": 1024,
+      "title": "Megbocsátás, de külön utakon",
+      "alt": "Ép, járható fahíd két végén Nóra és Áron egymástól elfordulva, külön irányba sétálnak az őszi tájban.",
+      "transcript": [],
+      "transcriptSource": "image-description",
+      "layout": "bridge",
+      "sha256": "02b39feb48e1bbad0d17aac8281ce0b6af38e1515d656753a217bf0a4e661322",
+      "sourceManifest": "docs/manifest_J5_J6_HID_0.0.4.json",
+      "approval": "awaiting_individual_approval",
+      "kind": "bridge"
+    },
+    "R4": {
+      "id": "bridge-R4",
+      "src": "design/references/R4_lezart_hid.webp",
+      "width": 1536,
+      "height": 1024,
+      "title": "A híd lezárva marad",
+      "alt": "Az álló fahíd közepét lakattal lezárt kapu zárja el. Nóra összefont karral a bal parton áll, Áron a jobb parton elfordul tőle.",
+      "transcript": [],
+      "transcriptSource": "image-description",
+      "layout": "bridge",
+      "sha256": "ddb229aa24fe41e8c246eb11ce51d6d4da96ad9c05441e2b5525839335f430d8",
+      "sourceManifest": "docs/manifest_J5_J6_HID_0.0.4.json",
+      "approval": "awaiting_individual_approval",
+      "kind": "bridge"
+    },
+    "R5": {
+      "id": "bridge-R5",
+      "src": "design/references/R5_osszeomlott_hid.webp",
+      "width": 1536,
+      "height": 1024,
+      "title": "A híd összeomlik",
+      "alt": "Az összeomlott fahíd törött deszkái a patak fölé roskadnak. Nóra és Áron külön parton, egymástól távolodva sétálnak.",
+      "transcript": [],
+      "transcriptSource": "image-description",
+      "layout": "bridge",
+      "sha256": "f7435f4513111db941e23e0c8ecfa0ee413486ebe085afb7fcc57ad8b5c48d1b",
+      "sourceManifest": "docs/manifest_J5_J6_HID_0.0.4.json",
+      "approval": "awaiting_individual_approval",
+      "kind": "bridge"
     }
   }
 };

@@ -7,9 +7,9 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function () {
   'use strict';
 
-  const VERSION = 1;
+  const VERSION = 2;
   const STORAGE_KEY = 'torott_hid_demo_v1';
-  const VIEWS = ['start', 'scene', 'feedback', 'confirmation', 'ending'];
+  const VIEWS = ['start', 'scene', 'feedback', 'ending'];
   const own = (object, key) => Object.prototype.hasOwnProperty.call(object, key);
   const record = value => value !== null && typeof value === 'object' && !Array.isArray(value);
 
@@ -30,8 +30,9 @@
   }
 
   /** Reconstruct only reachable phase shapes, never trust supplied derived flags. */
-  function normalize(candidate, story) {
-    if (!record(candidate) || candidate.version !== VERSION || !VIEWS.includes(candidate.view) ||
+  function readState(candidate, story, legacy) {
+    const views = legacy ? VIEWS.concat('confirmation') : VIEWS;
+    if (!record(candidate) || candidate.version !== (legacy ? 1 : VERSION) || !views.includes(candidate.view) ||
         !Number.isInteger(candidate.scene) || candidate.scene < 0 || candidate.scene > 7 ||
         !record(candidate.decisions) || !record(candidate.publications) || typeof candidate.corrected !== 'boolean') return null;
     const { view, scene } = candidate;
@@ -49,20 +50,51 @@
     }
     const publications = {};
     for (const key of Object.keys(candidate.publications)) {
-      if (!['5', '6'].includes(key) || typeof candidate.publications[key] !== 'boolean') return null;
+      if (!(legacy ? ['5', '6'] : ['5']).includes(key) || typeof candidate.publications[key] !== 'boolean') return null;
       publications[key] = candidate.publications[key];
     }
-    const confirmingFive = view === 'confirmation' && scene === 5;
-    const confirmingSix = view === 'confirmation' && scene === 6;
-    if (confirmingFive && decisions[5] !== 'D') return null;
-    if (confirmingSix && decisions[6] !== 'E') return null;
-    const fiveRequired = decisions[5] === 'D' && !confirmingFive;
-    if (fiveRequired !== own(publications, 5)) return null;
-    if (own(publications, 5) && decisions[5] !== 'D') return null;
-    const sixRequired = decisions[6] === 'E' && !confirmingSix;
-    if (sixRequired !== own(publications, 6) || (sixRequired && publications[6] !== true)) return null;
+    if (legacy) {
+      const confirmingFive = view === 'confirmation' && scene === 5;
+      const confirmingSix = view === 'confirmation' && scene === 6;
+      if (confirmingFive && decisions[5] !== 'D') return null;
+      if (confirmingSix && decisions[6] !== 'E') return null;
+      const fiveRequired = decisions[5] === 'D' && !confirmingFive;
+      if (fiveRequired !== own(publications, 5)) return null;
+      if (own(publications, 5) && decisions[5] !== 'D') return null;
+      const sixRequired = decisions[6] === 'E' && !confirmingSix;
+      if (sixRequired !== own(publications, 6) || (sixRequired && publications[6] !== true)) return null;
+    } else {
+      // J5-D is the only publication. J6-E is a classroom confrontation.
+      if ((decisions[5] === 'D') !== own(publications, 5)) return null;
+      if (own(publications, 5) && publications[5] !== true) return null;
+    }
     if (candidate.corrected && (scene < 6 || !canCorrect({ decisions, publications }))) return null;
-    return { version: VERSION, view, scene, decisions, publications, corrected: candidate.corrected };
+    return { version: legacy ? 1 : VERSION, view, scene, decisions, publications, corrected: candidate.corrected };
+  }
+
+  function normalize(candidate, story) {
+    return readState(candidate, story, false);
+  }
+
+  /** Keep earlier choices without turning an old unposted draft into an act. */
+  function migrate(candidate, story) {
+    const previous = readState(candidate, story, true);
+    if (!previous) return null;
+    const next = { ...previous, version: VERSION };
+    let rewound = false;
+    if (previous.decisions[5] === 'D' && previous.publications[5] !== true) {
+      next.view = 'scene'; next.scene = 5;
+      next.decisions = Object.fromEntries(Object.entries(previous.decisions).filter(([number]) => Number(number) < 5));
+      next.publications = {}; next.corrected = false;
+      rewound = true;
+    } else if (previous.decisions[6] === 'E') {
+      next.view = 'scene'; next.scene = 6;
+      next.decisions = Object.fromEntries(Object.entries(previous.decisions).filter(([number]) => Number(number) < 6));
+      next.publications = previous.publications[5] === true ? { 5: true } : {};
+      rewound = true;
+    }
+    const state = normalize(next, story);
+    return state ? { state, rewound } : null;
   }
 
   /** Actions affect Nóra's choices. Áron's apology is an independent scripted event. */
@@ -76,17 +108,8 @@
     } else if (action.type === 'SELECT' && next.view === 'scene' &&
         choicesFor(next.scene, story).includes(action.value)) {
       next.decisions[next.scene] = action.value;
-      next.view = (next.scene === 5 && action.value === 'D') || (next.scene === 6 && action.value === 'E')
-        ? 'confirmation' : 'feedback';
-    } else if (action.type === 'CONFIRM' && next.view === 'confirmation' && typeof action.value === 'boolean') {
-      if (next.scene === 6 && !action.value) {
-        // An unposted draft is not a completed future decision or a retaliation.
-        delete next.decisions[6];
-        next.view = 'scene';
-      } else {
-        next.publications[next.scene] = action.value;
-        next.view = 'feedback';
-      }
+      if (next.scene === 5 && action.value === 'D') next.publications[5] = true;
+      next.view = 'feedback';
     } else if (action.type === 'CORRECT' && next.view === 'scene' && next.scene === 6 && canCorrect(next)) {
       // The view labels this as an actual withdrawal/repair of Nóra's own act.
       next.corrected = true;
@@ -103,8 +126,7 @@
   function facts(state) {
     const clean = normalize(state) || createState();
     const d = clean.decisions, p = clean.publications;
-    const retaliation = p[5] === true || p[6] === true;
-    const selfRegulation = d[5] === 'D' && p[5] === false;
+    const retaliation = p[5] === true;
     return {
       publicConfrontation: d[1] === 'A',
       pauseRequested: d[1] === 'B' || d[2] === 'C',
@@ -116,31 +138,32 @@
       conversationOpen: d[4] === 'A' || (['A', 'B'].includes(d[3]) && d[4] !== 'D'),
       boundaryStated: d[1] === 'D' || d[2] === 'C' || d[3] === 'C' || ['B', 'D'].includes(d[4]) || ['A', 'C'].includes(d[5]) || d[6] === 'D',
       noContact: d[4] === 'D',
-      limitedOutreach: d[4] === 'D' && ['A', 'B'].includes(d[5]),
+      limitedOutreach: d[4] === 'D' && ['A', 'B', 'C'].includes(d[5]),
       repairPrivate: d[5] === 'A',
       repairPublic: d[5] === 'B',
       aidRejected: d[5] === 'C',
       revengeThreat: d[3] === 'D',
-      revengeIntent: d[3] === 'D' || d[5] === 'D' || d[6] === 'E',
+      revengeIntent: d[3] === 'D' || d[5] === 'D',
+      finalPublicConflict: d[6] === 'E',
       retaliation,
-      unresolvedRetaliation: p[6] === true || (p[5] === true && !clean.corrected),
-      selfRegulation,
+      unresolvedRetaliation: p[5] === true && !clean.corrected,
+      selfRegulation: false,
       corrected: clean.corrected,
       correctionAvailable: clean.view === 'scene' && clean.scene === 6 && canCorrect(clean) && !clean.corrected,
-      unresolvedThreat: d[3] === 'D' && !clean.corrected && !selfRegulation,
+      unresolvedThreat: d[3] === 'D' && !clean.corrected,
       apologyHeard: clean.scene >= 4,
       boundaryRespected: clean.scene >= 5,
       forgiveness: d[6] === 'C' ? 'declared' : d[4] === 'C' ? 'direction' : 'undecided',
-      future: ({ A: 'open', B: 'cautious', C: 'separate', D: 'distance', E: 'public_retaliation' })[d[6]] || 'undecided'
+      future: ({ A: 'open', B: 'cautious', C: 'separate', D: 'distance', E: 'public_conflict' })[d[6]] || 'undecided'
     };
   }
 
-  /** Demo interpretation: unresolved actual harm is not erased by a final label. */
+  /** Unresolved actual harm is not erased by a final label. */
   function ending(state) {
     const clean = normalize(state);
-    if (!clean || !own(clean.decisions, 6) || clean.view === 'confirmation') return null;
+    if (!clean || !own(clean.decisions, 6)) return null;
     const context = facts(clean);
-    if (context.unresolvedRetaliation) return 'R5';
+    if (context.unresolvedRetaliation || context.finalPublicConflict) return 'R5';
     if (clean.decisions[6] === 'C') return 'R3';
     if (clean.decisions[6] === 'D') return 'R4';
     if (clean.decisions[6] === 'B') return 'R2';
@@ -168,13 +191,22 @@
     } catch (_) {
       return { state: createState(), recovered: false, storageAvailable: false };
     }
-    let state = null;
+    let state = null, migrated = false;
     if (raw !== null) {
-      try { state = normalize(JSON.parse(raw), story); } catch (_) { /* recover below */ }
+      try {
+        const candidate = JSON.parse(raw);
+        state = normalize(candidate, story);
+        if (!state) {
+          const migration = migrate(candidate, story);
+          if (migration) { state = migration.state; migrated = migration.rewound; }
+        }
+      } catch (_) { /* recover below */ }
     }
     const recovered = raw !== null && !state;
     state = state || createState();
-    return { state, recovered, storageAvailable: save(storage, state) };
+    const result = { state, recovered, storageAvailable: save(storage, state) };
+    if (migrated) result.migrated = true;
+    return result;
   }
 
   function reset(storage) {
@@ -184,5 +216,5 @@
     return state;
   }
 
-  return Object.freeze({ VERSION, STORAGE_KEY, createState, normalize, transition, facts, ending, save, load, reset });
+  return Object.freeze({ VERSION, STORAGE_KEY, createState, normalize, migrate, transition, facts, ending, save, load, reset });
 });

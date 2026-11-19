@@ -1,8 +1,9 @@
 {
   "name": "torott-hid",
-  "version": "0.0.4",
+  "version": "1.0.0",
   "private": true,
-  "description": "A Törött híd – Nóra történetének interaktív, szöveges demója.",
+  "description": "A Törött híd – Nóra interaktív erkölcsi döntéstörténete.",
+  "appStatus": "Fejlesztés alatt",
   "scripts": {
     "version:sync": "node scripts/sync-version.cjs",
     "version": "node scripts/sync-version.cjs",

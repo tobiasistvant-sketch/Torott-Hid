@@ -10,12 +10,14 @@
     main.textContent = 'A történet egyik fájlja nem töltődött be. Frissítsd az oldalt.';
     return;
   }
-  const version = window.TorottHidVersion.version;
-  document.title = S.title + ' · ' + version + ' demó';
+  const version = window.TorottHidVersion.displayVersion;
+  const status = window.TorottHidVersion.status;
+  document.title = S.title + ' · v' + version + ' · ' + status;
   let storage = null;
   try { storage = window.sessionStorage; } catch (_) { /* The story still works in memory. */ }
   const loaded = E.load(storage, S);
   let state = loaded.state, storageAvailable = loaded.storageAvailable, recovered = loaded.recovered;
+  let migrated = !!loaded.migrated;
   const navigation = N.create({ engine: E, story: S, storage, initialState: state, recovered });
   state = navigation.current;
   const HISTORY_MARKER = 'torott-hid-navigation-v2';
@@ -25,7 +27,7 @@
   const comicViewerImage = document.getElementById('comic-viewer-image');
   const comicCanvas = document.getElementById('comic-canvas');
   const comicScroll = comicDialog.querySelector('.comic-viewer-scroll');
-  const comicEntries = Object.values(C.scenes).concat(Object.values(C.consequences).flatMap(Object.values));
+  const comicEntries = Object.values(C.scenes).concat(Object.values(C.consequences).flatMap(Object.values), Object.values(C.sceneVariants || {}).flatMap(Object.values));
   const comicById = new Map(comicEntries.map(entry => [entry.id, entry]));
   let comicZoom = 1, comicOpener = null, comicReturnScroll = null, originalBodyOverflow = '';
   const esc = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -33,6 +35,7 @@
   const button = (text, action, secondary, disabled) => '<button type="button" class="btn ' + (secondary ? 'btn-secondary' : 'btn-primary') + '" data-action="' + action + '"' + (disabled ? ' disabled' : '') + '>' + esc(text) + '</button>';
   const heading = (eyebrow, title) => '<header class="screen-heading"><p class="eyebrow">' + esc(eyebrow) + '</p><h1 id="screen-title" tabindex="-1">' + esc(title) + '</h1></header>';
   const scene = () => S.scenes[state.scene];
+  const choiceFor = (number, id) => Object.assign({}, S.scenes[number].choices.find(choice => choice.id === id), (U.choiceOverrides[number] || {})[id]);
   function blocksHTML(blocks) {
     return blocks.map(block => {
       const speaker = block.type === 'thought' ? 'Nóra · belső gondolat' : block.speaker;
@@ -53,7 +56,8 @@
       '<div class="comic-source-fallback" tabindex="-1" hidden>' + blocksHTML(sourceBlocks) + '</div></section>';
   }
   function sceneContent(blocks) {
-    const entry = C.scenes[state.scene];
+    const variants = (C.sceneVariants || {})[state.scene];
+    const entry = variants && E.facts(state).noContact ? variants.noContact : C.scenes[state.scene];
     if (!entry) return blocksHTML(blocks);
     const beforeIds = entry.beforeBlockIds || [], afterLines = entry.afterSourceLines || [];
     const before = blocks.filter(block => beforeIds.includes(block.id));
@@ -75,6 +79,12 @@
     frame.querySelector('.comic-source-fallback').hidden = false;
     frame.querySelector('.comic-fallback-message').hidden = false;
     if (restoreFocus && !comicDialog.open) frame.querySelector('.comic-source-fallback').focus({ preventScroll: true });
+  }
+  function bridgeHTML(id) {
+    const entry = C.bridges && C.bridges[id];
+    if (!entry) return '';
+    return '<figure class="bridge-illustration" data-bridge-id="' + esc(id) + '"><img class="bridge-image" src="' + esc(entry.src) + '" width="' + entry.width + '" height="' + entry.height + '" alt="' + esc(entry.alt) + '" loading="lazy" decoding="async">' +
+      '<figcaption class="bridge-fallback" role="status" hidden>' + esc(entry.alt) + '</figcaption></figure>';
   }
   function setComicZoom(value) {
     comicZoom = Math.max(1, Math.min(4, value));
@@ -122,16 +132,19 @@
     const image = event.target;
     if (!(image instanceof HTMLImageElement)) return;
     if (image.matches('img.comic-image')) revealComicFallback(image.closest('.comic').dataset.comicId);
-    else if (image === comicViewerImage && comicDialog.open) {
+    else if (image.matches('img.bridge-image')) {
+      image.hidden = true;
+      image.closest('.bridge-illustration').querySelector('.bridge-fallback').hidden = false;
+    } else if (image === comicViewerImage && comicDialog.open) {
       revealComicFallback(comicDialog.dataset.comicId);
       comicDialog.close();
     }
   }, true);
   function startScreen() {
-    return '<section class="hero"><div class="hero-copy"><p class="demo-badge">v' + esc(version) + ' demó</p>' +
+    return '<section class="hero"><div class="hero-copy"><p class="release-badge">v' + esc(version) + ' · ' + esc(status) + '</p>' +
       '<p class="eyebrow">XI. osztály · Református vallás</p><h1 id="screen-title" tabindex="-1">' + esc(S.title) + '</h1>' +
       '<p class="lead">' + esc(A.ui.intro) + '</p><p>' + esc(A.ui.role) + '</p><div class="actions">' + button('Belépek Nóra történetébe', 'start') + '</div>' +
-      '<p class="session-note">' + esc(A.ui.demo) + '</p></div><aside class="hero-aside"><div class="bridge-emblem" aria-hidden="true"></div><h2>Harag és megbocsátás</h2><p>Morális dilemmák az emberi kapcsolatokban.</p></aside></section>' +
+      '</div><aside class="hero-aside">' + bridgeHTML('H0') + '<h2>Harag és megbocsátás</h2><p>Morális dilemmák az emberi kapcsolatokban.</p></aside></section>' +
       '<section class="review-note"><p>' + esc(A.ui.care) + '</p><p>A haladás ezen a böngészőlapon újratöltés után is megmarad. A lap bezárásával a munkamenet véget ér.</p></section>';
   }
   function correctionPanel() {
@@ -148,55 +161,53 @@
       '<section class="scene-card"><p class="scene-time">' + esc(item.time) + '</p>' + sceneContent(U.sceneBlocks(state, A.blocksForScene(state, S, E))) + '</section>';
     if (!item.choices.length) return narrative + '<div class="actions">' + button('Tovább a történetben', 'next') + '</div>';
     return narrative + correctionPanel() + '<section class="choice-panel"><h2 class="choice-question">' + esc(item.question) + '</h2><div class="choice-list">' +
-      item.choices.map(choice => '<button type="button" class="choice-card" id="choice-' + choice.id + '" data-action="select" data-value="' + choice.id + '"><span class="choice-letter" aria-hidden="true">' + choice.id + '</span><span class="choice-text">' + esc(choice.label) + '</span></button>').join('') +
+      item.choices.map(original => choiceFor(item.id, original.id)).map(choice => '<button type="button" class="choice-card" id="choice-' + choice.id + '" data-action="select" data-value="' + choice.id + '"><span class="choice-letter" aria-hidden="true">' + choice.id + '</span><span class="choice-text">' + esc(choice.label) + '</span></button>').join('') +
       '</div></section>';
   }
   function feedbackScreen() {
-    const item = scene(), choice = item.choices.find(c => c.id === state.decisions[state.scene]);
+    const item = scene(), choice = choiceFor(state.scene, state.decisions[state.scene]);
     const entry = (C.consequences[state.scene] || {})[choice.id];
     const feedback = U.feedbackBlocks(state, A.feedbackBlocks(state, S, E));
     return heading(state.scene + '. jelenet · A történet folytatódik', item.title) + '<section class="consequence-card">' +
       (entry ? comicHTML(entry, feedback) : '<p class="selected-answer">' + esc(choice.label) + '</p><div class="consequence-body">' + blocksHTML(feedback) + '</div>') +
       '</section><div class="actions">' + button(state.scene === 6 ? 'A híd állapota' : 'Tovább a történetben', 'next') + '</div>';
   }
-  function confirmationScreen() {
-    return heading(state.scene + '. jelenet', 'Mielőtt közzétennéd') + '<section class="confirmation-card"><p>' + esc(A.ui.confirmation) + '</p>' +
-      '<article class="story-block thought"><p class="speaker">Nóra · belső gondolat</p><p class="block-text">' + esc(A.sourceExcerpts.confirmationThought.text) + '</p></article>' +
-      '<div class="actions"><button type="button" class="btn btn-secondary" data-action="confirm" data-value="false">Átgondolom még</button><button type="button" class="btn btn-primary" data-action="confirm" data-value="true">Közzéteszem</button></div></section>';
-  }
   function historyHTML() {
     return '<ol class="route-list">' + Object.entries(state.decisions).map(([number, id]) => {
-      const item = S.scenes[Number(number)], choice = item.choices.find(c => c.id === id);
+      const item = S.scenes[Number(number)], choice = choiceFor(Number(number), id);
       let note = '';
-      if ((number === '5' && id === 'D') || (number === '6' && id === 'E')) note = state.publications[number] ? 'A közzétételt megerősítetted.' : 'A tervezetet nem tetted közzé.';
+      if (number === '5' && id === 'D') note = U.publicationFact;
       if (number === '5' && state.publications[5] && state.corrected) note += ' Később visszavontad, és vállaltad érte a felelősséget.';
       return '<li><p class="route-scene">' + esc(number + '. ' + item.title) + '</p><p class="route-choice">' + esc(choice.label) + '</p>' + (note ? '<p class="summary-note">' + esc(note) + '</p>' : '') + '</li>';
     }).join('') + '</ol>';
   }
   function endingScreen() {
-    const item = R[E.ending(state)];
-    return '<header class="ending-header"><p class="eyebrow">7. jelenet · A híd állapota</p><div class="bridge-emblem ending-symbol" aria-hidden="true"></div><h1 id="screen-title" tabindex="-1">' + esc(item.title) + '</h1><p class="ending-subtitle">' + esc(item.subtitle) + '</p></header>' +
-      '<section class="reflection-card"><h2>Mi történt a te történetedben?</h2>' + paras(A.summary(state, E)) + '<blockquote class="reflection-quote">' + esc(item.quote) + '</blockquote></section>' +
+    const ending = E.ending(state), item = R[ending];
+    const questions = [U.endingQuestions.common, U.endingQuestions.byEnding[ending]];
+    return '<header class="ending-header"><p class="eyebrow">7. jelenet · A híd állapota</p><h1 id="screen-title" tabindex="-1">' + esc(item.title) + '</h1><p class="ending-subtitle">' + esc(item.subtitle) + '</p>' + bridgeHTML(ending) + '</header>' +
+      '<section class="reflection-card"><h2>Mi történt a te történetedben?</h2>' + paras(U.summary(state, A.summary(state, E), E)) + '<blockquote class="reflection-quote">' + esc(item.quote) + '</blockquote></section>' +
       '<section class="reflection-card"><h2>Mit tanulhatunk ebből?</h2>' + paras(item.moral) + '</section>' +
       '<section class="reflection-card"><h2>Bibliai iránytű</h2><div class="scripture-list">' + item.scriptures.map(verse => '<article><h3>' + esc(verse.reference) + ' – ' + esc(verse.label) + '</h3><p>' + esc(verse.explanation.text) + '</p></article>').join('') + '</div></section>' +
-      '<section class="reflection-card"><h2>Gondolkodj el!</h2><ol class="question-list">' + item.questions.map(question => '<li>' + esc(question) + '</li>').join('') + '</ol><p class="summary-note">A kérdéseket magadban vagy a fiktív történetről beszélgetve is átgondolhatod.</p></section>' +
+      '<section class="reflection-card"><h2>Gondolkodj el!</h2><ol class="question-list">' + questions.map(question => '<li>' + esc(question) + '</li>').join('') + '</ol><p class="summary-note">A kérdéseket magadban vagy a fiktív történetről beszélgetve is átgondolhatod.</p></section>' +
       '<section class="reflection-card"><h2>A döntési útvonalad</h2>' + historyHTML() + '</section><section class="review-note">' +
       blocksHTML(S.scenes[7].blocks) + '<p>' + esc(A.ui.finish) + '</p></section><div class="actions">' + button('Újrajátszom Nóra történetét', 'restart', true) + '</div>';
   }
   function updateNotice() {
     const note = document.getElementById('storage-note');
-    note.hidden = storageAvailable && !recovered;
+    note.hidden = storageAvailable && !recovered && !migrated;
     note.textContent = !storageAvailable ? 'Ebben a böngészőben nem tudjuk menteni a haladásodat. A játék működik, de újratöltéskor elveszhet a munkamenet.' :
-      recovered ? 'A korábbi mentés nem volt olvasható. Új történetet indítottunk.' : '';
+      recovered ? 'A korábbi mentés nem volt olvasható. Új történetet indítottunk.' :
+      migrated ? 'A történet frissült. A korábbi döntéseidet megőriztük; innen az új változat szerint folytathatod.' : '';
   }
   function render(moveFocus) {
-    const views = { start: startScreen, scene: sceneScreen, feedback: feedbackScreen, confirmation: confirmationScreen, ending: endingScreen };
+    const views = { start: startScreen, scene: sceneScreen, feedback: feedbackScreen, ending: endingScreen };
     main.innerHTML = views[state.view]();
     document.querySelector('[data-action="screen-back"]').disabled = !navigation.canBack;
     document.querySelector('[data-action="screen-forward"]').disabled = !navigation.canForward;
     main.dataset.view = state.view; main.dataset.scene = String(state.scene);
     if (state.view === 'ending') main.dataset.ending = E.ending(state); else delete main.dataset.ending;
     document.querySelectorAll('[data-app-version]').forEach(node => { node.textContent = 'v' + version; node.hidden = false; });
+    document.querySelector('[data-release-credit]').textContent = 'MI-támogatott fejlesztés · v' + version + ' · ' + status;
     document.querySelector('.restart-button').hidden = state.view === 'start';
     document.getElementById('chapters').innerHTML = S.scenes.map(item => '<li class="' + (state.view !== 'start' && item.id === state.scene ? 'current' : item.id < state.scene ? 'done' : '') + '"' + (state.view !== 'start' && item.id === state.scene ? ' aria-current="step"' : '') + ' aria-label="' + esc(item.id + '. ' + item.title) + '"><span class="chapter-number">' + item.id + '</span><span class="chapter-label">' + esc(item.title) + '</span></li>').join('');
     const value = state.view === 'ending' ? 8 : state.view === 'start' ? 0 : state.scene + (state.view === 'feedback' ? 1 : 0);
@@ -240,6 +251,7 @@
     closeOverlays();
     state = navigation.current;
     recovered = false;
+    migrated = false;
     saveProgress();
     writeBrowserEntry(navigation.entryId, false);
     render(true);
@@ -252,6 +264,7 @@
     else navigation.push(next);
     state = navigation.current;
     if (state.view !== 'start' || action.type === 'RESTART') recovered = false;
+    migrated = false;
     saveProgress();
     writeBrowserEntry(navigation.entryId, action.type === 'RESTART');
     render(true);
@@ -261,6 +274,7 @@
       closeOverlays();
       state = navigation.current;
       recovered = false;
+      migrated = false;
       saveProgress();
       render(true);
     } else if (event.state && event.state.app === HISTORY_MARKER) {
@@ -285,7 +299,6 @@
     else if (action === 'start') dispatch({ type: 'START' });
     else if (action === 'next') dispatch({ type: 'NEXT' });
     else if (action === 'select' && /^[A-E]$/.test(control.dataset.value || '')) dispatch({ type: 'SELECT', value: control.dataset.value });
-    else if (action === 'confirm') dispatch({ type: 'CONFIRM', value: control.dataset.value === 'true' });
     else if (action === 'correct') dispatch({ type: 'CORRECT' });
   });
   dialog.addEventListener('close', () => { if (dialog.returnValue === 'restart') dispatch({ type: 'RESTART' }); });

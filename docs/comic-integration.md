@@ -1,68 +1,54 @@
-# Képregény-integráció – 0.0.4 demó
+# Képregény- és hídintegráció – v1.0
 
-A 21 WebP a szerző által jóváhagyott, változatlan kép. A 0.0.2 kiadás tizenegy képe megmarad, a 0.0.4 további öt J3 és öt J4 képet kapcsol a játékhoz. Az alkalmazás nem generál, nem szerkeszt, nem vág és nem feliratoz újra illusztrációt. A képek eredeti oldalaránya és teljes vászna megmarad.
+A kiadás a meglévő 39 WebP-t illeszti a történethez: 33 képregényes jelenet-/következményképet és 6 hídillusztrációt. A korábbi 21 J0–J4 kép megmarad; a J5/J6 tizenkét jóváhagyott képe kapcsolódik hozzájuk. A hat híd a felhasználó integrációs kérése alapján szerepel, **egyedi végleges vizuális jóváhagyásra váró** sorozatként. Az alkalmazás nem generál, nem szerkeszt, nem vág és nem feliratoz újra képet.
 
-A jelenlegi [README_CODI.md](../design/references/README_CODI.md) és [manifest.json](../design/references/manifest.json) a J3 csomag forrása; a J4 jegyzék a repositoryban ténylegesen a [`docs/manifest_J4_0.0.4.json`](manifest_J4_0.0.4.json). A csomagok `kepek/...` útvonalait nem kell könyvtárszerkezetként létrehozni. A futásidejű, központi hozzárendelés a [`js/comics.js`](../js/comics.js) fájlban a tényleges `design/references/<fájlnév>.webp` útvonalakat használja. A kumulatív tartalmi előírásokat és a nyitott J–05 feladatot a [0.0.4 integrációs jegyzék](release-0.0.4.md) részletezi.
+A futásidejű hozzárendelés a [`js/comics.js`](../js/comics.js), a jóváhagyott szövegfrissítések a [`js/revisions.js`](../js/revisions.js) fájlban szerkeszthetők. A [teljes képjegyzék](../design/references/README.md) mind a 39 állományt felsorolja mérettel, tényleges elérési úttal és jóváhagyási státusszal. A J3 [manifestje](../design/references/manifest.json) mellett a J4 és J5/J6/híd jegyzék tényleges helye [`docs/manifest_J4_0.0.4.json`](manifest_J4_0.0.4.json), illetve [`docs/manifest_J5_J6_HID_0.0.4.json`](manifest_J5_J6_HID_0.0.4.json). A csomagok `kepek/...` útvonalai helyett a futó játék a `design/references/<fájlnév>.webp` állományokat használja.
 
-## Hozzárendelés és szöveges kíséret
+## Képválasztás és képen kívüli tartalom
 
-| Játékhelyzet | Képazonosító | Eredeti méret | Megjelenítési mód |
-| --- | --- | --- | --- |
-| 0. jelenet | `scene-0` | 1178 × 1335 | A képregény váltja a hosszú párbeszédkártyákat. |
-| 1. jelenet | `scene-1` | 1199 × 1312 | Közös folyosói képregény, utána a választások. |
-| 1/A | `scene-1-A` | 1199 × 1312 | Szöveg nélküli kép; az eredeti azonnali következmény szövege is szükséges. |
-| 1/B | `scene-1-B` | 1199 × 1312 | Szöveg nélküli kép; az eredeti azonnali következmény szövege is szükséges. |
-| 1/C | `scene-1-C` | 1199 × 1312 | A kikérdezés és a válaszok a képen olvashatók. |
-| 1/D | `scene-1-D` | 1199 × 1312 | A határ kimondása, az elhallgatás és Nóra magánéletről szóló mondata a képen szerepel. |
-| 2. jelenet | `scene-2` | 1122 × 1402 | Új J–03 felvezetés és a megőrzött szükséges döntésfüggő rész a közös kép előtt; a kijelölt két extra blokk kimarad. |
-| 2/A | `scene-2-A` | 1536 × 1024 | A válaszüzenet és Áron reakciója a képen olvasható. |
-| 2/B | `scene-2-B` | 1122 × 1402 | Az ígéret számonkérése és Áron válasza a képen olvasható. |
-| 2/C | `scene-2-C` | 1122 × 1402 | Az idő kérése és Áron válasza a képen olvasható. |
-| 2/D | `scene-2-D` | 1536 × 1024 | A jóváhagyott felirat, üzenetváltás és Nóra bizonytalansága változatlan. |
-| 3. jelenet | `scene-3` | 1448 × 1086 | J–06 monológ és külön J–07 narráció után a közös kép, majd a választások. |
-| 3/A | `scene-3-A` | 1536 × 1024 | A számonkérés és Nóra elfordulása a jóváhagyott képen szerepel. |
-| 3/B | `scene-3-B` | 1536 × 1024 | Nóra elmondja a fájdalmát, Áron meghallgatja. |
-| 3/C | `scene-3-C` | 1536 × 1024 | A beszélgetés elutasítása; nincs külön, önvádat sugalló utólagos monológ. |
-| 3/D | `scene-3-D` | 1536 × 1024 | Fenyegetés, még nem tényleges titokközlés. |
-| 4. jelenet | `scene-4` | 1448 × 1086 | J–10 monológ után a közös, jóváhagyott bocsánatkérő kép. |
-| 4/A | `scene-4-A` | 1122 × 1402 | Nóra nem vállalja át a jóvátétel megtervezését. |
-| 4/B | `scene-4-B` | 1536 × 1024 | Időkérés, Áron nem sürgeti; új monológ nélkül. |
-| 4/C | `scene-4-C` | 1536 × 1024 | A „bosszú” szó megmarad, a jövőbeli barátságról Nóra dönthet. |
-| 4/D | `scene-4-D` | 1536 × 1024 | A végleges `04D_ne_irj_tobbet_JOVAHAGYOTT.webp`; Áron nem küld záró választ. |
+| Helyzet | Megjelenítés |
+| --- | --- |
+| J0 | Közös titokmegosztó képregény, látható átirattal. |
+| J1 | Jóváhagyott felvezetés → közös folyosói kép → A/B/C/D választás → saját következménykép. |
+| J2 | Jóváhagyott felvezetés és megőrzött szükséges feltételes szöveg → közös üzenetkép → választás → saját következménykép. A kijelölt két fölösleges blokk kimarad. |
+| J3 | J2 szerinti J–06 monológ → külön J–07 narráció → közös kép → választás → 3A/3B/3C/3D kép. |
+| J4 | J3 szerinti J–10 monológ → közös bocsánatkérő kép → választás → 4A/4B/4C/végleges 4D kép. |
+| J5 | J4 szerinti J–13 monológ → ABC esetén közvetlen Áron-üzenet / D esetén közvetett osztálytársi hír → választás → 5A/5B/5C/5D kép. |
+| J6 | J5 szerinti narráció → belső monológ → közös, felirat nélküli osztálytermi kép → öt választás → 6A/6B/6C/6D/6E kép. |
+| Kezdőoldal | H0 ép híd, Nóra és Áron a két parton; nincs új didaktikus képaláírás. |
+| R1–R5 | Az adott befejezés hídillusztrációja és a dokumentumból átvett reflexiós kérdés. Külön új képregény nem jelenik meg. |
 
-A `layout` mező a közös, a képen kívüli szöveggel kísért, a néma következményképet és a párbeszédet helyettesítő következményképet különbözteti meg. Az 5–7. jelenetekhez nincs képbejegyzés, ezért szövegesek maradnak. Nincsenek helyettesítő képek vagy önálló galériaadatok.
+A közös jelenetkép, a J5 külön változata, a döntési következmény és a híd külön metaadat. A híd nem állapotmérő: a J0–J6 alatt nincs folyamatos hídjelzés vagy átvezető animáció. A változó narráció és monológ nem kerül rá a statikus képre.
 
-## Képen kívüli szöveg és a 0.0.4 pontosításai
+A J5 alapképe a `scenes[5]`, a kapcsolatfelvételi tiltás utáni változat a `sceneVariants[5].noContact` bejegyzés. A J6 közös képe a `scenes[6]`. A hat híd a `bridges.H0` és `bridges.R1`–`bridges.R5` kulcsokon cserélhető; azonosítóik `bridge-H0`, illetve `bridge-R1`–`bridge-R5`.
 
-A `beforeBlockIds` azokat a narrációkat és döntésfüggő monológokat azonosítja, amelyeknek a közös kép **előtt**, külön szövegként kell maradniuk. A 0.0.4 új szövegeit és a szándékos kivételeket a [`js/revisions.js`](../js/revisions.js) kezeli; nem kell törölni a régi forrásadatokat.
+A `beforeBlockIds` azonosítja a közös kép előtt, külön szövegként megmaradó blokkokat. J5 és J6 a korábbi döntésből választja ki a megfelelő tartalmat; visszalépés és új választás után a kép, a monológ és a következmény az új állapotból számolódik. Az eredeti `js/story.js` és `js/adaptations.js` forrásréteg nem veszti el a történeti szöveget, de a megjelenítésben a friss, jóváhagyott tartalom élvez elsőbbséget.
 
-A 2. jelenet közös képe már tartalmazza Áron teljes első üzenetét és Nóra „Tanácsot? Engedélyt nem kért tőlem…” kezdetű, állandó gondolatát. Ezek a kép egyetlen szöveges átiratában elérhetők; ezen felül nem jelennek meg még egyszer külön eredeti párbeszédkártyákban.
+## Szándékos állapotváltozás és kapcsolatfelvételi határ
 
-A J–03 szerint a 2. jelenetből kimarad a `s2-public` gondolat és Áron „Kérlek, ezt ne az egész osztály előtt beszéljük meg.” mondata. A korábbi `afterSourceLines: [136]` megjelenítési szabály ezért nem érvényes erre a jelenetre. A többi szükséges döntésfüggő szöveg megmarad, és az új J–03 felvezetés a kép fölött szerepel.
+J5–D választása valódi fiktív közlés, nem piszkozat. A régi megerősítő panel és a figyelmeztető belső gondolat nem jelenik meg. J6–E nyilvános vita, nem új titok publikálása. Az R-kimenet a teljes döntéstörténetet használja; a J5–D tényét nem lehet egy utolsó címkével eltüntetni. A régebbi kiadásból létező, kifejezett J6 korrekció külön cselekvés, nem új vagy automatikus R-oldali jóváírás.
 
-A 3. jelenetben a J–06 monológot a külön J–07 narráció, a közös nyitókép és a választások követik. A 4. jelenetben a J–10 monológ után a J–11 közös bocsánatkérő kép következik. Egyik monológ sem kerül rá a képre; a képeket az alkalmazás nem látja el új címmel vagy szereplőnévvel.
+J4–D után a J5 közös nyitása közvetett hír: Áron nem küld személyes üzenetet. Ha a játékos a jóváhagyott J5 A/B/C válaszok egyikével Nóra új, korlátozott kapcsolatfelvételét választja, az annak megfelelő válasz különbözik a tiltott, Áron által kezdeményezett megkereséstől. E határt a nyitóképek, a szöveg és az állapot együtt tartja meg.
 
-## Átiratok és tartalék szöveg
+A J–20 szerinti J5–D → J6 A/B/C-zárolás és az R4/R5 új plusz gomb nincs aktiválva; mind az öt J6 választás megmarad. Az új történeti szál vagy automatikus helyreállítás nem része ennek a kiadásnak.
 
-Minden képhez magyar `alt`, eredeti szélesség/magasság, ellenőrzőösszeg és külön szerkeszthető `transcript` tartozik. Az átirat a jóváhagyott képen olvasható, történetileg lényeges szöveget követi; nem másolja a telefon billentyűzetének vagy kezelőszerveinek minden betűjét. A képen előbb megírt, majd elküldve megismételt azonos üzenet egyszer szerepel az átiratban. A szöveg nélküli képeknél rövid képleírás adja át a látott cselekvést.
+## Átirat, képhiba és képi sajátosságok
 
-A teljes eredeti történetszöveg a `js/story.js` és `js/adaptations.js` adatrétegében változatlanul megmarad. A jóváhagyott friss jelenetek és következmények a `js/revisions.js` külön rétegéből kapják a tartalmat, képhiba esetén is. A J–01 szerint az átirat alapból látható és képernyőolvasóval hozzáférhető, külön lenyitás nélkül. Az átiraton felül nem kerül mellé második teljes párbeszédkártya vagy ismételt válaszidézet.
+Minden képregényhez magyar alternatív leírás, eredeti méret, ellenőrzőösszeg és szerkeszthető átirat tartozik. Az átirat a történetileg lényeges képi szöveget közvetíti, a telefon kezelőszerveinek betűit nem másolja. A képen megírt, majd elküldve megismételt üzenet egy szöveges példányban szerepel. Az átirat alapból látható, képernyőolvasóval elérhető; nincs külön lenyitás. Ezen felül nem jelenik meg második teljes párbeszédkártya vagy ismételt válaszidézet.
 
-A képregényátirat tudatosan követi a jóváhagyott képi sajátosságokat:
+Képhiba esetén az adott jelenethez vagy választáshoz tartozó, aktuális szöveges tartalék marad használható; a döntések és a mentés nem változnak. A híd helyzetét alternatív leírás közvetíti; nem találunk ki pótló illusztrációt vagy új erkölcsi feliratot.
 
-- A 0. jelenet utolsó gondolata a képen „Áronban mindig bízom.”; az eredeti forgatókönyv múlt idejű mondata ettől még változatlanul megmarad a forrásadatokban.
-- A 2/A, 2/B és 2/C felső narrációja az elfogadott „Nóra keményen megfogalmazza fájdalmát.” szöveg.
-- A 2/D képen látható „Rendben. Nem sürgetlek.” válasz változtatás nélkül szerepel az átiratban.
-- Az 1/D képen látható „Ez nem pletyka téma.” megfogalmazás képi szövegét az integráció nem javítja át.
+A korábbi képi sajátosságok megmaradnak: a J0 „Áronban mindig bízom.” gondolata, a J2 A/B/C azonos felső narrációja, a J2D elfogadott „Rendben. Nem sürgetlek.” válasza és a J1D „Ez nem pletyka téma.” mondata nem kap önkényes javítást. A J4D a végleges `04D_ne_irj_tobbet_JOVAHAGYOTT.webp`; Áron azon nem válaszol. A J3C önvád nélküli, a J3D fenyegetése nem lesz automatikusan közzététel.
 
-Ezek nem új javítási kérések: a jóváhagyott képek szövegei változatlanok maradnak.
+**J–05 nyitott:** a J2B nagy fehér területének kijavítására nincs jóváhagyott cserekép; a fájl változatlan.
 
-**J–05 nyitott:** a 2/B kép nagy, üres fehér területe még nem kapott jóváhagyott grafikai javítást. A 0.0.4 integráció ezt a fájlt is változatlanul hagyja.
+## Mobil és adatellenőrzés
 
-## Adatellenőrzés
+A képek eredeti oldalarányukkal, teljes vászonnal jelennek meg, panelek és szövegbuborékok levágása nélkül. A képregény nagyítható; saját görgethető nézete bezárás után visszaadja a történeti állapotot és fókuszt. Az alapoldal nem kap vízszintes görgetést. A későbbi képek nem töltődnek le előre egyszerre.
 
 ```sh
-node --test tests/comics.test.js
+node --test tests/comics.test.js tests/revisions.test.js
+npm run test:browser
 ```
 
-A teszt a korábbi tizenegy és a J3/J4 csomagok öt-öt képét, összesen 21 lapos útvonalat ellenőriz; vizsgálja a WebP-fejlécet, a binárisból kiolvasott eredeti képméretet, a jóváhagyott fájl ellenőrzőösszegét, az egyedi azonosítókat és az alternatív szövegeket. Külön ellenőrzi a képen kívüli monológok helyét meghatározó adatokat, a képfeliratok elfogadott sajátosságait és az 5–7. jelenetek szöveges határát. A tényleges képbetöltést, a nyolc új előzményfüggő monológot és nyolc következményágat, a nagyítást és a tartalékmegjelenítést a böngészős integrációs tesztek vizsgálják. A tényleges futtatási eredményeket az átadási beszámoló rögzíti.
+Az adatellenőrzés a korábbi és új fájlokat, a manifesteket, méreteket, ellenőrzőösszegeket, alternatív szöveget, jóváhagyási státuszt és a kép előtti blokkokat vizsgálja. A böngészőtesztek a valódi képbetöltést, a 80 J4→J5→J6 kombinációt, az átiratot, képhibát, nagyítást, navigációt, R-képet és láblécet ellenőrzik. A végrehajtott futás számát és eredményét a [v1.0 kiadási jegyzék](release-v1.0.md), illetve az átadási beszámoló külön rögzíti; a felsorolás önmagában nem tesztsiker.

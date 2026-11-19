@@ -6,12 +6,12 @@ const adaptations = require('../js/adaptations.js');
 const revisions = require('../js/revisions.js');
 const approvedApology = 'Nóra, sokat gondolkodtam azon, ami történt. Megígértem, hogy nem mondom el senkinek, mégis megtettem. Nem Lili hibája, hogy megbíztam benne a titkoddal. Én szegtem meg az ígéretemet. Sajnálom, hogy megbántottalak. Nem várom, hogy most válaszolj, és azt sem, hogy azonnal megbocsáss.';
 const KEY = require('../js/engine.js').STORAGE_KEY;
-const versionLabel = 'v' + require('../package.json').version;
+const versionLabel = 'v1.0';
 const active = page => page.locator('#main-content');
 const action = (page, name) => page.locator(`[data-action="${name}"]`);
 const state = page => page.evaluate(key => JSON.parse(sessionStorage.getItem(key)), KEY);
 const scene = number => story.scenes.find(item => item.id === number);
-const choice = (number, letter) => scene(number).choices.find(item => item.id === letter);
+const choice = (number, letter) => ({ ...scene(number).choices.find(item => item.id === letter), ...((revisions.choiceOverrides[number] || {})[letter] || {}) });
 
 async function phase(page, view, number) {
   await expect(active(page)).toHaveAttribute('data-view', view);
@@ -35,32 +35,25 @@ async function select(page, number, letter) {
   await phase(page, 'scene', number);
   await expect(page.locator('button.choice-card')).toHaveCount(scene(number).choices.length);
   await expect(action(page, 'choose')).toHaveCount(0);
-  for (const item of scene(number).choices) await expect(page.locator(`button#choice-${item.id}`)).toContainText(item.label);
+  for (const item of scene(number).choices) await expect(page.locator(`button#choice-${item.id}`)).toContainText(choice(number, item.id).label);
   // The answer card itself commits the choice; no separate confirmation button.
   await page.locator('#choice-' + letter).click();
 }
-async function confirm(page, number, publish) {
-  await phase(page, 'confirmation', number);
-  await expect(action(page, 'confirm').filter({ hasText: 'Átgondolom még' })).toBeVisible();
-  await page.locator(`[data-action="confirm"][data-value="${publish}"]`).click();
-  await phase(page, number === 6 && !publish ? 'scene' : 'feedback', number);
-}
-async function decide(page, number, letter, publish = true) {
+async function decide(page, number, letter) {
   await select(page, number, letter);
-  if ((number === 5 && letter === 'D') || (number === 6 && letter === 'E')) await confirm(page, number, publish);
-  else await phase(page, 'feedback', number);
+  await phase(page, 'feedback', number);
+  await expect(action(page, 'confirm')).toHaveCount(0);
   await expect(page.locator('.consequence-card')).toBeVisible();
-  if (number <= 4) await expect(active(page).locator('.comic')).toHaveCount(1);
-  else await expect(active(page)).toContainText(choice(number, letter).label);
+  await expect(active(page).locator('.comic')).toHaveCount(1);
   expect((await state(page)).decisions[number]).toBe(letter);
   await expect(active(page)).not.toContainText('Ezt választottad');
   await expect(active(page).locator('.screen-heading .eyebrow')).toContainText('A történet folytatódik');
   await action(page, 'next').click();
   await phase(page, number === 6 ? 'ending' : 'scene', number + 1);
 }
-async function through(page, route, last = 6, publications = {}) {
+async function through(page, route, last = 6) {
   await begin(page);
-  for (let number = 1; number <= last; number++) await decide(page, number, route[number - 1], publications[number] ?? true);
+  for (let number = 1; number <= last; number++) await decide(page, number, route[number - 1]);
 }
 async function ending(page, id, route) {
   await phase(page, 'ending', 7);
@@ -73,7 +66,8 @@ async function ending(page, id, route) {
     await expect(active(page)).toContainText(verse.explanation.text);
   }
   await expect(page.locator('.question-list li')).toHaveCount(2);
-  for (const question of item.questions) await expect(page.locator('.question-list')).toContainText(question);
+  await expect(page.locator('.question-list')).toContainText('Mit jelképezhet a híd Nóra és Áron történetében?');
+  await expect(page.locator('.question-list')).toContainText(bridgeQuestions[id]);
   await expect(page.locator('.route-list li')).toHaveCount(6);
   for (let number = 1; number <= 6; number++) await expect(page.locator('.route-list')).toContainText(choice(number, route[number - 1]).label);
   await expect(page.locator('#progress')).toHaveAttribute('aria-valuenow', '8');
@@ -87,6 +81,13 @@ async function noDirectAronMessage(page) {
   await expect(direct).toHaveCount(0);
   await expect(active(page)).not.toContainText('Szóltam Lilinek, hogy nem lett volna szabad továbbadni. Ha szeretnéd, nyilvánosan is vállalom, hogy tőlem indult.');
 }
+const bridgeQuestions = {
+  R1: 'Mit mutat a képen az, hogy mindketten elindultak a másik felé? Elég-e egy bocsánatkérés a bizalom helyreállításához?',
+  R2: 'Miért állhatnak meg a szereplők egy félig megjavított híd két végén? Mi segíthet abban, hogy a kapcsolat ne siettetve, hanem biztonságosan alakuljon?',
+  R3: 'Ha a híd járható, miért dönthetnek mégis a külön út mellett? Miben különbözik a megbocsátás a kibéküléstől?',
+  R4: 'Mit jelenthet a lezárt kapu? Mikor fontos elfogadni a másik ember által kijelölt határt?',
+  R5: 'Milyen döntések vezettek a híd összeomlásához? Minden összeomlott hidat újjá kell építeni?'
+};
 const routes = [
   { id: 'R1', route: ['C', 'B', 'A', 'A', 'A', 'A'] },
   // The same final A has a different result when earlier repair stays uncertain.
@@ -106,8 +107,7 @@ for (const { id, route } of routes) {
     expect(saved.scene).toBe(7); expect(saved.view).toBe('ending');
     expect(saved.decisions).toEqual(Object.fromEntries(route.map((letter, index) => [index + 1, letter])));
     if (id === 'R5') {
-      expect(saved.publications).toEqual({ 5: true, 6: true });
-      await expect(active(page)).toContainText('később');
+      expect(saved.publications).toEqual({ 5: true });
       await expect(active(page)).not.toContainText('Áron mentegetőzött, nem vállalt felelősséget');
     }
     await page.reload(); await ending(page, id, route);
@@ -122,12 +122,16 @@ for (const repair of ['A', 'B', 'C', 'D']) {
     await phase(page, 'scene', 5); await noDirectAronMessage(page);
     await expect(active(page)).toContainText('osztálytárs');
     await select(page, 5, repair);
-    if (repair === 'D') await confirm(page, 5, false);
-    await phase(page, 'feedback', 5); await noDirectAronMessage(page);
+    await phase(page, 'feedback', 5);
+    expect(engine.facts(await state(page)).noContact).toBe(true);
+    if (['A', 'C'].includes(repair)) {
+      const firstSpeaker = active(page).locator('.comic-transcript .story-block.speech .speaker').first();
+      await expect(firstSpeaker).toContainText('Nóra');
+    }
     await action(page, 'next').click();
     await phase(page, 'scene', 6); await noDirectAronMessage(page);
     expect((await state(page)).decisions[4]).toBe('D');
-    await decide(page, 6, 'D'); await ending(page, 'R4', route);
+    await decide(page, 6, 'D'); await ending(page, repair === 'D' ? 'R5' : 'R4', route);
   });
 }
 
@@ -145,30 +149,33 @@ test('Az első reakció láthatóan megváltoztatja a későbbi jelenet szöveg�
   await other.close();
 });
 
-test('A fenyegetés és az el nem küldött tervezet nem válik tényleges megtorlássá', async ({ page }) => {
-  const route = ['C', 'B', 'D', 'C', 'D', 'C'];
-  await through(page, route, 5, { 5: false });
+test('A fenyegetés önmagában nem válik tényleges titokközléssé', async ({ page }) => {
+  const route = ['C', 'B', 'D', 'C', 'C', 'C'];
+  await through(page, route, 5);
   const saved = await state(page);
-  expect(saved.publications).toEqual({ 5: false });
-  expect(saved.view).toBe('scene'); expect(saved.scene).toBe(6);
+  expect(saved.publications).toEqual({});
+  expect(engine.facts(saved).revengeThreat).toBe(true);
+  expect(engine.facts(saved).retaliation).toBe(false);
   await decide(page, 6, 'C'); await ending(page, 'R3', route);
 });
 
-test('A 6/E közzététel előtt visszaléphető, és új jövőbeli döntés választható', async ({ page }) => {
+test('A 6/E nyilvános vita nem új titokközlés, és a döntés visszalépés után cserélhető', async ({ page }) => {
   const route = ['C', 'B', 'A', 'A', 'A', 'C'];
   await through(page, route, 5);
-  await select(page, 6, 'E');
+  await select(page, 6, 'E'); await phase(page, 'feedback', 6);
   expect((await state(page)).publications).toEqual({});
-  await page.reload(); await phase(page, 'confirmation', 6);
-  await confirm(page, 6, false);
+  expect(engine.facts(await state(page)).finalPublicConflict).toBe(true);
+  expect(engine.facts(await state(page)).retaliation).toBe(false);
+  await expect(action(page, 'confirm')).toHaveCount(0);
+  await page.reload(); await phase(page, 'feedback', 6);
+  await action(page, 'screen-back').click(); await phase(page, 'scene', 6);
   expect((await state(page)).decisions[6]).toBeUndefined();
-  await expect(action(page, 'choose')).toHaveCount(0);
   await decide(page, 6, 'C'); await ending(page, 'R3', route);
 });
 for (const corrected of [false, true]) {
   test('A korábbi tényleges közzététel ' + (corrected ? 'visszavonható, felelősségvállalással' : 'következménye nem törlődik az utolsó C választól'), async ({ page }) => {
     const route = ['C', 'B', 'A', 'A', 'D', 'C'];
-    await through(page, route, 5, { 5: true });
+    await through(page, route, 5);
     await expect(action(page, 'correct')).toBeVisible();
     if (corrected) {
       await action(page, 'correct').click();
@@ -201,7 +208,7 @@ test('Újratöltés megőrzi a következményt, az újrajátszás tiszta állapo
   await action(page, 'restart').last().click();
   await page.locator('#reset-dialog button[value="restart"]').click();
   await phase(page, 'start', 0);
-  expect(await state(page)).toEqual({ version: 1, view: 'start', scene: 0, decisions: {}, publications: {}, corrected: false });
+  expect(await state(page)).toEqual(engine.createState());
   expect(await page.evaluate(() => sessionStorage.getItem('another_app'))).toBe('preserve');
   await action(page, 'start').click(); await action(page, 'next').click();
   await expect(page.locator('button.choice-card')).toHaveCount(4);
@@ -381,7 +388,7 @@ test('A képregény nagyítása olvasható és bezárható, a döntési állapot
 test('A történet csak az aktuális képregényt tölti be, a későbbi jeleneteket nem tölti előre', async ({ page }) => {
   const requested = [];
   page.on('request', request => {
-    if (request.url().includes('/design/references/') && request.url().endsWith('.webp')) requested.push(new URL(request.url()).pathname);
+    if (/\/design\/references\/[0-6]/.test(request.url()) && request.url().endsWith('.webp')) requested.push(new URL(request.url()).pathname);
   });
   await page.goto('/');
   expect(requested).toEqual([]);

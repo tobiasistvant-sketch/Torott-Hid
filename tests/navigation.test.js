@@ -31,7 +31,6 @@ function snapshotsFor(config) {
   for (let number = 1; number <= 6; number++) {
     if (number === 6 && config.corrected) step('CORRECT');
     step('SELECT', config.choices[number]);
-    if (state.view === 'confirmation') step('CONFIRM', config.publications[number]);
     step('NEXT');
   }
   return snapshots;
@@ -113,7 +112,7 @@ test('A régi, egyetlen pillanatképes mentés minden szakasza az állapotgéppe
   const configs = [
     ...Object.values(routes),
     { choices: { 1: 'A', 2: 'B', 3: 'D', 4: 'A', 5: 'D', 6: 'C' }, publications: { 5: true }, corrected: true },
-    { choices: { 1: 'C', 2: 'B', 3: 'A', 4: 'D', 5: 'D', 6: 'D' }, publications: { 5: false }, corrected: false }
+    { choices: { 1: 'C', 2: 'B', 3: 'A', 4: 'D', 5: 'D', 6: 'D' }, publications: { 5: true }, corrected: false }
   ];
   let checked = 0;
   for (const config of configs) {
@@ -170,6 +169,31 @@ test('Sérült főmentés után a régi előzmény és böngészőazonosító ne
   assert.equal(fresh.trail.length, 1);
   assert.notEqual(fresh.runId, old.runId);
   assert.equal(fresh.restore(old.entryId), false);
+});
+
+test('Régi tervezet migrálása új, érvényes előzményt épít, a mentett jövő nem teszi közzé a titkot', () => {
+  const storage = memory();
+  const snapshots = snapshotsFor({ choices: { 1: 'C', 2: 'B', 3: 'A', 4: 'D', 5: 'D', 6: 'C' }, corrected: false });
+  const atFive = snapshots.find(state => state.scene === 5 && state.view === 'scene');
+  const draft = snapshots.find(state => state.scene === 5 && state.view === 'feedback');
+  const legacy = { ...draft, version: 1, publications: { 5: false } };
+  storage.setItem(Engine.STORAGE_KEY, JSON.stringify(legacy));
+  storage.setItem(Navigation.STORAGE_KEY, JSON.stringify({
+    version: 1, runId: 'previous-playthrough', position: 1, nextId: 2,
+    entries: [{ id: 0, snapshot: { ...atFive, version: 1 } }, { id: 1, snapshot: legacy }]
+  }));
+  const loaded = Engine.load(storage, story);
+  assert.equal(loaded.migrated, true);
+  assert.deepEqual(loaded.state, atFive);
+  const navigation = create(storage, loaded.state, loaded.recovered);
+  assert.notEqual(navigation.runId, 'previous-playthrough');
+  assert.equal(navigation.canBack, true);
+  assert.equal(navigation.canForward, false);
+  assert.deepEqual(navigation.current, atFive);
+  assert.equal(Engine.facts(navigation.current).retaliation, false);
+  assert.ok(navigation.trail.every(entry => entry.snapshot.version === Engine.VERSION));
+  navigation.save();
+  assert.deepEqual(JSON.parse(storage.getItem(Engine.STORAGE_KEY)), atFive);
 });
 
 test('Újrakezdés külön munkamenet-azonosítót és tiszta előzményt indít, más tárolókulcsot megőriz', () => {

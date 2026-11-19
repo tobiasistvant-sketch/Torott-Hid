@@ -1,42 +1,41 @@
-# A Törött híd – grafikai stílus (jóváhagyott irány)
+# A Törött híd – grafikai stílus és v1.0 integráció
 
-## Stílus
-- Hagyományos **színes ceruzás** illusztráció, látható papír- és ceruzatextúrával.
-- Meleg, élénk, harmonikus színek: őszi aranysárga, puha kék, rózsás-lila, természetes barna.
-- **Nem fotórealisztikus, nem manga és nem anime**; kézzel rajzolt történetmesélő képregényhangulat.
-- Nóra és Áron következetes megjelenésű kamaszszereplők, természetes mimikával.
-- Keretezett, elkülönülő képregénypanelek; történetmesélő gesztusok és tekintetek.
+## Közös arculat
 
-## Szövegek a képen
-- **Csak a párbeszéd szövege legyen a beszédbuborékokban.** Nem szerepelnek „Nóra:”, „Áron:” vagy egyéb névcímkék.
-- A gondolatok gondolatfelhőbe kerülnek, „Nóra · belső gondolat” felirat nélkül.
-- A buborék csúcsa vagy a gondolatfelhő pontjai egyértelműen mutassák, ki beszél/gondolkodik.
-- A magyar szöveg ékezeteit, írásjeleit és tartalmát a forgatókönyv alapján ellenőrizni kell.
-- A panelolvasási sorrend mobilon is egyértelmű, a betűméret olvasható.
+A meglévő oktatási játékcsalád sötétkék, meleg törtfehér és türkiz felületei, a betűkészletek, a választási kártyák és a reszponzív szerkezet megmaradnak. A v1.0 nem általános UI-újratervezés.
 
-## A 0.0.4 demó jóváhagyott képanyaga
+A jelenlegi kiadás megjelenített verziója **v1.0**, státusza **Fejlesztés alatt**. A lábléc a meglévő tantárgyi/adatkezelési tájékoztatás alatt két visszafogott sort kap:
 
-A repositoryban már megtalálható a szerző által jóváhagyott **21 WebP-kép** a `design/references/` mappában. A korábbi tizenegy kép megmarad; a 3. és 4. jelenethez öt-öt meglévő kép kerül be. A korábban tervezett `nora-aron-0-jelenet-elfogadott.png` nem az alkalmazásban használt útvonal; a 0. jelenet tényleges képe `design/references/00_jelenet_a_titok_kozosen.webp`.
+```text
+Koncepció és fejlesztés: Tóbiás István Tamás
+MI-támogatott fejlesztés · v1.0 · Fejlesztés alatt
+```
 
-A teljes fájljegyzék és a jelenetenkénti hozzárendelés a [referenciák README-jében](references/README.md), a J3 csomag beillesztési útmutatója a [README_CODI.md](references/README_CODI.md) fájlban található. A J4 csomagjegyzék tényleges helye a [`docs/manifest_J4_0.0.4.json`](../docs/manifest_J4_0.0.4.json). A csomagok `kepek/...` útvonalai helyett a játék a GitHubon ténylegesen meglévő, egyetlen mappában található WebP-ket tölti be.
+A szerzői sorok normál, körülbelül 400-as betűsúlyúak, a főtartalomnál kisebbek, semleges színűek és mérsékelt térközzel állnak. Nem címek, badge-ek vagy gombok. Nem tartalmaznak félkövér kiemelést. Mobilon és a támogatott színsémában megfelelő kontraszttal olvashatók maradnak; e változtatás a láblécre korlátozódik.
 
-A 0. jelenet ötpanelezett képregénye az iskola melletti titokmegosztást és az ígéretet mutatja. Nóra felkötött vörösesbarna hajú, rózsás-lila kapucnis felsőt visel; Áron barna hajú, kék kapucnis felsős kamasz. Az 1–4. jelenetnek közös alapképe, majd A/B/C/D döntési következményképei vannak.
+## Képi stílus
 
-A képek konkrét, szerzőileg jóváhagyott feliratait az általános stíluselvek alapján sem írjuk át. A 2B és 2C kép azonos felső narrációja szándékos; a 2D kép a jelenlegi felirataival elfogadott.
+- Jól látható, hagyományos színesceruza-vonások, kézzel satírozott papír- és ceruzatextúra.
+- Meleg, harmonikus színek: őszi aranysárga, puha kék, rózsás-lila és természetes barna.
+- Nóra szeplős, vörösesbarna kontyos középiskolás lila-rózsaszín felsőben; Áron barna hajú kamasz, kék felsővel.
+- Természetes mimika és testbeszéd, követhető panelolvasási sorrend. Nem fotórealisztikus, manga- vagy animehatású átrajzolás.
+- A beszédbuborék előtt nincs „Nóra:”/„Áron:” névcímke, a gondolatfelhőn nincs „Nóra · belső gondolat” felirat. A chat fejlécében a partner neve természetesen megjelenhet.
+- A jóváhagyott képek nem kapnak új jelenetcímet, ráhelyezett feliratot vagy erkölcsi értékelést. A J6 közös osztálytermi képe felirat nélküli.
 
-A J4–D végleges javított változata a `04D_ne_irj_tobbet_JOVAHAGYOTT.webp`: Áron sötét tokos telefonján Nóra neve és profilképe látszik, Nóra készüléke lila tokos. A kép nem cserélhető vissza korábbi változatra, és nem kerül rá új cím vagy szereplőcímke. A 2B üres fehér részének J–05 szerinti javítása továbbra is külön, nyitott grafikai feladat.
+## Meglévő képanyag
 
-## Beillesztési és mobilos alapelvek
+A `design/references/` alatt 39 meglévő WebP szerepel: a korábbi 21 J0–J4 kép, 12 jóváhagyott J5/J6 képregény és 6, egyedi végleges vizuális jóváhagyásra váró hídillusztráció. A felhasználó a teljes feltöltött csomag beillesztését kérte; ez nem jelenti a hat híd egyenkénti végleges vizuális lezárását. A hídmetaadatok külön, könnyen cserélhető hozzárendelésben maradnak.
 
-- A képregény a meglévő történet része, nem külön galéria vagy diavetítés.
-- A döntési kártyák, a fejléc, a haladásjelző és a közös alkalmazáscsalád arculata megmarad.
-- A J–01 szerinti átirat alapból látható, külön nyitógomb nélkül. Az átiraton felül nincs újabb, ugyanazt ismétlő teljes párbeszédkártya vagy válaszidézet; képhiba esetére működő tartalék marad.
-- A külön felvezetések és a 3–4. jelenet döntésfüggő Nóra-monológjai külön szöveges elemként, a közös kép fölött jelennek meg; nem kerülnek rá a statikus képre. A 2. jelenetből csak a J–03-ban kijelölt fölösleges blokkok maradnak el.
-- Az eredeti oldalarányt megtartjuk, panelek és beszédbuborékok levágása nélkül. Telefonon kattintással vagy koppintással nyitható nagyított nézet; a bezárás a történethez vezet vissza.
-- A későbbi képek nem töltődnek be egyszerre; az aktuális történeti pont határozza meg a szükséges illusztrációt.
+A teljes lista a [referenciák README-jében](references/README.md) található. A J3 manifest a `design/references/manifest.json`, a J4 és J5/J6/híd jegyzék ténylegesen a `docs/manifest_J4_0.0.4.json` és `docs/manifest_J5_J6_HID_0.0.4.json`. A csomagok `kepek/...` útvonalai helyett a játék a tényleges, lapos GitHub-útvonalakat használja.
 
-## Feladatmegosztás és további jelenetek
+**Codi/Codex nem generál, nem szerkeszt és nem rajzol újra képeket.** A feladat a meglévő állományok változatlan beillesztése. A J4–D végleges változata a `04D_ne_irj_tobbet_JOVAHAGYOTT.webp`. A J2–B nagy fehér részének J–05 szerinti javítása továbbra is külön, nyitott grafikai feladat.
 
-**Az illusztrációkat a szerző és a ChatGPT képgenerálással külön készíti és hagyja jóvá. Codi/Codex nem generálhat, szerkeszthet vagy rajzolhat újra képeket.** A 0.0.4 képi feladata a már jóváhagyott fájlok változatlan beillesztése, reszponzív megjelenítése és a meglévő döntési rendszerhez kapcsolása.
+## Elhelyezés és olvashatóság
 
-A 0.0.4 jóváhagyott szövegfrissítései külön adatrétegben kapnak helyet; a kapcsolatfelvételi határ, a döntési logika, a navigáció és az öt reflexiós lezárás működése megmarad. Az 5–7. jelenet egyelőre szöveges; oda csak további szerzőileg jóváhagyott képanyag készülte után kerülhet képregény. Addig nem használunk helyettesítő képet vagy illusztrációt.
+A J0–J6 képei a történet részei, nem galériát vagy diavetítést alkotnak. A döntésfüggő monológok és a jóváhagyott felvezetések külön szöveges komponensként maradnak a kép előtt. J5 két nyitóképe a J4 döntéséhez illeszkedik, J6 közös képe elé a J5 szerinti narráció és monológ kerül.
+
+Hídillusztráció csak a kezdőképernyőn és az R1–R5 végoldalon jelenik meg. Nincs folyamatos hídmérő vagy hídanimáció a jelenetek között. Az R-oldalakon a híd és a testbeszéd hordozza a képi helyzetet; nem kerül mellé külön új képregény vagy kitalált didaktikus képaláírás. A reflexiós kérdések a [jóváhagyott R-dokumentumból](../docs/04_R_reflexios_kerdesek.md) származnak.
+
+Az átirat kattintás nélkül látható és hozzáférhető, ezen felül nincs még egy teljesen azonos párbeszédkártya. A képek eredeti oldalaránya és teljes vászna megmarad. Mobilon használható nagyított nézet segíti a képi szöveg olvasását; a bezárás visszaadja a történeti állapotot és fókuszt. Csak az aktuális állapothoz tartozó kép töltődik be. Képhibánál működő szöveges tartalék marad.
+
+A J–20 szerint felvetett J6-zárolás és R4/R5 plusz gomb továbbra is terv: a kiadás nem jelenít meg új zároló vagy helyreállító felületet. A konkrét, még nem aktivált javaslatot a [v1.0 jegyzék](../docs/release-v1.0.md#nyitott-tervek-konkrét-javaslatok-aktiválás-nélkül) tartalmazza.

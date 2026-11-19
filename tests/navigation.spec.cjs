@@ -24,17 +24,13 @@ async function begin(page) {
   await action(page, 'next').click();
   await phase(page, 'scene', 1);
 }
-async function select(page, scene, choice, publish = true) {
+async function select(page, scene, choice) {
   await phase(page, 'scene', scene);
   await page.locator('#choice-' + choice).click();
-  if ((scene === 5 && choice === 'D') || (scene === 6 && choice === 'E')) {
-    await phase(page, 'confirmation', scene);
-    await page.locator(`[data-action="confirm"][data-value="${publish}"]`).click();
-  }
-  await phase(page, scene === 6 && choice === 'E' && !publish ? 'scene' : 'feedback', scene);
+  await phase(page, 'feedback', scene);
 }
-async function advance(page, scene, choice, publish = true) {
-  await select(page, scene, choice, publish);
+async function advance(page, scene, choice) {
+  await select(page, scene, choice);
   await action(page, 'next').click();
   await phase(page, scene === 6 ? 'ending' : 'scene', scene + 1);
 }
