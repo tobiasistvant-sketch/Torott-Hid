@@ -65,7 +65,7 @@ test('Mind az öt befejezésnek van ellenőrizhető, végigjátszható tesztútv
 });
 
 test('A J3 fenyegetés nem közzététel; J5–D viszont azonnal megtörtént nyilvános tett', () => {
-  const config = { choices: { ...routes.R1.choices, 3: 'D', 5: 'D', 6: 'B' }, corrected: false };
+  const config = { choices: { ...routes.R1.choices, 3: 'D', 5: 'D', 6: 'D' }, corrected: false };
   const before = play(config, 5);
   assert.equal(Engine.facts(before).revengeThreat, true);
   assert.equal(Engine.facts(before).retaliation, false);
@@ -92,17 +92,20 @@ test('J6–E osztály előtti konfliktus, nem egy második titokközlés vagy me
   assert.equal(action(confronted, 'NEXT').view, 'ending');
 });
 
-test('A korábbi tényleges sérelem nem törlődik az utolsó válasz megváltoztatásától', () => {
-  const config = { choices: { ...routes.R1.choices, 5: 'D', 6: 'C' }, corrected: false };
-  assert.equal(Engine.ending(play(config)), 'R5');
-  config.corrected = true;
-  const explicitlyCorrected = play(config);
+test('A zárolás előtti mentések korrekciója továbbra is betölthető, új zárolt döntés nem hozható', () => {
+  const config = { choices: { ...routes.R1.choices, 5: 'D', 6: 'D' }, corrected: false };
+  const before = play(config, 6);
+  for (const value of ['A', 'B', 'C']) assert.deepEqual(action(before, 'SELECT', value), before);
+  const legacy = { ...play(config), decisions: { ...config.choices, 6: 'C' } };
+  assert.equal(Engine.ending(legacy), 'R5');
+  const explicitlyCorrected = { ...legacy, corrected: true };
+  assert.deepEqual(Engine.load(memory(JSON.stringify(explicitlyCorrected)), story).state, explicitlyCorrected);
   assert.equal(Engine.ending(explicitlyCorrected), 'R3', 'A korábbi, külön korrekciós döntés megmarad.');
   assert.deepEqual(explicitlyCorrected.publications, { 5: true });
   assert.equal(Engine.facts(explicitlyCorrected).retaliation, true);
-  config.choices[6] = 'D'; assert.equal(Engine.ending(play(config)), 'R4');
-  config.choices[6] = 'A'; assert.equal(Engine.ending(play(config)), 'R2');
-  config.choices[6] = 'E'; assert.equal(Engine.ending(play(config)), 'R5');
+  for (const [value, expected] of [['D', 'R4'], ['A', 'R2'], ['E', 'R5']]) {
+    assert.equal(Engine.ending({ ...explicitlyCorrected, decisions: { ...legacy.decisions, 6: value } }), expected);
+  }
 });
 
 test('R1 tényleges jóvátételt igényel; egy indulatos mondat nem minősíti a játékost', () => {
@@ -122,6 +125,11 @@ test('A kapcsolatfelvételi tiltás mellett csak Nóra kezdeményezhet korlátoz
     const config = { choices: { ...routes.R1.choices, 1: first, 2: second, 3: third, 4: 'D' }, corrected: false };
     assert.equal(Engine.facts(play(config, 4)).apologyHeard, true);
     for (const repair of letters) {
+      if (repair === 'A') {
+        const before = play(config, 5);
+        assert.deepEqual(action(before, 'SELECT', repair), before);
+        continue;
+      }
       const after = play({ ...config, choices: { ...config.choices, 5: repair } }, 6);
       assert.equal(Engine.facts(after).noContact, true);
       assert.equal(Engine.facts(after).limitedOutreach, ['A', 'B', 'C'].includes(repair));
@@ -131,10 +139,20 @@ test('A kapcsolatfelvételi tiltás mellett csak Nóra kezdeményezhet korlátoz
   }
 });
 
-test('A 4×4×5 J4–J5–J6 kombináció mind bejárható, külön engedély nélküli zárolás nélkül', () => {
+test('A J4–J5–J6 kombinációk közül csak a jóváhagyott zárolások akadályozzák a továbblépést', () => {
   let checked = 0;
   for (const fourth of letters) for (const fifth of letters) for (const sixth of [...letters, 'E']) {
     const config = { choices: { ...routes.R1.choices, 4: fourth, 5: fifth, 6: sixth }, corrected: false };
+    if (fourth === 'D' && fifth === 'A') {
+      const before = play(config, 5);
+      assert.deepEqual(action(before, 'SELECT', fifth), before);
+      continue;
+    }
+    if (fifth === 'D' && ['A', 'B', 'C'].includes(sixth)) {
+      const before = play(config, 6);
+      assert.deepEqual(action(before, 'SELECT', sixth), before);
+      continue;
+    }
     const state = play(config), facts = Engine.facts(state);
     assert.equal(state.decisions[4], fourth); assert.equal(state.decisions[5], fifth); assert.equal(state.decisions[6], sixth);
     assert.equal(facts.noContact, fourth === 'D');
@@ -144,18 +162,23 @@ test('A 4×4×5 J4–J5–J6 kombináció mind bejárható, külön engedély n�
     const expected = fifth === 'D' || sixth === 'E' ? 'R5' : ({ A: fifth === 'A' ? 'R1' : 'R2', B: 'R2', C: 'R3', D: 'R4' })[sixth];
     assert.equal(Engine.ending(state), expected); checked++;
   }
-  assert.equal(checked, 80);
+  assert.equal(checked, 63);
 });
 
 test('Minden döntés- és korábbi explicit korrekciókombináció következetes befejezést ad', () => {
   let journeys = 0;
   const totals = { R1: 0, R2: 0, R3: 0, R4: 0, R5: 0 };
   for (const a of letters) for (const b of letters) for (const c of letters) for (const d of letters) for (const fifth of letters) {
+    if (d === 'D' && fifth === 'A') continue;
     const config = { choices: { 1: a, 2: b, 3: c, 4: d, 5: fifth }, corrected: false }, base = play(config, 6);
     const corrections = Engine.facts(base).correctionAvailable ? [false, true] : [false];
     for (const corrected of corrections) {
       const ready = corrected ? action(base, 'CORRECT') : base;
       for (const future of [...letters, 'E']) {
+        if (fifth === 'D' && ['A', 'B', 'C'].includes(future)) {
+          assert.deepEqual(action(ready, 'SELECT', future), ready);
+          continue;
+        }
         const state = action(action(ready, 'SELECT', future), 'NEXT'), result = Engine.ending(state), facts = Engine.facts(state);
         assert.ok(Engine.normalize(state, story));
         assert.equal(state.scene, 7); assert.equal(state.view, 'ending'); assert.ok(own(totals, result));
@@ -170,7 +193,7 @@ test('Minden döntés- és korábbi explicit korrekciókombináció következete
       }
     }
   }
-  assert.equal(journeys, 8080); assert.ok(Object.values(totals).every(count => count > 0));
+  assert.equal(journeys, 6084); assert.ok(Object.values(totals).every(count => count > 0));
   console.log(`✓ ${journeys} teljes döntési útvonal: ${JSON.stringify(totals)}`);
 });
 

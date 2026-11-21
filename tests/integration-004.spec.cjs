@@ -99,7 +99,8 @@ async function loaded(page, file) {
   expect(dimensions.rendered).toBeCloseTo(dimensions.natural, 2);
   expect(dimensions.fit).toBe('contain');
   await expect(comic.locator('.comic-transcript')).toBeVisible();
-  await expect(comic.locator('details, summary')).toHaveCount(0);
+  await expect(comic.locator('details.comic-transcript')).not.toHaveAttribute('open');
+  await expect(comic.locator('summary')).toHaveText('Szöveg');
   await expect(comic.locator('.comic-source-fallback')).toBeHidden();
   return comic;
 }

@@ -67,7 +67,7 @@ test('A kért teljes navigációs próba: 0 → 1 → vissza → előre, A helye
   await phase(page, 'scene', 1);
   expect(await saved(page)).toEqual(choiceScreen);
   await select(page, 1, 'A');
-  await expect(main(page).locator('.comic-image')).toHaveAttribute('src', /01A_nyilvanos_szamonkeres_kovetkezmeny\.webp$/);
+  await expect(main(page).locator('.comic-image')).toHaveAttribute('src', 'design/references/Iskolai folyosói titokdráma.png');
   await previous(page).click();
   await phase(page, 'scene', 1);
   await select(page, 1, 'B');
@@ -85,10 +85,10 @@ test('Egy korai új döntés eldobja az elhagyott jövő döntéseit, közzété
   await begin(page);
   const route = ['A', 'B', 'D', 'A', 'D'];
   for (let number = 1; number <= 5; number++) await advance(page, number, route[number - 1]);
-  await action(page, 'correct').click();
-  expect((await saved(page)).corrected).toBe(true);
-  await advance(page, 6, 'C');
-  await expect(main(page)).toHaveAttribute('data-ending', 'R3');
+  await expect(action(page, 'correct')).toHaveCount(0);
+  expect((await saved(page)).corrected).toBe(false);
+  await advance(page, 6, 'D');
+  await expect(main(page)).toHaveAttribute('data-ending', 'R5');
   await rewindToChoice(page, 1);
   await select(page, 1, 'B');
   const changed = await saved(page);
@@ -308,7 +308,7 @@ test('Az elhagyott A ág régi böngészőbejegyzései nem élednek fel a játé
     expect(await page.evaluate(() => history.length)).toBe(historyLength);
     if (page.url() === outside) { exited = true; break; }
     expect((await saved(page)).decisions[1]).not.toBe('A');
-    await expect(main(page).locator('.comic-image[src$="01A_nyilvanos_szamonkeres_kovetkezmeny.webp"]')).toHaveCount(0);
+    await expect(main(page).locator('.comic-image[src$="Iskolai folyosói titokdráma.png"]')).toHaveCount(0);
   }
   expect(exited, 'A véges böngésző-előzményből ki lehessen lépni a játékot megelőző oldalra.').toBe(true);
 });

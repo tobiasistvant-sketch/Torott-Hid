@@ -94,7 +94,8 @@ async function image(page, file) {
   expect(dimensions.actual).toBeCloseTo(dimensions.natural, 2);
   expect(dimensions.fit).toBe('contain');
   await expect(main(page).locator('.comic-transcript')).toBeVisible();
-  await expect(main(page).locator('details, summary')).toHaveCount(0);
+  await expect(main(page).locator('details.comic-transcript')).not.toHaveAttribute('open');
+  await expect(main(page).locator('.comic-transcript summary')).toHaveText('Szöveg');
   await expect(main(page).locator('.bridge-illustration')).toHaveCount(0);
 }
 async function bridge(page, id) {
@@ -123,7 +124,7 @@ async function precedes(node, selector) {
 }
 
 for (const fourth of ['A', 'B', 'C', 'D']) for (const fifth of ['A', 'B', 'C', 'D']) {
-  test('v1.0: J4/' + fourth + ' → J5/' + fifth + ' → mind az öt J6-választás, teljes 80-as ágellenőrzés', async ({ page }) => {
+  test('v1.1: J4/' + fourth + ' → J5/' + fifth + ' → engedélyezett J6-választások és zárolások', async ({ page }) => {
     test.setTimeout(90000);
     await seed(page, snapshotAt(4));
     await choose(page, 4, fourth);
@@ -139,6 +140,14 @@ for (const fourth of ['A', 'B', 'C', 'D']) for (const fifth of ['A', 'B', 'C', '
       await expect(main(page)).toContainText('Lili már nem beszél rólad. Áron szólt neki.');
       await expect(main(page)).toContainText('Írjak neki én?');
     } else await expect(direct).not.toHaveCount(0);
+    if (fourth === 'D' && fifth === 'A') {
+      await expect(page.locator('#choice-A')).toBeDisabled();
+      const before = await saved(page);
+      await page.locator('#choice-A').evaluate(node => node.click());
+      expect(await saved(page)).toEqual(before);
+      for (const letter of ['B', 'C', 'D']) await expect(page.locator('#choice-' + letter)).toBeEnabled();
+      return;
+    }
     await choose(page, 5, fifth);
     await image(page, FEEDBACK_FILES[5][fifth]);
     for (const text of DIALOGUES[5][fifth]) await expect(main(page).locator('.comic-transcript')).toContainText(text);
@@ -160,14 +169,22 @@ for (const fourth of ['A', 'B', 'C', 'D']) for (const fifth of ['A', 'B', 'C', '
     await precedes(thought, '.comic');
     await image(page, CLASSROOM_FILE);
     const sixthState = await saved(page);
-    for (const sixth of ['A', 'B', 'C', 'D', 'E']) await test.step('J4/' + fourth + ' → J5/' + fifth + ' → J6/' + sixth, async () => {
-      if (sixth !== 'A') {
+    const activeSixth = fifth === 'D' ? ['D', 'E'] : ['A', 'B', 'C', 'D', 'E'];
+    for (const sixth of activeSixth) await test.step('J4/' + fourth + ' → J5/' + fifth + ' → J6/' + sixth, async () => {
+      if (sixth !== activeSixth[0]) {
         await action(page, 'screen-back').click(); await phase(page, 'feedback', 6);
         await action(page, 'screen-back').click(); await phase(page, 'scene', 6);
         expect(await saved(page)).toEqual(sixthState);
       }
       await expect(main(page).locator('button.choice-card')).toHaveCount(5);
-      for (const letter of ['A', 'B', 'C', 'D', 'E']) await expect(page.locator('#choice-' + letter)).toBeEnabled();
+      for (const letter of ['A', 'B', 'C', 'D', 'E']) {
+        const card = page.locator('#choice-' + letter);
+        if (fifth === 'D' && ['A', 'B', 'C'].includes(letter)) {
+          await expect(card).toBeDisabled();
+          await card.evaluate(node => node.click());
+          expect(await saved(page)).toEqual(sixthState);
+        } else await expect(card).toBeEnabled();
+      }
       await choose(page, 6, sixth);
       await image(page, FEEDBACK_FILES[6][sixth]);
       for (const text of DIALOGUES[6][sixth]) await expect(main(page).locator('.comic-transcript')).toContainText(text);
@@ -193,15 +210,15 @@ for (const fourth of ['A', 'B', 'C', 'D']) for (const fifth of ['A', 'B', 'C', '
   });
 }
 
-for (const colorScheme of ['light', 'dark']) test('v1.0: pontos státusz és diszkrét, olvasható, nem félkövér szerzői lábléc (' + colorScheme + ')', async ({ page }) => {
+for (const colorScheme of ['light', 'dark']) test('v1.1: pontos státusz és diszkrét, olvasható, nem félkövér szerzői lábléc (' + colorScheme + ')', async ({ page }) => {
   await page.emulateMedia({ colorScheme });
   await page.goto('/');
   await phase(page, 'start', 0);
-  for (const version of await page.locator('[data-app-version]').allTextContents()) expect(version).toBe('v1.0');
-  await expect(page).toHaveTitle(/A Törött híd.*v1\.0.*Fejlesztés alatt/);
+  for (const version of await page.locator('[data-app-version]').allTextContents()) expect(version).toBe('v1.1');
+  await expect(page).toHaveTitle(/A Törött híd.*v1\.1.*Fejlesztés alatt/);
   await expect(page.locator('body')).not.toContainText(/demó|demo|v0\.0\.[234]/i);
   const credits = page.locator('.app-footer .footer-credits');
-  await expect(credits.locator('p')).toHaveText(['Koncepció és fejlesztés: Tóbiás István Tamás', 'MI-támogatott fejlesztés · v1.0 · Fejlesztés alatt']);
+  await expect(credits.locator('p')).toHaveText(['Koncepció és fejlesztés: Tóbiás István Tamás', 'MI-támogatott fejlesztés · v1.1 · Fejlesztés alatt']);
   await expect(page.locator('.app-footer')).toContainText('XI. osztály · Református vallás');
   await expect(page.locator('.app-footer')).toContainText('Nincs pontozás. A döntéseid ezen a böngészőlapon maradnak.');
   await expect(credits.locator('strong, b, button')).toHaveCount(0);
@@ -220,7 +237,7 @@ for (const colorScheme of ['light', 'dark']) test('v1.0: pontos státusz és dis
   await bridge(page, 'H0');
 });
 
-test('v1.0: a hat híd csak a kezdő- és a megfelelő záróképernyőn jelenik meg, előtöltés nélkül', async ({ page }) => {
+test('v1.1: a hat híd csak a kezdő- és a megfelelő záróképernyőn jelenik meg, előtöltés nélkül', async ({ page }) => {
   const requested = [];
   page.on('request', request => { if (/\/design\/references\/(?:H0_|R[1-5]_).*\.webp$/.test(request.url())) requested.push(new URL(request.url()).pathname); });
   await page.goto('/');
@@ -238,7 +255,7 @@ test('v1.0: a hat híd csak a kezdő- és a megfelelő záróképernyőn jelenik
   expect([...new Set(requested)].sort()).toEqual(['H0_fokepernyo_ep_hid.webp', ...Object.values(END_FILES)].map(file => '/design/references/' + file).sort());
 });
 
-test('v1.0: mind a tizenkét új képregény hibája jóváhagyott, működő szöveges tartalékot ad', async ({ page }) => {
+test('v1.1: mind a tizenkét új képregény hibája jóváhagyott, működő szöveges tartalékot ad', async ({ page }) => {
   test.setTimeout(120000);
   await page.route('**/design/references/05*.webp', route => route.abort());
   await page.route('**/design/references/06*.webp', route => route.abort());
@@ -262,7 +279,7 @@ test('v1.0: mind a tizenkét új képregény hibája jóváhagyott, működő sz
   }
 });
 
-test('v1.0: a hat híd képhibája mellett is működik a kezdés, az öt reflexió és az újrajátszás', async ({ page }) => {
+test('v1.1: a hat híd képhibája mellett is működik a kezdés, az öt reflexió és az újrajátszás', async ({ page }) => {
   await page.route(/\/design\/references\/(?:H0_|R[1-5]_).*\.webp$/, route => route.abort());
   await page.goto('/');
   await expect(main(page).locator('.bridge-fallback')).toBeVisible();
@@ -277,7 +294,7 @@ test('v1.0: a hat híd képhibája mellett is működik a kezdés, az öt reflex
   }
 });
 
-test('v1.0: régi, el nem küldött J5D mentése nem válik visszamenőleg közzététellé', async ({ page }) => {
+test('v1.1: régi, el nem küldött J5D mentése nem válik visszamenőleg közzététellé', async ({ page }) => {
   await page.goto('/');
   const legacy = { version: 1, view: 'ending', scene: 7, decisions: { 1: 'C', 2: 'B', 3: 'A', 4: 'D', 5: 'D', 6: 'C' }, publications: { 5: false }, corrected: false };
   await page.evaluate(({ key, navKey, legacy }) => { sessionStorage.setItem(key, JSON.stringify(legacy)); sessionStorage.removeItem(navKey); }, { key: KEY, navKey: NAV_KEY, legacy });
@@ -294,7 +311,7 @@ test('v1.0: régi, el nem küldött J5D mentése nem válik visszamenőleg közz
   expect((await saved(page)).publications).toEqual({ 5: true });
 });
 
-test('v1.0: a régi titokközlő J6E helyett a játékos újra választhat a vita előtt', async ({ page }) => {
+test('v1.1: a régi titokközlő J6E helyett a játékos újra választhat a vita előtt', async ({ page }) => {
   await page.goto('/');
   const legacy = { version: 1, view: 'ending', scene: 7, decisions: { 1: 'C', 2: 'B', 3: 'A', 4: 'D', 5: 'D', 6: 'E' }, publications: { 5: true, 6: true }, corrected: false };
   await page.evaluate(({ key, navKey, legacy }) => { sessionStorage.setItem(key, JSON.stringify(legacy)); sessionStorage.removeItem(navKey); }, { key: KEY, navKey: NAV_KEY, legacy });
@@ -302,13 +319,14 @@ test('v1.0: a régi titokközlő J6E helyett a játékos újra választhat a vit
   await phase(page, 'scene', 6);
   expect((await saved(page)).decisions).toEqual({ 1: 'C', 2: 'B', 3: 'A', 4: 'D', 5: 'D' });
   expect((await saved(page)).publications).toEqual({ 5: true });
-  for (const letter of ['A', 'B', 'C', 'D', 'E']) await expect(page.locator('#choice-' + letter)).toBeEnabled();
+  for (const letter of ['A', 'B', 'C']) await expect(page.locator('#choice-' + letter)).toBeDisabled();
+  for (const letter of ['D', 'E']) await expect(page.locator('#choice-' + letter)).toBeEnabled();
   await choose(page, 6, 'E');
   await expect(main(page).locator('.comic-transcript')).not.toContainText(POST_TEXT);
   expect((await saved(page)).publications).toEqual({ 5: true });
 });
 
-test('v1.0: billentyűzetes J5D, újratöltés, Vissza/Előre és tiszta újrajátszás', async ({ page }) => {
+test('v1.1: billentyűzetes J5D, újratöltés, Vissza/Előre és tiszta újrajátszás', async ({ page }) => {
   await seed(page, snapshotAt(5, { 4: 'D' }));
   await page.evaluate(() => { localStorage.setItem('other-local-app', 'preserve'); sessionStorage.setItem('other-session-app', 'preserve'); });
   await page.locator('#choice-D').focus(); await page.keyboard.press('Enter');
@@ -339,7 +357,7 @@ test('v1.0: billentyűzetes J5D, újratöltés, Vissza/Előre és tiszta újraj�
   expect((await saved(page)).publications).toEqual({});
 });
 
-test('v1.0: közvetlen történetlink új böngészőlapon nem másolja át a másik lap döntéseit', async ({ page, context }) => {
+test('v1.1: közvetlen történetlink új böngészőlapon nem másolja át a másik lap döntéseit', async ({ page, context }) => {
   await seed(page, snapshotAt(5, { 4: 'D' }));
   await choose(page, 5, 'D');
   const original = await saved(page), url = page.url();

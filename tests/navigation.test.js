@@ -75,7 +75,7 @@ test('Újratöltés után a kurzor és a később már bejárt képernyők is vi
 });
 
 test('Másik korábbi döntés levágja a régi jövőt, a közzétételt és a korrekciót is', () => {
-  const config = { choices: { 1: 'A', 2: 'B', 3: 'D', 4: 'A', 5: 'D', 6: 'C' }, publications: { 5: true }, corrected: true };
+  const config = { choices: { 1: 'A', 2: 'B', 3: 'D', 4: 'A', 5: 'D', 6: 'D' }, publications: { 5: true }, corrected: true };
   const navigation = create();
   for (const snapshot of snapshotsFor(config).slice(1)) assert.equal(navigation.push(snapshot), true);
   const discardedIds = navigation.trail.slice(3).map(entry => entry.id);
@@ -111,7 +111,7 @@ test('A tárolt következő azonosító újratöltés és új elágazás után s
 test('A régi, egyetlen pillanatképes mentés minden szakasza az állapotgéppel rekonstruálható', () => {
   const configs = [
     ...Object.values(routes),
-    { choices: { 1: 'A', 2: 'B', 3: 'D', 4: 'A', 5: 'D', 6: 'C' }, publications: { 5: true }, corrected: true },
+    { choices: { 1: 'A', 2: 'B', 3: 'D', 4: 'A', 5: 'D', 6: 'D' }, publications: { 5: true }, corrected: true },
     { choices: { 1: 'C', 2: 'B', 3: 'A', 4: 'D', 5: 'D', 6: 'D' }, publications: { 5: true }, corrected: false }
   ];
   let checked = 0;

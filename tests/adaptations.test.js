@@ -36,14 +36,16 @@ test('A korábbi reakciók ténylegesen módosítják a későbbi elbeszélést'
   const unresolved = atScene(3, {1:'C',2:'D'}, {});
   assert.ok(A.blocksForScene(unresolved, S, E).some(b => b.id === 's3-premature-peace'));
 });
-test('A kapcsolatfelvételi tilalom mind a négy jóvátételi útvonalon megmarad', () => {
+test('A kapcsolatfelvételi tilalom megmarad; J4–D után J5–A nem választható', () => {
   for (const repair of ['A','B','C','D']) {
     const decisions = {1:'C',2:'B',3:'A',4:'D',5:repair};
     let s = atScene(5, decisions, {});
     const before = A.blocksForScene(s,S,E);
     assert.ok(before.some(b => b.id === 's5-indirect'));
     assert.ok(!before.some(b => b.speaker === 'Áron' && b.channel === 'message'));
-    s = E.transition(s,{type:'SELECT',value:repair},S);
+    const chosen = E.transition(s,{type:'SELECT',value:repair},S);
+    if (repair === 'A') { assert.deepEqual(chosen, s); continue; }
+    s = chosen;
     if (s.view === 'confirmation') s = E.transition(s,{type:'CONFIRM',value:false},S);
     assert.ok(!A.feedbackBlocks(s,S,E).some(b => b.speaker === 'Áron' && b.channel === 'message'));
     s = E.transition(s,{type:'NEXT'},S);

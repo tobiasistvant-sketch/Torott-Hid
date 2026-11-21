@@ -25,6 +25,7 @@ const originalAssets = {
 const comicEntries = Object.values(comics.scenes).concat(Object.values(comics.sceneVariants).flatMap(Object.values), Object.values(comics.consequences).flatMap(Object.values));
 const bridgeEntries = Object.values(comics.bridges);
 const entries = comicEntries.concat(bridgeEntries);
+const approvedJ1A = 'Iskolai folyosói titokdráma.png';
 function webpSize(bytes) {
   assert.equal(bytes.toString('ascii', 0, 4), 'RIFF');
   assert.equal(bytes.toString('ascii', 8, 12), 'WEBP');
@@ -47,6 +48,12 @@ function webpSize(bytes) {
   }
   assert.fail('Hiányzik a WebP méretadata.');
 }
+function imageSize(bytes) {
+  if (bytes.subarray(0, 8).toString('hex') === '89504e470d0a1a0a') {
+    return [bytes.readUInt32BE(16), bytes.readUInt32BE(20)];
+  }
+  return webpSize(bytes);
+}
 
 test('A korábbi huszonegy és az új manifest tizennyolc képe a valódi, lapos GitHub-útvonalakon szerepel', () => {
   assert.equal(entries.length, 39);
@@ -61,7 +68,7 @@ test('A korábbi huszonegy és az új manifest tizennyolc képe a valódi, lapos
   assert.equal(j3Manifest.images.length, 5);
   assert.equal(j4Manifest.image_files.length, 5);
   for (const item of [...j3Manifest.images, ...j4Manifest.image_files]) assert.equal(item.approved, true);
-  const expected = [...Object.keys(originalAssets), ...j3Manifest.images.map(entry => path.basename(entry.webp)),
+  const expected = [...Object.keys(originalAssets).map(name => name === '01A_nyilvanos_szamonkeres_kovetkezmeny.webp' ? approvedJ1A : name), ...j3Manifest.images.map(entry => path.basename(entry.webp)),
     ...j4Manifest.image_files.map(entry => path.basename(entry.webp)),
     ...fullManifest.images.map(entry => path.basename(entry.webp))].map(name => 'design/references/' + name).sort();
   assert.deepEqual(entries.map(entry => entry.src).sort(), expected);
@@ -71,8 +78,13 @@ test('A korábbi huszonegy és az új manifest tizennyolc képe a valódi, lapos
     const bytes = fs.readFileSync(path.resolve(__dirname, '..', entry.src));
     assert.equal(crypto.createHash('sha256').update(bytes).digest('hex'), entry.sha256, entry.id + ' feltöltött bináris változatlan');
     if (originalAssets[path.basename(entry.src)]) assert.equal(entry.sha256, originalAssets[path.basename(entry.src)], 'Az eredeti tizenegy kép változatlan marad.');
-    assert.deepEqual(webpSize(bytes), [entry.width, entry.height], entry.id + ' változatlan eredeti képarány');
+    assert.deepEqual(imageSize(bytes), [entry.width, entry.height], entry.id + ' a tényleges képarányt használja');
   }
+  for (const [name, hash] of Object.entries(originalAssets)) {
+    assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.resolve(__dirname, '../design/references', name))).digest('hex'), hash, 'A korábbi képfájlok megmaradnak.');
+  }
+  assert.equal(comics.consequences[1].A.sha256, 'a81534979741400545585e437161552ad520e31fc7530c4c7f9a5f5c17bb0f62');
+  assert.equal(comics.consequences[1].A.transcript.at(-1).text, 'Hogy tehetted ezt? Megígérted, hogy nem mondod el senkinek!');
 });
 
 test('A közös képek, a külön monológ és a szöveget igénylő néma következményképek elkülönülnek', () => {

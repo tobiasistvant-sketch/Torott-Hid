@@ -129,6 +129,7 @@ test('J4–C megőrzi a bosszú szót; J4–D után Áron nem küld záró vála
     const before = R.sceneBlocks(fifth, A.blocksForScene(fifth, S, E));
     assert.ok(!before.some(block => block.speaker === 'Áron' && block.channel === 'message'));
     let feedback = E.transition(fifth, { type: 'SELECT', value: repair }, S);
+    if (repair === 'A') { assert.deepEqual(feedback, fifth); continue; }
     if (feedback.view === 'confirmation') feedback = E.transition(feedback, { type: 'CONFIRM', value: false }, S);
     const after = R.feedbackBlocks(feedback, A.feedbackBlocks(feedback, S, E));
     const messages = after.filter(block => block.type === 'speech' && block.channel === 'message');
@@ -184,7 +185,7 @@ test('J–14: J4–D után közvetett hír, A/B/C után pontos közvetlen üzene
 
 test('J–15/J–16: az új J5 ágak jóváhagyott szövegei és a tényleges közzététel elkülönülnek', () => {
   for (const letter of ['A', 'B', 'C', 'D']) {
-    const before = stateAt(5, { 1: 'C', 2: 'B', 3: 'A', 4: 'D' });
+    const before = stateAt(5, { 1: 'C', 2: 'B', 3: 'A', 4: 'A' });
     const state = E.transition(before, { type: 'SELECT', value: letter }, S);
     assert.equal(state.view, 'feedback', 'Nincs második megerősítő vagy piszkozatképernyő.');
     const blocks = R.feedbackBlocks(state, A.feedbackBlocks(state, S, E));
@@ -249,7 +250,7 @@ test('J–18: mind az öt J6 párbeszéd a jóváhagyott szakaszhoz tartozik; E 
 
 test('Az összegzés megőrzi a megtörtént J5D tényét, és J6E esetén nem talál ki titokközlést', () => {
   for (const fifth of ['A', 'B', 'C', 'D']) {
-    const before = stateAt(6, { 1: 'C', 2: 'B', 3: 'A', 4: 'D', 5: fifth });
+    const before = stateAt(6, { 1: 'C', 2: 'B', 3: 'A', 4: 'A', 5: fifth });
     const feedback = E.transition(before, { type: 'SELECT', value: 'E' }, S);
     const ended = E.transition(feedback, { type: 'NEXT' }, S);
     const summary = R.summary(ended, A.summary(ended, E), E);
@@ -261,7 +262,7 @@ test('Az összegzés megőrzi a megtörtént J5D tényét, és J6E esetén nem t
   }
   let state = stateAt(6, { 1: 'C', 2: 'B', 3: 'A', 4: 'D', 5: 'D' });
   state = E.transition(state, { type: 'CORRECT' }, S);
-  state = E.transition(state, { type: 'SELECT', value: 'C' }, S);
+  state = E.transition(state, { type: 'SELECT', value: 'D' }, S);
   state = E.transition(state, { type: 'NEXT' }, S);
   const summary = R.summary(state, A.summary(state, E), E);
   assert.equal(state.publications[5], true);
@@ -284,6 +285,7 @@ test('A teljes J4 × J5 × J6 kombináció jóváhagyott szöveget és valós á
     const atFive = stateAt(5, { 1: 'C', 2: 'B', 3: 'A', 4: fourth });
     assert.equal(R.sceneBlocks(atFive, A.blocksForScene(atFive, S, E))[0], R.monologues[5][fourth]);
     const chosenFive = E.transition(atFive, { type: 'SELECT', value: fifth }, S);
+    if (fourth === 'D' && fifth === 'A') { assert.deepEqual(chosenFive, atFive); continue; }
     assert.equal(chosenFive.view, 'feedback');
     assert.equal(R.feedbackBlocks(chosenFive, A.feedbackBlocks(chosenFive, S, E)), R.feedback[5][fifth]);
     const atSix = E.transition(chosenFive, { type: 'NEXT' }, S);
@@ -291,7 +293,8 @@ test('A teljes J4 × J5 × J6 kombináció jóváhagyott szöveget és valós á
     assert.equal(openingSix[0], R.narrations[6][fifth]);
     assert.equal(openingSix[1], R.monologues[6][fifth]);
     const chosenSix = E.transition(atSix, { type: 'SELECT', value: sixth }, S);
-    assert.equal(chosenSix.view, 'feedback', 'J20 szerint egyik J6 ág sem zárolt.');
+    if (fifth === 'D' && ['A', 'B', 'C'].includes(sixth)) { assert.deepEqual(chosenSix, atSix); continue; }
+    assert.equal(chosenSix.view, 'feedback', 'Csak az engedélyezett J6 ág léphet tovább.');
     assert.equal(R.feedbackBlocks(chosenSix, A.feedbackBlocks(chosenSix, S, E)), R.feedback[6][sixth]);
     assert.equal(chosenSix.publications[5] === true, fifth === 'D');
     assert.equal(Object.hasOwn(chosenSix.publications, 6), false);
@@ -301,6 +304,6 @@ test('A teljes J4 × J5 × J6 kombináció jóváhagyott szöveget és valós á
     if (fifth === 'D' || sixth === 'E') assert.equal(ending, 'R5');
     count++;
   }
-  assert.equal(count, 80);
+  assert.equal(count, 63);
   assert.deepEqual(Array.from(endings).sort(), ['R1', 'R2', 'R3', 'R4', 'R5']);
 });

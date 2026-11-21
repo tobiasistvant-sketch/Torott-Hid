@@ -6,6 +6,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 const story = require('../js/story.js');
+const crypto = require('node:crypto');
 
 const project = path.resolve(__dirname, '..');
 const manuscript = fs.readFileSync(path.join(project, story.sourceFile), 'utf8').split(/\r?\n/);
@@ -88,4 +89,17 @@ test('A történeti adatfájl Node-ban és közvetlenül a böngészőben is bet
   const browser = {};
   vm.runInNewContext(fs.readFileSync(path.join(project, 'js/story.js'), 'utf8'), browser);
   assert.deepEqual(JSON.parse(JSON.stringify(browser.TorottHidStory)), story);
+});
+
+
+test('A CSS/JS gyorsítótár-azonosítója a tényleges fájltartalomhoz kötődik, a játékverzióhoz különül', () => {
+  const html = fs.readFileSync(path.join(project, 'index.html'), 'utf8');
+  const version = require('../package.json').version;
+  const assets = [...html.matchAll(/(?:src|href)="((?:js|css)\/[^"?]+)\?v=([^"]+)"/g)];
+  assert.equal(assets.length, 10);
+  for (const [, relative, cacheKey] of assets) {
+    const hash = crypto.createHash('sha256').update(fs.readFileSync(path.join(project, relative))).digest('hex').slice(0, 12);
+    assert.equal(cacheKey, version + '-' + hash, relative);
+  }
+  assert.equal(require('../js/version.js').version, version);
 });

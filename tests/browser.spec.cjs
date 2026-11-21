@@ -6,7 +6,7 @@ const adaptations = require('../js/adaptations.js');
 const revisions = require('../js/revisions.js');
 const approvedApology = 'Nóra, sokat gondolkodtam azon, ami történt. Megígértem, hogy nem mondom el senkinek, mégis megtettem. Nem Lili hibája, hogy megbíztam benne a titkoddal. Én szegtem meg az ígéretemet. Sajnálom, hogy megbántottalak. Nem várom, hogy most válaszolj, és azt sem, hogy azonnal megbocsáss.';
 const KEY = require('../js/engine.js').STORAGE_KEY;
-const versionLabel = 'v1.0';
+const versionLabel = 'v' + require('../js/version.js').displayVersion;
 const active = page => page.locator('#main-content');
 const action = (page, name) => page.locator(`[data-action="${name}"]`);
 const state = page => page.evaluate(key => JSON.parse(sessionStorage.getItem(key)), KEY);
@@ -63,7 +63,7 @@ async function ending(page, id, route) {
   for (const paragraph of item.moral) await expect(active(page)).toContainText(paragraph);
   for (const verse of item.scriptures) {
     await expect(active(page)).toContainText(verse.reference);
-    await expect(active(page)).toContainText(verse.explanation.text);
+    for (const paragraph of verse.explanation.paragraphs) await expect(active(page)).toContainText(paragraph);
   }
   await expect(page.locator('.question-list li')).toHaveCount(2);
   await expect(page.locator('.question-list')).toContainText('Mit jelképezhet a híd Nóra és Áron történetében?');
@@ -121,6 +121,7 @@ for (const repair of ['A', 'B', 'C', 'D']) {
     await through(page, route, 4);
     await phase(page, 'scene', 5); await noDirectAronMessage(page);
     await expect(active(page)).toContainText('osztálytárs');
+    if (repair === 'A') { await expect(page.locator('#choice-A')).toBeDisabled(); return; }
     await select(page, 5, repair);
     await phase(page, 'feedback', 5);
     expect(engine.facts(await state(page)).noContact).toBe(true);
@@ -172,17 +173,20 @@ test('A 6/E nyilvános vita nem új titokközlés, és a döntés visszalépés 
   expect((await state(page)).decisions[6]).toBeUndefined();
   await decide(page, 6, 'C'); await ending(page, 'R3', route);
 });
-for (const corrected of [false, true]) {
-  test('A korábbi tényleges közzététel ' + (corrected ? 'visszavonható, felelősségvállalással' : 'következménye nem törlődik az utolsó C választól'), async ({ page }) => {
-    const route = ['C', 'B', 'A', 'A', 'D', 'C'];
+for (const future of ['D', 'E']) {
+  test('J5–D után csak D/E aktív, korrekciós blokk nincs; J6/' + future, async ({ page }) => {
+    const route = ['C', 'B', 'A', 'A', 'D', future];
     await through(page, route, 5);
-    await expect(action(page, 'correct')).toBeVisible();
-    if (corrected) {
-      await action(page, 'correct').click();
-      expect((await state(page)).corrected).toBe(true);
-      await expect(action(page, 'correct')).toHaveCount(0);
+    const before = await state(page);
+    await expect(action(page, 'correct')).toHaveCount(0);
+    await expect(active(page)).not.toContainText('Egy korábbi mondatod vagy tetted');
+    for (const letter of ['A', 'B', 'C']) {
+      await expect(page.locator('#choice-' + letter)).toBeDisabled();
+      await page.locator('#choice-' + letter).evaluate(node => node.click());
+      expect(await state(page)).toEqual(before);
     }
-    await decide(page, 6, 'C'); await ending(page, corrected ? 'R3' : 'R5', route);
+    for (const letter of ['D', 'E']) await expect(page.locator('#choice-' + letter)).toBeEnabled();
+    await decide(page, 6, future); await ending(page, 'R5', route);
     expect((await state(page)).publications[5]).toBe(true);
   });
 }
@@ -252,7 +256,7 @@ test('Billentyűzettel választható, a fókusz és a megszakított újrakezdés
 const expectedComics = [
   { number: 0, view: 'scene', file: '00_jelenet_a_titok_kozosen.webp' },
   { number: 1, view: 'scene', file: '01_jelenet_a_folyoson_kozosen.webp' },
-  { number: 1, view: 'feedback', letter: 'A', file: '01A_nyilvanos_szamonkeres_kovetkezmeny.webp' },
+  { number: 1, view: 'feedback', letter: 'A', file: 'Iskolai folyosói titokdráma.png' },
   { number: 1, view: 'feedback', letter: 'B', file: '01B_elvonulas_kovetkezmeny.webp' },
   { number: 1, view: 'feedback', letter: 'C', file: '01C_osztalytarsak_kikerdezese_kovetkezmeny.webp' },
   { number: 1, view: 'feedback', letter: 'D', file: '01D_pletyka_leallitasa_kovetkezmeny.webp' },
@@ -306,7 +310,8 @@ test('Mind a tizenegy jóváhagyott kép a megfelelő közös jelenethez vagy d�
     const comic = await loadedComic(page, item.file);
     await expect(active(page).locator('img.comic-image')).toHaveCount(1);
     await expect(comic.locator('.comic-transcript')).toBeVisible();
-    await expect(comic.locator('details, summary')).toHaveCount(0);
+    await expect(comic.locator('details.comic-transcript')).not.toHaveAttribute('open');
+    await expect(comic.locator('summary')).toHaveText('Szöveg');
     if (item.view === 'scene' && item.number < 2) {
       await expect(active(page).locator('.scene-card > .story-block.speech:visible')).toHaveCount(0);
     }
@@ -323,6 +328,7 @@ for (const [letter, id] of Object.entries({ A: 's2-public', B: 's2-pause', C: 's
     await expect(monologue).toHaveCount(letter === 'A' ? 0 : 1);
     if (letter !== 'A') expect(await monologue.evaluate(el => !!(el.compareDocumentPosition(document.querySelector('.comic')) & Node.DOCUMENT_POSITION_FOLLOWING))).toBe(true);
     const originalMessage = scene(2).blocks.find(block => block.speaker === 'Áron').text;
+    await comic.locator('summary').click();
     await expect(comic.locator('.comic-transcript .story-block:visible').filter({ hasText: originalMessage })).toHaveCount(1);
     await expect(active(page).locator('.scene-card > .story-block:visible').filter({ hasText: originalMessage })).toHaveCount(0);
     const originalThought = scene(2).blocks.find(block => block.type === 'thought').text;
@@ -334,22 +340,22 @@ for (const [letter, id] of Object.entries({ A: 's2-public', B: 's2-pause', C: 's
   });
 }
 
-test('J–01: a képregény szöveges átirata alaphelyzetben látható, hozzáférhető és nincs lenyitó gomb', async ({ page }) => {
+test('J–01: a Szöveg panel alaphelyzetben csukott, billentyűzettel nyitható és csukható', async ({ page }) => {
   const saved = await restoreComic(page, { number: 0, view: 'scene' });
   const comic = await loadedComic(page, '00_jelenet_a_titok_kozosen.webp');
-  const transcript = comic.locator('.comic-transcript');
-  await expect(transcript).toBeVisible();
-  await expect(transcript).toHaveAttribute('aria-label', /átirat/i);
-  await expect(comic.locator('details, summary')).toHaveCount(0);
-  await expect(active(page).getByRole('button', { name: /szöveg(?:es)? átirat/i })).toHaveCount(0);
-  await transcript.focus();
-  await expect(transcript).toBeFocused();
-  expect((await transcript.innerText()).length).toBeGreaterThan(120);
+  const transcript = comic.locator('.comic-transcript'), toggle = transcript.locator('summary');
+  await expect(toggle).toHaveText('Szöveg');
+  await expect(transcript).not.toHaveAttribute('open');
+  await expect(transcript.locator('.story-block').first()).toBeHidden();
+  await toggle.focus(); await page.keyboard.press('Enter');
+  await expect(transcript).toHaveAttribute('open');
   const texts = await page.evaluate(() => TorottHidComics.scenes[0].transcript.map(block => block.text));
   for (const text of texts) {
     await expect(transcript).toContainText(text);
     await expect(active(page).locator('.block-text:visible').filter({ hasText: text })).toHaveCount(1);
   }
+  await page.keyboard.press('Enter');
+  await expect(transcript).not.toHaveAttribute('open');
   expect(await state(page)).toEqual(saved);
 });
 
@@ -403,7 +409,7 @@ test('A történet csak az aktuális képregényt tölti be, a későbbi jelenet
 
 test('Mind a tizenegy hibás képútvonal automatikusan működő szöveges tartalékot ad', async ({ page }) => {
   test.setTimeout(90000);
-  await page.route('**/design/references/*.webp', route => route.abort());
+  await page.route('**/design/references/*', route => route.abort());
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
   for (const item of expectedComics) {
@@ -424,7 +430,7 @@ test('Mind a tizenegy hibás képútvonal automatikusan működő szöveges tart
 
 for (const { id, route } of routes) {
   test(id + ': minden kép hiányában is teljesen végigjátszható a történet és a saját reflexió', async ({ page }) => {
-    await page.route('**/design/references/*.webp', request => request.abort());
+    await page.route('**/design/references/*', request => request.abort());
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
     await through(page, route);
@@ -447,7 +453,7 @@ for (const focusTarget of ['nagyítógomb', 'átirat']) test('A későn hibázó
   await requested;
   const saved = await state(page);
   const comic = active(page).locator('.comic');
-  const focused = focusTarget === 'nagyítógomb' ? comic.locator('[data-action="open-comic"]') : comic.locator('.comic-transcript');
+  const focused = focusTarget === 'nagyítógomb' ? comic.locator('[data-action="open-comic"]') : comic.locator('.comic-transcript summary');
   await focused.focus();
   await pendingRoute.abort();
   const fallback = comic.locator('.comic-source-fallback');
