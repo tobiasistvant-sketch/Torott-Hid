@@ -102,6 +102,8 @@ async function loaded(page, file) {
   await expect(comic.locator('details.comic-transcript')).not.toHaveAttribute('open');
   await expect(comic.locator('summary')).toHaveText('Szöveg');
   await expect(comic.locator('.comic-source-fallback')).toBeHidden();
+  await comic.locator('summary').click();
+  await expect(comic.locator('.comic-transcript')).toHaveAttribute('open');
   return comic;
 }
 async function before(left, right) {
