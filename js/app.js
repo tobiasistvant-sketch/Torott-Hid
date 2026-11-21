@@ -187,9 +187,9 @@
     return '<header class="ending-header"><p class="eyebrow">7. jelenet · A híd állapota</p><h1 id="screen-title" tabindex="-1">' + esc(item.title) + '</h1><p class="ending-subtitle">' + esc(item.subtitle) + '</p>' + bridgeHTML(ending) + '</header>' +
       '<section class="reflection-card"><h2>Mi történt a te történetedben?</h2>' + paras(U.summary(state, A.summary(state, E), E)) + '<blockquote class="reflection-quote">' + esc(item.quote) + '</blockquote></section>' +
       '<section class="reflection-card"><h2>Mit tanulhatunk ebből?</h2>' + paras(item.moral) + '</section>' +
-      '<section class="reflection-card"><h2>Bibliai iránytű</h2><div class="scripture-list">' + item.scriptures.map(verse => '<article><h3>' + esc(verse.reference) + ' – ' + esc(verse.label) + '</h3><p>' + esc(verse.explanation.text) + '</p></article>').join('') + '</div></section>' +
+      '<section class="reflection-card"><h2>Bibliai iránytű</h2><div class="scripture-list">' + item.scriptures.map(verse => '<article><h3>' + esc(verse.reference) + ' – ' + esc(verse.label) + '</h3><details class="scripture-verse"><summary aria-label="Az igevers elolvasása: ' + esc(verse.reference) + '">Az igevers elolvasása</summary><blockquote class="scripture-quote">' + esc(verse.quote) + '</blockquote></details>' + paras(verse.explanation.paragraphs) + '</article>').join('') + '</div></section>' +
       '<section class="reflection-card"><h2>Gondolkodj el!</h2><ol class="question-list">' + questions.map(question => '<li>' + esc(question) + '</li>').join('') + '</ol><p class="summary-note">A kérdéseket magadban vagy a fiktív történetről beszélgetve is átgondolhatod.</p></section>' +
-      '<section class="reflection-card"><h2>A döntési útvonalad</h2>' + historyHTML() + '</section><section class="review-note">' +
+      '<section class="reflection-card"><details class="route-details"><summary>A döntési útvonalad</summary>' + historyHTML() + '</details></section><section class="review-note">' +
       blocksHTML(S.scenes[7].blocks) + '<p>' + esc(A.ui.finish) + '</p></section><div class="actions">' + button('Újrajátszom Nóra történetét', 'restart', true) + '</div>';
   }
   function updateNotice() {

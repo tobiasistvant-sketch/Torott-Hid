@@ -11,6 +11,8 @@ const sourceFile = 'docs/ot-befejezes-reflexios-oldalak.md';
 const source = fs.readFileSync(path.join(root, sourceFile), 'utf8');
 const lines = source.split(/\r?\n/);
 const sections = source.split(/^## 0[1-5]  /m).slice(1).map(part => part.split(/^06  TANÁRI MÓDSZERTANI ÚTMUTATÓ/m)[0]);
+const replacementFile = 'docs/Torott_Hid_R1_R5_Bovitett_IGEVERSEKKEL_CODINAK.md';
+const replacements = fs.readFileSync(path.join(root, replacementFile), 'utf8').split(/^## R[1-5] – [^\n]+\n/m).slice(1).map(part => part.split('\n## Megjegyzés')[0]);
 
 function subsection(section, title) {
   const after = section.split('### ' + title + '\n')[1];
@@ -18,7 +20,7 @@ function subsection(section, title) {
   return after.split(/\n### |\n\s*TANÁRI MEGJEGYZÉS/)[0].trim().split(/\r?\n/).map(line => line.trim()).filter(Boolean);
 }
 
-test('Mind az öt reflexió címe, kiemelése, erkölcsi tanítása és két kérdése forráshű', () => {
+test('Az öt reflexió címe, felirata, kiemelése és korábbi kérdései változatlanok', () => {
   assert.deepEqual(Object.keys(reflections), ['R1', 'R2', 'R3', 'R4', 'R5']);
   assert.equal(sections.length, 5);
   for (const [index, section] of sections.entries()) {
@@ -30,7 +32,6 @@ test('Mind az öt reflexió címe, kiemelése, erkölcsi tanítása és két ké
     assert.equal(reflection.subtitle, header[1]);
     assert.equal(reflection.quote, header.find(line => line.startsWith('„')));
     assert.equal(reflection.quoteKind, 'pedagogical', 'A saját pedagógiai kiemelés nem bibliai idézet.');
-    assert.deepEqual(reflection.moral, subsection(section, 'MIT TANULHATUNK EBBŐL?'));
     assert.deepEqual(reflection.questions, subsection(section, 'GONDOLKODJ EL!').map(line => line.replace(/^•\s*/, '')));
     assert.equal(reflection.questions.length, 2);
     assert.equal(reflection.sourceSummary, subsection(section, 'MI TÖRTÉNT?')[0], 'Az eredeti összefoglaló kizárólag ellenőrizhető referencia.');
@@ -39,38 +40,42 @@ test('Mind az öt reflexió címe, kiemelése, erkölcsi tanítása és két ké
   }
 });
 
-test('Az igehelyek változatlanok, az új magyarázatok elkülönített és dokumentált kiegészítések', () => {
-  const ledger = fs.readFileSync(path.join(root, 'docs/reflection-additions.md'), 'utf8');
+test('Az öt teljes tanítás és mind a 15 igevers a felhasználó új forrásából származik', () => {
+  assert.equal(replacements.length, 5);
   const ids = new Set();
   for (const [index, reflection] of Object.values(reflections).entries()) {
-    const text = reflection.scriptures.map(scripture => scripture.reference + ' – ' + scripture.label).join(' Kiegészítő ige: ');
-    assert.equal(text, subsection(sections[index], 'BIBLIAI IRÁNYTŰ')[0]);
-    for (const scripture of reflection.scriptures) {
-      assert.equal('quote' in scripture, false, 'Új, nem ellenőrzött szó szerinti bibliai idézet nem került az adatokba.');
-      assert.equal(scripture.explanation.origin, 'addition');
+    const [teaching, bible] = replacements[index].split('### Bibliai iránytű\n');
+    assert.equal(reflection.moral.join('\n\n'), teaching.split('### Mit tanulhatunk ebből?\n')[1].trim());
+    assert.equal(reflection.contentSource, replacementFile);
+    const passages = bible.split(/^#### /m).slice(1);
+    assert.equal(reflection.scriptures.length, 3);
+    for (const [number, scripture] of reflection.scriptures.entries()) {
+      const passage = passages[number];
+      assert.equal(passage.split('\n')[0], scripture.reference + ' – ' + scripture.label);
+      assert.equal(scripture.quote, passage.match(/<\/summary>\s*([\s\S]*?)\s*<\/details>/)[1].trim());
+      assert.equal(scripture.explanation.paragraphs.join('\n\n'), passage.split('</details>')[1].trim());
+      assert.equal(scripture.explanation.text, scripture.explanation.paragraphs.join('\n\n'));
+      assert.equal(scripture.explanation.origin, 'user-provided');
+      assert.equal(scripture.source.file, replacementFile);
       assert.ok(!ids.has(scripture.explanation.id));
       ids.add(scripture.explanation.id);
-      assert.ok(scripture.explanation.text.length > 100);
-      assert.ok(ledger.includes(scripture.explanation.id));
-      assert.ok(ledger.includes(scripture.explanation.text));
     }
   }
-  assert.equal(ids.size, 6);
-  assert.deepEqual(reflections.R5.scriptures.map(scripture => scripture.reference), ['Mt 5,21–26', 'Jak 1,19–20']);
+  assert.equal(ids.size, 15);
+  assert.equal(reflections.R3.scriptures[2].reference, 'Ef 4,32');
+  assert.equal(reflections.R3.scriptures[2].quote, reflections.R1.scriptures[1].quote);
 });
 
-test('A tanári háttér és az eredeti R5-összefoglaló nem keveredik a megjelenítendő reflexiós törzsszövegbe', () => {
-  for (const reflection of Object.values(reflections)) {
-    const studentFields = JSON.stringify({ title: reflection.title, subtitle: reflection.subtitle,
-      quote: reflection.quote, moral: reflection.moral, scriptures: reflection.scriptures, questions: reflection.questions });
-    for (const marker of ['TANÁRI MEGJEGYZÉS', 'TANKÖNYVI KAPCSOLÓDÁS', 'TANTERVI ILLESZKEDÉS', 'PDF-oldal']) {
-      assert.ok(!studentFields.includes(marker), marker);
-    }
-    assert.ok(!studentFields.includes('Áron mentegetőzött, nem vállalt felelősséget'));
-  }
-  assert.match(reflections.R5.moral.join(' '), /Áron eredeti felelőssége nem szűnik meg/);
-  assert.match(reflections.R3.scriptures[0].explanation.text, /nem teszi egyenlővé a megbocsátást/);
-  assert.match(reflections.R4.scriptures[0].explanation.text, /nem jelentheti a kapcsolat vagy a bizalom kikényszerítését/);
+test('Az idézet és az útvonal natív, alapból zárt panelt kap; a dinamikus összegzés megmarad', () => {
+  const app = fs.readFileSync(path.join(root, 'js/app.js'), 'utf8');
+  new vm.Script(app);
+  const bible = app.split("'<section class=\"reflection-card\"><h2>Bibliai iránytű</h2>")[1].split(".join('')")[0];
+  assert.ok(bible.indexOf('<h3>') < bible.indexOf('<details'));
+  assert.ok(bible.indexOf('</details>') < bible.indexOf('paras(verse.explanation.paragraphs)'));
+  assert.match(bible, /Az igevers elolvasása/);
+  assert.match(app, /<details class="route-details"><summary>A döntési útvonalad<\/summary>/);
+  assert.doesNotMatch(app, /<details[^>]*\bopen\b/);
+  assert.ok(app.includes('U.summary(state, A.summary(state, E), E)'));
 });
 
 test('A reflexiós adatok közvetlenül betölthetők böngészőben és Node-ban is', () => {

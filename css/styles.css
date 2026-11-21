@@ -176,6 +176,10 @@ strong { font-weight: 750; }
 .reflection-card p { max-width: 72ch; line-height: 1.9; }
 .reflection-quote { margin-block: 1.2rem; padding: 1.1rem 1.3rem; border-left: 4px solid #238597; border-radius: 0 11px 11px 0; background: #F0F8F9; color: #143E4B; font-family: var(--font-heading); font-size: 1.1rem; font-weight: 600; line-height: 1.8; }
 .scripture-list { display: grid; gap: 1rem; padding: 0; list-style: none; }
+.scripture-verse { margin-block: 0.65rem; }
+.scripture-verse > summary, .route-details > summary { min-height: 44px; padding-block: 0.5rem; color: var(--teal); font-weight: 700; cursor: pointer; }
+.scripture-quote { margin-block: 0.75rem; padding: 0.75rem 1rem; border-left: 3px solid var(--turquoise); font-size: 0.95rem; line-height: 1.85; }
+.route-details > summary { color: var(--navy); font-family: var(--font-heading); font-size: 1.3rem; }
 .scripture-list > li, .scripture-list > article, .scripture-note { padding: 1.1rem 1.25rem; border: 1px solid #C5DDE6; border-radius: 12px; background: #EEF7FA; color: #253F4C; }
 .scripture-list h3, .scripture-reference { color: #185B70; font-family: var(--font-heading); font-weight: 700; }
 .scripture-list p + p { margin-top: 0.65rem; }
