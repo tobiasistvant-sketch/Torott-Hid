@@ -38,23 +38,29 @@
   const choiceFor = (number, id) => Object.assign({}, S.scenes[number].choices.find(choice => choice.id === id), (U.choiceOverrides[number] || {})[id]);
   function blocksHTML(blocks) {
     return blocks.map(block => {
-      const speaker = block.type === 'thought' ? 'Nóra · belső gondolat' : block.speaker;
-      const speakerName = block.speaker || (block.type === 'thought' ? 'Nóra' : '');
+      const speakerName = ({ 'Osztálytárs 1': 'Lara', 'Osztálytárs 2': 'Niki' })[block.speaker] || block.speaker || (block.type === 'thought' ? 'Nóra' : '');
+      const speaker = block.type === 'thought' ? 'Nóra · belső gondolat' : speakerName;
       return '<article class="story-block ' + esc(block.type) + '"' + (speakerName ? ' data-speaker="' + esc(speakerName) + '"' : '') + (block.channel ? ' data-channel="' + esc(block.channel) + '"' : '') + '>' +
         (speaker ? '<p class="speaker">' + esc(speaker) + (block.channel === 'message' ? ' · üzenet' : '') + '</p>' : '') +
         '<p class="block-text">' + esc(block.text) + '</p></article>';
     }).join('');
   }
   function comicHTML(entry, sourceBlocks) {
-    const accompanying = entry.layout === 'illustrated-consequence'
-      ? '<div class="comic-accompanying-text">' + blocksHTML(sourceBlocks) + '</div>' : '';
+    // Put a trailing scene description before the dialogue it introduces.
+    // Narration between individual utterances keeps its original position.
+    const end = entry.transcript.findLastIndex(block => block.type !== 'narration') + 1;
+    const ordered = entry.transcript.slice(end).concat(entry.transcript.slice(0, end));
+    const firstVoice = ordered.findIndex(block => block.type !== 'narration');
+    const split = firstVoice < 0 ? ordered.length : firstVoice;
+    const transcript = ordered.slice(0, split).concat(
+      entry.layout === 'illustrated-consequence' ? sourceBlocks : [], ordered.slice(split));
     return '<section class="comic" data-comic-id="' + esc(entry.id) + '">' +
       '<figure class="comic-media"><button type="button" class="comic-image-button" data-action="open-comic" data-comic-id="' + esc(entry.id) + '" aria-label="Képregény nagyítása: ' + esc(entry.title) + '">' +
       '<img class="comic-image" src="' + esc(entry.src) + '" width="' + entry.width + '" height="' + entry.height + '" alt="' + esc(entry.alt) + '" loading="lazy" decoding="async">' +
       '<span class="comic-zoom-hint">Képregény nagyítása</span></button><figcaption>' + esc(entry.title) + '</figcaption></figure>' +
-      '<details class="comic-transcript"><summary class="transcript-label">Szöveg</summary><div>' + accompanying + blocksHTML(entry.transcript) + '</div></details>' +
+      '<details class="comic-transcript"><summary class="transcript-label">Szöveg</summary><div>' + blocksHTML(transcript) + '</div></details>' +
       '<p class="comic-fallback-message" role="status" hidden>A kép most nem tölthető be. A történet szöveges változatával folytathatod.</p>' +
-      '<div class="comic-source-fallback" tabindex="-1" hidden>' + blocksHTML(sourceBlocks) + '</div></section>';
+      '<div class="comic-source-fallback" tabindex="-1" hidden>' + blocksHTML(entry.layout === 'illustrated-consequence' ? transcript : sourceBlocks) + '</div></section>';
   }
   function sceneContent(blocks) {
     const variants = (C.sceneVariants || {})[state.scene];
@@ -148,21 +154,13 @@
       '</div><aside class="hero-aside">' + bridgeHTML('H0') + '<h2>Harag és megbocsátás</h2><p>Morális dilemmák az emberi kapcsolatokban.</p></aside></section>' +
       '<section class="review-note"><p>' + esc(A.ui.care) + '</p><p>A haladás ezen a böngészőlapon újratöltés után is megmarad. A lap bezárásával a munkamenet véget ér.</p></section>';
   }
-  function correctionPanel() {
-    const f = E.facts(state);
-    if (state.scene !== 6) return '';
-    if (f.corrected) return '<p class="completion-feedback" role="status">' + esc(A.ui.corrected) + '</p>';
-    if (!f.correctionAvailable) return '';
-    const description = state.publications[5] ? A.ui.correctPost : f.revengeThreat ? A.ui.correctThreat : A.ui.correctTone;
-    return '<aside class="correction-card"><h2>Egy korábbi mondatod vagy tetted</h2><p>' + esc(description) + '</p><div class="actions">' + button(A.ui.correction, 'correct', true) + '</div><p class="session-note">Ezt a lépést nem kötelező választanod.</p></aside>';
-  }
   function sceneScreen() {
     const item = scene();
     const narrative = heading(state.scene + '. jelenet', item.title) +
       '<section class="scene-card"><p class="scene-time">' + esc(item.time) + '</p>' + sceneContent(U.sceneBlocks(state, A.blocksForScene(state, S, E))) + '</section>';
     if (!item.choices.length) return narrative + '<div class="actions">' + button('Tovább a történetben', 'next') + '</div>';
-    return narrative + correctionPanel() + '<section class="choice-panel"><h2 class="choice-question">' + esc(item.question) + '</h2><div class="choice-list">' +
-      item.choices.map(original => choiceFor(item.id, original.id)).map(choice => '<button type="button" class="choice-card" id="choice-' + choice.id + '" data-action="select" data-value="' + choice.id + '"><span class="choice-letter" aria-hidden="true">' + choice.id + '</span><span class="choice-text">' + esc(choice.label) + '</span></button>').join('') +
+    return narrative + '<section class="choice-panel"><h2 class="choice-question">' + esc(item.question) + '</h2><div class="choice-list">' +
+      item.choices.map(original => choiceFor(item.id, original.id)).map(choice => '<button type="button" class="choice-card" id="choice-' + choice.id + '" data-action="select" data-value="' + choice.id + '"' + (E.canChoose(state, choice.id, S) ? '' : ' disabled aria-disabled="true"') + '><span class="choice-letter" aria-hidden="true">' + choice.id + '</span><span class="choice-text">' + esc(choice.label) + '</span></button>').join('') +
       '</div></section>';
   }
   function feedbackScreen() {
@@ -300,7 +298,6 @@
     else if (action === 'start') dispatch({ type: 'START' });
     else if (action === 'next') dispatch({ type: 'NEXT' });
     else if (action === 'select' && /^[A-E]$/.test(control.dataset.value || '')) dispatch({ type: 'SELECT', value: control.dataset.value });
-    else if (action === 'correct') dispatch({ type: 'CORRECT' });
   });
   dialog.addEventListener('close', () => { if (dialog.returnValue === 'restart') dispatch({ type: 'RESTART' }); });
   dialog.addEventListener('keydown', event => {

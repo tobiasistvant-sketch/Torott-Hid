@@ -29,6 +29,13 @@
     return state.decisions[1] === 'A' || state.decisions[3] === 'D' || state.publications[5] === true;
   }
 
+  function canChoose(state, value, story) {
+    if (state.view !== 'scene' || !choicesFor(state.scene, story).includes(value)) return false;
+    if (state.scene === 5 && state.decisions[4] === 'D' && value === 'A') return false;
+    if (state.scene === 6 && state.decisions[5] === 'D' && ['A', 'B', 'C'].includes(value)) return false;
+    return true;
+  }
+
   /** Reconstruct only reachable phase shapes, never trust supplied derived flags. */
   function readState(candidate, story, legacy) {
     const views = legacy ? VIEWS.concat('confirmation') : VIEWS;
@@ -106,7 +113,7 @@
     if (action.type === 'START' && next.view === 'start') {
       next.view = 'scene';
     } else if (action.type === 'SELECT' && next.view === 'scene' &&
-        choicesFor(next.scene, story).includes(action.value)) {
+        canChoose(next, action.value, story)) {
       next.decisions[next.scene] = action.value;
       if (next.scene === 5 && action.value === 'D') next.publications[5] = true;
       next.view = 'feedback';
@@ -216,5 +223,5 @@
     return state;
   }
 
-  return Object.freeze({ VERSION, STORAGE_KEY, createState, normalize, migrate, transition, facts, ending, save, load, reset });
+  return Object.freeze({ VERSION, STORAGE_KEY, createState, normalize, migrate, canChoose, transition, facts, ending, save, load, reset });
 });

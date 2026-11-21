@@ -266,6 +266,7 @@
     return originalBlocks;
   }
   function feedbackBlocks(state, originalBlocks) {
+    if (state.scene === 1 && state.decisions[1] === 'B') return [];
     const choices = feedback[state.scene];
     return choices && choices[state.decisions[state.scene]] || originalBlocks;
   }

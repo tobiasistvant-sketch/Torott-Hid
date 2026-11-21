@@ -64,12 +64,12 @@
         {
           "type": "speech",
           "text": "Azt hallottad, hogy Nóráék szülei szétmentek?",
-          "speaker": "Osztálytárs 1"
+          "speaker": "Lara"
         },
         {
           "type": "speech",
           "text": "Lili mondta. Árontól tudja.",
-          "speaker": "Osztálytárs 2"
+          "speaker": "Niki"
         },
         {
           "type": "thought",
@@ -248,20 +248,25 @@
     "1": {
       "A": {
         "id": "scene-1-A",
-        "src": "design/references/01A_nyilvanos_szamonkeres_kovetkezmeny.webp",
-        "width": 1199,
-        "height": 1312,
+        "src": "design/references/Iskolai folyosói titokdráma.png",
+        "width": 1122,
+        "height": 1402,
         "title": "Nyilvános számonkérés",
-        "alt": "Három szöveg nélküli képkockán Nóra a folyosón Áront kéri számon. A többiek odafordulnak, Áron lesüti a szemét, Nóra feszülten áll vele szemben.",
+        "alt": "Három képkockán Nóra a folyosón Áront kéri számon: Hogy tehetted ezt? Megígérted, hogy nem mondod el senkinek! A többiek odafordulnak, Áron lesüti a szemét.",
         "transcript": [
           {
             "type": "narration",
             "text": "Nóra mások előtt Áron felé fordulva számon kéri. Az osztálytársak odanéznek. Áron lesüti a szemét; Nóra arca feszült."
+          },
+          {
+            "type": "speech",
+            "speaker": "Nóra",
+            "text": "Hogy tehetted ezt? Megígérted, hogy nem mondod el senkinek!"
           }
         ],
         "transcriptSource": "approved-image",
         "layout": "illustrated-consequence",
-        "sha256": "b19973fa5e095fa2f7c746917a7158520495f9ddcf1059b0c2a743360d1d3d08"
+        "sha256": "a81534979741400545585e437161552ad520e31fc7530c4c7f9a5f5c17bb0f62"
       },
       "B": {
         "id": "scene-1-B",
@@ -296,12 +301,12 @@
           {
             "type": "speech",
             "text": "Lilitől hallottam, hogy a szüleid szétmentek.",
-            "speaker": "Osztálytárs 1"
+            "speaker": "Lara"
           },
           {
             "type": "speech",
             "text": "Igen, ő mondta. Árontól hallotta állítólag.",
-            "speaker": "Osztálytárs 2"
+            "speaker": "Niki"
           }
         ],
         "transcriptSource": "approved-image",
@@ -439,10 +444,6 @@
             "type": "speech",
             "text": "Rendben. Nem sürgetlek.",
             "speaker": "Áron"
-          },
-          {
-            "type": "narration",
-            "text": "Áron megkönnyebbült arccal nézi a telefonját, Nóra gondolatfelhőjében kusza vonalak látszanak."
           }
         ],
         "transcriptSource": "approved-image",
@@ -882,6 +883,10 @@
         "alt": "Nóra elküldi Áron bizalmas információját az osztálycsoportba. Az üzenet megjelenik, a többiek reagálnak, és Áron elolvassa. Később Nóra és Áron elkerülik egymást.",
         "transcript": [
           {
+            "type": "narration",
+            "text": "Nóra az osztály közös csoportjában nyilvánosságra hozza Áron titkát. Nóra és Áron később elkerülik egymást."
+          },
+          {
             "type": "thought",
             "speaker": "Nóra",
             "text": "Majd én is közzéteszek rólad valamit, hogy érezd, milyen."
@@ -915,10 +920,6 @@
             "speaker": "Osztálytárs",
             "text": "Hogy lehetett ilyen bizalmas?",
             "channel": "class-group"
-          },
-          {
-            "type": "narration",
-            "text": "Nóra az osztály közös üzenetváltásában nyilvánosságra hozza Áron bizalmas információját, és megnyomja a küldés gombot. Az osztály reagál, Áron elolvassa. Nóra és Áron később elkerülik egymást."
           }
         ],
         "transcriptSource": "approved-image",
