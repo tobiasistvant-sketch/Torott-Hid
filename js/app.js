@@ -39,7 +39,8 @@
   function blocksHTML(blocks) {
     return blocks.map(block => {
       const speaker = block.type === 'thought' ? 'Nóra · belső gondolat' : block.speaker;
-      return '<article class="story-block ' + esc(block.type) + '"' + (block.channel ? ' data-channel="' + esc(block.channel) + '"' : '') + '>' +
+      const speakerName = block.speaker || (block.type === 'thought' ? 'Nóra' : '');
+      return '<article class="story-block ' + esc(block.type) + '"' + (speakerName ? ' data-speaker="' + esc(speakerName) + '"' : '') + (block.channel ? ' data-channel="' + esc(block.channel) + '"' : '') + '>' +
         (speaker ? '<p class="speaker">' + esc(speaker) + (block.channel === 'message' ? ' · üzenet' : '') + '</p>' : '') +
         '<p class="block-text">' + esc(block.text) + '</p></article>';
     }).join('');
@@ -51,7 +52,7 @@
       '<figure class="comic-media"><button type="button" class="comic-image-button" data-action="open-comic" data-comic-id="' + esc(entry.id) + '" aria-label="Képregény nagyítása: ' + esc(entry.title) + '">' +
       '<img class="comic-image" src="' + esc(entry.src) + '" width="' + entry.width + '" height="' + entry.height + '" alt="' + esc(entry.alt) + '" loading="lazy" decoding="async">' +
       '<span class="comic-zoom-hint">Képregény nagyítása</span></button><figcaption>' + esc(entry.title) + '</figcaption></figure>' +
-      accompanying + '<section class="comic-transcript" role="region" aria-label="Képregény szöveges átirata" tabindex="0"><h2 class="transcript-label">Szöveges átirat</h2><div>' + blocksHTML(entry.transcript) + '</div></section>' +
+      '<details class="comic-transcript"><summary class="transcript-label">Szöveg</summary><div>' + accompanying + blocksHTML(entry.transcript) + '</div></details>' +
       '<p class="comic-fallback-message" role="status" hidden>A kép most nem tölthető be. A történet szöveges változatával folytathatod.</p>' +
       '<div class="comic-source-fallback" tabindex="-1" hidden>' + blocksHTML(sourceBlocks) + '</div></section>';
   }
@@ -188,8 +189,8 @@
       '<section class="reflection-card"><h2>Mi történt a te történetedben?</h2>' + paras(U.summary(state, A.summary(state, E), E)) + '<blockquote class="reflection-quote">' + esc(item.quote) + '</blockquote></section>' +
       '<section class="reflection-card"><h2>Mit tanulhatunk ebből?</h2>' + paras(item.moral) + '</section>' +
       '<section class="reflection-card"><h2>Bibliai iránytű</h2><div class="scripture-list">' + item.scriptures.map(verse => '<article><h3>' + esc(verse.reference) + ' – ' + esc(verse.label) + '</h3><details class="scripture-verse"><summary aria-label="Az igevers elolvasása: ' + esc(verse.reference) + '">Az igevers elolvasása</summary><blockquote class="scripture-quote">' + esc(verse.quote) + '</blockquote></details>' + paras(verse.explanation.paragraphs) + '</article>').join('') + '</div></section>' +
-      '<section class="reflection-card"><h2>Gondolkodj el!</h2><ol class="question-list">' + questions.map(question => '<li>' + esc(question) + '</li>').join('') + '</ol><p class="summary-note">A kérdéseket magadban vagy a fiktív történetről beszélgetve is átgondolhatod.</p></section>' +
-      '<section class="reflection-card"><details class="route-details"><summary>A döntési útvonalad</summary>' + historyHTML() + '</details></section><section class="review-note">' +
+      '<section class="reflection-card"><h2>Gondolkodj el!</h2><ol class="question-list">' + questions.map(question => '<li>' + esc(question) + '</li>').join('') + '</ol></section>' +
+      '<section class="reflection-card"><details class="route-details"><summary>A döntési útvonalad</summary>' + historyHTML() + '</details></section><section class="ending-narration">' +
       blocksHTML(S.scenes[7].blocks) + '<p>' + esc(A.ui.finish) + '</p></section><div class="actions">' + button('Újrajátszom Nóra történetét', 'restart', true) + '</div>';
   }
   function updateNotice() {
