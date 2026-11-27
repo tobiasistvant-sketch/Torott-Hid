@@ -15,7 +15,7 @@
   <script src="js/version.js?v=1.1.0-ad83b07939fd" defer></script>
   <script src="js/comics.js?v=1.1.0-6400702b3625" defer></script>
   <script src="js/revisions.js?v=1.1.0-738993f2a78e" defer></script>
-  <script src="js/app.js?v=1.1.0-2a14f3b513b5" defer></script>
+  <script src="js/app.js?v=1.1.0-edc6822f41b6" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main-content">Ugrás a történethez</a>
@@ -31,7 +31,8 @@
       <nav class="chapter-nav" aria-label="A történet jelenetei"><ol id="chapters"></ol></nav>
       <div id="progress" class="progress-track" role="progressbar" aria-label="Haladás a történetben" aria-valuemin="0" aria-valuemax="8" aria-valuenow="0"><div id="progress-fill" class="progress-fill"></div></div>
     </header>
-    <nav class="screen-navigation" aria-label="Navigáció a már meglátogatott képernyők között">
+    <!-- A nyilak visszakapcsolása: data-history-arrows-enabled="true" -->
+    <nav class="screen-navigation" data-history-arrows-enabled="false" aria-label="Navigáció a már meglátogatott képernyők között">
       <button type="button" class="btn btn-secondary" data-action="screen-back" disabled>← Előző képernyő</button>
       <button type="button" class="btn btn-secondary" data-action="screen-forward" disabled>Következő képernyő →</button>
     </nav>
