@@ -6,6 +6,8 @@
   const U = window.TorottHidRevisions;
   const C = window.TorottHidComics || { scenes: {}, consequences: {} };
   const main = document.getElementById('main-content');
+  // One reversible switch in index.html controls the in-game history arrows.
+  const historyArrowsEnabled = document.querySelector('.screen-navigation').dataset.historyArrowsEnabled === 'true';
   if (!S || !A || !R || !E || !N || !U) {
     main.textContent = 'A történet egyik fájlja nem töltődött be. Frissítsd az oldalt.';
     return;
@@ -201,8 +203,8 @@
   function render(moveFocus) {
     const views = { start: startScreen, scene: sceneScreen, feedback: feedbackScreen, ending: endingScreen };
     main.innerHTML = views[state.view]();
-    document.querySelector('[data-action="screen-back"]').disabled = !navigation.canBack;
-    document.querySelector('[data-action="screen-forward"]').disabled = !navigation.canForward;
+    document.querySelector('[data-action="screen-back"]').disabled = !historyArrowsEnabled || !navigation.canBack;
+    document.querySelector('[data-action="screen-forward"]').disabled = !historyArrowsEnabled || !navigation.canForward;
     main.dataset.view = state.view; main.dataset.scene = String(state.scene);
     if (state.view === 'ending') main.dataset.ending = E.ending(state); else delete main.dataset.ending;
     document.querySelectorAll('[data-app-version]').forEach(node => { node.textContent = 'v' + version; node.hidden = false; });
@@ -292,8 +294,8 @@
     else if (action === 'comic-zoom-in') setComicZoom(comicZoom + 0.5);
     else if (action === 'comic-zoom-out') setComicZoom(comicZoom - 0.5);
     else if (action === 'comic-zoom-reset') setComicZoom(1);
-    else if (action === 'screen-back') restoreScreen(-1);
-    else if (action === 'screen-forward') restoreScreen(1);
+    else if (action === 'screen-back' && historyArrowsEnabled) restoreScreen(-1);
+    else if (action === 'screen-forward' && historyArrowsEnabled) restoreScreen(1);
     else if (action === 'restart') { dialog.returnValue = 'cancel'; if (!dialog.open) dialog.showModal(); }
     else if (action === 'start') dispatch({ type: 'START' });
     else if (action === 'next') dispatch({ type: 'NEXT' });
